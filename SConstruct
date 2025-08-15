@@ -37,7 +37,7 @@ Run the following command to download godot-cpp:
 
 env = SConscript("godot-cpp/SConstruct", {"env": env, "customs": customs})
 
-env.Append(CPPPATH=["src/"])
+env.Append(CPPPATH=["src", "CARL/include"])
 sources = Glob("src/*.cpp")
 
 if env["target"] in ["editor", "template_debug"]:
@@ -48,11 +48,11 @@ if env["target"] in ["editor", "template_debug"]:
         print("Not including class reference as we're targeting a pre-4.3 baseline.")
 
 if env['platform'] == 'android':
-    env.Append(LIBPATH=['CARL_build_android/Targets'])
+    env.Append(LIBPATH=['CARL_build_android/CARL'])
 else:
-    env.Append(LIBPATH=['CARL_build/Targets'])
+    env.Append(LIBPATH=['CARL_build/CARL'])
 
-env.Append(LIBS=['carl_static_library'])
+env.Append(LIBS=['carl_core'])
 
 # .dev doesn't inhibit compatibility, so we don't need to key it.
 # .universal just means "compatible with all relevant arches" so we don't need to key it.
