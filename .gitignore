@@ -1,3 +1,5 @@
+/CARL_build*
+
 # Godot auto generated files
 *.gen.*
 .godot/

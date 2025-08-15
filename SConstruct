@@ -5,7 +5,7 @@ import sys
 from methods import print_error
 
 
-libname = "EXTENSION-NAME"
+libname = "godot_meta_carl"
 projectdir = "demo"
 
 localEnv = Environment(tools=["default"], PLATFORM="")
@@ -46,6 +46,13 @@ if env["target"] in ["editor", "template_debug"]:
         sources.append(doc_data)
     except AttributeError:
         print("Not including class reference as we're targeting a pre-4.3 baseline.")
+
+if env['platform'] == 'android':
+    env.Append(LIBPATH=['CARL_build_android/Targets'])
+else:
+    env.Append(LIBPATH=['CARL_build/Targets'])
+
+env.Append(LIBS=['carl_static_library'])
 
 # .dev doesn't inhibit compatibility, so we don't need to key it.
 # .universal just means "compatible with all relevant arches" so we don't need to key it.
