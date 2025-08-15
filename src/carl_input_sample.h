@@ -24,17 +24,42 @@
 #pragma once
 
 #include <godot_cpp/classes/resource.hpp>
+#include <godot_cpp/classes/xr_hand_tracker.hpp>
+
+#include <carl/Carl.h>
 
 using namespace godot;
 
 class CARLInputSample : public Resource {
 	GDCLASS(CARLInputSample, Resource);
 
+	Transform3D hmd_pose;
+	Transform3D left_hand_joint_poses[XRHandTracker::HandJoint::HAND_JOINT_MAX];
+	Transform3D right_hand_joint_poses[XRHandTracker::HandJoint::HAND_JOINT_MAX];
+
+	carl::InputSample *carl_input_sample = nullptr;
+	bool dirty = false;
+
 protected:
 	static void _bind_methods();
 
 public:
+	void populate_from_hand_tracker(const Ref<XRHandTracker> &p_tracker);
+
+	void set_hmd_pose(const Transform3D &p_pose);
+	Transform3D get_hmd_pose() const;
+
+	void set_left_hand_joint_poses(const TypedArray<Transform3D> &p_poses);
+	TypedArray<Transform3D> get_left_hand_joint_poses() const;
+
+	void set_right_hand_joint_poses(const TypedArray<Transform3D> &p_poses);
+	TypedArray<Transform3D> get_right_hand_joint_poses() const;
+
+	PackedByteArray serialize() const;
+	static Ref<CARLInputSample> deserialize(const PackedByteArray &p_data);
+
+	carl::InputSample get_carl_object();
+
 	CARLInputSample() = default;
 	~CARLInputSample() override = default;
-
 };
