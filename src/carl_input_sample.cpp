@@ -36,6 +36,11 @@ void CARLInputSample::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_right_hand_joint_poses", "poses"), &CARLInputSample::set_right_hand_joint_poses);
 	ClassDB::bind_method(D_METHOD("get_right_hand_joint_poses"), &CARLInputSample::get_right_hand_joint_poses);
 
+	ClassDB::bind_method(D_METHOD("serialize"), &CARLInputSample::serialize);
+	ClassDB::bind_static_method("CARLInputSample", D_METHOD("deserialize", "data"), &CARLInputSample::deserialize);
+
+	ClassDB::bind_method(D_METHOD("populate_from_hand_tracker", "hand_tracker"), &CARLInputSample::populate_from_hand_tracker);
+
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "timestamp"), "set_timestamp", "get_timestamp");
 	ADD_PROPERTY(PropertyInfo(Variant::TRANSFORM3D, "hmd_pose"), "set_hmd_pose", "get_hmd_pose");
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "left_hand_joint_poses", PROPERTY_HINT_ARRAY_TYPE, vformat("%s", Variant::TRANSFORM3D)), "set_left_hand_joint_poses", "get_left_hand_joint_poses");
@@ -126,8 +131,12 @@ Ref<CARLInputSample> CARLInputSample::deserialize(const PackedByteArray &p_data)
 carl::InputSample *CARLInputSample::get_carl_object() const {
 	if (carl_input_sample == nullptr) {
 		carl_input_sample = new carl::InputSample();
+		carl_input_sample->HmdPose.emplace();
+		carl_input_sample->LeftWristPose.emplace();
+		carl_input_sample->RightWristPose.emplace();
 	}
 
+	print_line("Left hand joints: ", left_hand_joint_poses.size());
 	to_carl_transform(hmd_pose, *carl_input_sample->HmdPose);
 	to_carl_transform(left_hand_joint_poses[XRHandTracker::HAND_JOINT_WRIST], *carl_input_sample->LeftWristPose);
 	to_carl_transform(right_hand_joint_poses[XRHandTracker::HAND_JOINT_WRIST], *carl_input_sample->RightWristPose);
@@ -170,7 +179,7 @@ void CARLInputSample::to_carl_hand_joint_poses(const TypedArray<Transform3D> &p_
 	// We fill them all, even though they are mostly unused - perhaps they will be used in the future?
 
 	int godot_joint = XRHandTracker::HAND_JOINT_THUMB_METACARPAL;
-	for (unsigned int i = 0; i < (unsigned int)carl::InputSample::Joint::COUNT; i++) {
+	for (uint64_t i = i; i < (uint64_t)carl::InputSample::Joint::COUNT; i++) {
 		// Skip the missing metacarpal joints.
 		if (godot_joint == XRHandTracker::HAND_JOINT_INDEX_FINGER_METACARPAL ||
 			godot_joint == XRHandTracker::HAND_JOINT_MIDDLE_FINGER_METACARPAL ||
@@ -191,7 +200,7 @@ void CARLInputSample::from_carl_hand_joint_poses(const std::optional<std::array<
 	// See `to_carl_hand_joint_poses()` for an explanation of how (I think) the CARL joint set is laid out.
 
 	int godot_joint = XRHandTracker::HAND_JOINT_THUMB_METACARPAL;
-	for (unsigned int i = 0; i < (unsigned int)carl::InputSample::Joint::COUNT; i++) {
+	for (uint64_t i = 1; i < (uint64_t)carl::InputSample::Joint::COUNT; i++) {
 		// Skip the missing metacarpal joints.
 		if (godot_joint == XRHandTracker::HAND_JOINT_INDEX_FINGER_METACARPAL ||
 			godot_joint == XRHandTracker::HAND_JOINT_MIDDLE_FINGER_METACARPAL ||
