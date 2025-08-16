@@ -6,8 +6,10 @@ Phase I: Get something working
 
 - Implement `CARLRecorder` and `CARLRecording`
 - Demo: Allow recording and playing back in demo
+  - Should allow selecting which poses are enabled
 - Implement `CARLExample`
 - Demo: Allow cropping and saving examples in demo
+  - Should be as simple as possible: maybe just scrub through recording and press button for "start" / "stop"
 - Implement `CARLDefinition`, `CARLSession`, `CARLRecognizer`
 - Demo: Test recognizing a definition in the demo
   - This should be the simplest hack to make it work!
