@@ -1,0 +1,22 @@
+TODO
+====
+
+Phase I: Get something working
+---
+
+- Implement `CARLRecorder` and `CARLRecording`
+- Demo: Allow recording and playing back in demo
+- Implement `CARLExample`
+- Demo: Allow cropping and saving examples in demo
+- Implement `CARLDefinition`, `CARLSession`, `CARLRecognizer`
+- Demo: Test recognizing a definition in the demo
+  - This should be the simplest hack to make it work!
+  - We need to know that our data is even any good, and that the library even remotely works
+- At this point, let's merge `carl-slush` into `main`
+
+Phase II: Proper tooling for development
+---
+
+- Demo: Implement "nice" UI for constructing and testing examples
+  - This should be the real deal!
+  - We want a simple "studio" for creating, testing and editing definitions
