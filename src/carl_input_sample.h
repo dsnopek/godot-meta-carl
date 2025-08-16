@@ -25,6 +25,7 @@
 
 #include <godot_cpp/classes/resource.hpp>
 #include <godot_cpp/classes/xr_hand_tracker.hpp>
+#include <godot_cpp/core/type_info.hpp>
 
 #include <carl/Carl.h>
 
@@ -33,16 +34,28 @@ using namespace godot;
 class CARLInputSample : public Resource {
 	GDCLASS(CARLInputSample, Resource);
 
+public:
+	enum Pose {
+		POSE_HMD = 1,
+		POSE_LEFT_WRIST = 2,
+		POSE_RIGHT_WRIST = 4,
+		POSE_LEFT_JOINTS = 8,
+		POSE_RIGHT_JOINTS = 16,
+	};
+
+private:
 	double timestamp = 0;
 	Transform3D hmd_pose;
 	TypedArray<Transform3D> left_hand_joint_poses;
 	TypedArray<Transform3D> right_hand_joint_poses;
+	BitField<Pose> enabled_poses = 0;
 
 	mutable carl::InputSample *carl_input_sample = nullptr;
 
 protected:
 	static void _bind_methods();
 
+	void update_carl_object() const;
 
 public:
 	void populate_from_hand_tracker(const Ref<XRHandTracker> &p_tracker);
@@ -59,6 +72,9 @@ public:
 	void set_right_hand_joint_poses(const TypedArray<Transform3D> &p_poses);
 	TypedArray<Transform3D> get_right_hand_joint_poses() const;
 
+	void set_enabled_poses(BitField<Pose> p_enabled_poses);
+	BitField<Pose> get_enabled_posed() const;
+
 	PackedByteArray serialize() const;
 	static Ref<CARLInputSample> deserialize(const PackedByteArray &p_data);
 
@@ -74,3 +90,5 @@ public:
 	CARLInputSample(carl::InputSample *p_carl_input_sample);
 	~CARLInputSample();
 };
+
+VARIANT_BITFIELD_CAST(CARLInputSample::Pose);

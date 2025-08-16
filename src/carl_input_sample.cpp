@@ -36,6 +36,9 @@ void CARLInputSample::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_right_hand_joint_poses", "poses"), &CARLInputSample::set_right_hand_joint_poses);
 	ClassDB::bind_method(D_METHOD("get_right_hand_joint_poses"), &CARLInputSample::get_right_hand_joint_poses);
 
+	ClassDB::bind_method(D_METHOD("set_enabled_poses", "enabled_poses"), &CARLInputSample::set_enabled_poses);
+	ClassDB::bind_method(D_METHOD("get_enabled_poses"), &CARLInputSample::get_enabled_posed);
+
 	ClassDB::bind_method(D_METHOD("serialize"), &CARLInputSample::serialize);
 	ClassDB::bind_static_method("CARLInputSample", D_METHOD("deserialize", "data"), &CARLInputSample::deserialize);
 
@@ -45,6 +48,52 @@ void CARLInputSample::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::TRANSFORM3D, "hmd_pose"), "set_hmd_pose", "get_hmd_pose");
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "left_hand_joint_poses", PROPERTY_HINT_ARRAY_TYPE, vformat("%s", Variant::TRANSFORM3D)), "set_left_hand_joint_poses", "get_left_hand_joint_poses");
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "right_hand_joint_poses", PROPERTY_HINT_ARRAY_TYPE, vformat("%s", Variant::TRANSFORM3D)), "set_right_hand_joint_poses", "get_right_hand_joint_poses");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "enabled_poses", PROPERTY_HINT_FLAGS, "HMD,Left Wrist,Right Wrist,Left Joints,Right Joints"), "set_enable_flags", "get_enable_flags");
+
+	BIND_BITFIELD_FLAG(Pose::POSE_HMD);
+	BIND_BITFIELD_FLAG(Pose::POSE_LEFT_WRIST);
+	BIND_BITFIELD_FLAG(Pose::POSE_RIGHT_WRIST);
+	BIND_BITFIELD_FLAG(Pose::POSE_LEFT_JOINTS);
+	BIND_BITFIELD_FLAG(Pose::POSE_RIGHT_JOINTS);
+}
+
+void CARLInputSample::update_carl_object() const {
+	if (!carl_input_sample) {
+		return;
+	}
+
+	if (enabled_poses.has_flag(POSE_HMD)) {
+		carl_input_sample->HmdPose.emplace();
+		to_carl_transform(hmd_pose, *carl_input_sample->HmdPose);
+	} else {
+		carl_input_sample->HmdPose.reset();
+	}
+
+	if (enabled_poses.has_flag(POSE_LEFT_WRIST)) {
+		carl_input_sample->LeftWristPose.emplace();
+		to_carl_transform(left_hand_joint_poses[XRHandTracker::HAND_JOINT_WRIST], *carl_input_sample->LeftWristPose);
+	} else {
+		carl_input_sample->LeftWristPose.reset();
+	}
+
+	if (enabled_poses.has_flag(POSE_RIGHT_WRIST)) {
+		carl_input_sample->RightWristPose.emplace();
+		to_carl_transform(right_hand_joint_poses[XRHandTracker::HAND_JOINT_WRIST], *carl_input_sample->RightWristPose);
+	} else {
+		carl_input_sample->RightWristPose.reset();
+	}
+
+	if (enabled_poses.has_flag(POSE_LEFT_JOINTS)) {
+		to_carl_hand_joint_poses(left_hand_joint_poses, carl_input_sample->LeftHandJointPoses);
+	} else {
+		carl_input_sample->LeftHandJointPoses.reset();
+	}
+
+	if (enabled_poses.has_flag(POSE_RIGHT_JOINTS)) {
+		to_carl_hand_joint_poses(right_hand_joint_poses, carl_input_sample->RightHandJointPoses);
+	} else {
+		carl_input_sample->RightHandJointPoses.reset();
+	}
 }
 
 void CARLInputSample::populate_from_hand_tracker(const Ref<XRHandTracker> &p_tracker) {
@@ -71,7 +120,7 @@ double CARLInputSample::get_timestamp() const {
 
 void CARLInputSample::set_hmd_pose(const Transform3D &p_pose) {
 	hmd_pose = p_pose;
-	if (carl_input_sample) {
+	if (carl_input_sample && enabled_poses.has_flag(POSE_HMD)) {
 		to_carl_transform(p_pose, *carl_input_sample->HmdPose);
 	}
 }
@@ -84,8 +133,12 @@ void CARLInputSample::set_left_hand_joint_poses(const TypedArray<Transform3D> &p
 	ERR_FAIL_COND(p_poses.size() != XRHandTracker::HAND_JOINT_MAX);
 	left_hand_joint_poses = p_poses;
 	if (carl_input_sample) {
-		to_carl_transform(p_poses[XRHandTracker::HAND_JOINT_WRIST], *carl_input_sample->LeftWristPose);
-		to_carl_hand_joint_poses(p_poses, carl_input_sample->LeftHandJointPoses);
+		if (enabled_poses.has_flag(POSE_LEFT_WRIST)) {
+			to_carl_transform(p_poses[XRHandTracker::HAND_JOINT_WRIST], *carl_input_sample->LeftWristPose);
+		}
+		if (enabled_poses.has_flag(POSE_LEFT_JOINTS)) {
+			to_carl_hand_joint_poses(p_poses, carl_input_sample->LeftHandJointPoses);
+		}
 	}
 }
 
@@ -97,13 +150,26 @@ void CARLInputSample::set_right_hand_joint_poses(const TypedArray<Transform3D> &
 	ERR_FAIL_COND(p_poses.size() != XRHandTracker::HAND_JOINT_MAX);
 	right_hand_joint_poses = p_poses;
 	if (carl_input_sample) {
-		to_carl_transform(p_poses[XRHandTracker::HAND_JOINT_WRIST], *carl_input_sample->RightWristPose);
-		to_carl_hand_joint_poses(p_poses, carl_input_sample->RightHandJointPoses);
+		if (enabled_poses.has_flag(POSE_RIGHT_WRIST)) {
+			to_carl_transform(p_poses[XRHandTracker::HAND_JOINT_WRIST], *carl_input_sample->RightWristPose);
+		}
+		if (enabled_poses.has_flag(POSE_RIGHT_JOINTS)) {
+			to_carl_hand_joint_poses(p_poses, carl_input_sample->RightHandJointPoses);
+		}
 	}
 }
 
 TypedArray<Transform3D> CARLInputSample::get_right_hand_joint_poses() const {
 	return right_hand_joint_poses;
+}
+
+void CARLInputSample::set_enabled_poses(BitField<Pose> p_enabled_poses) {
+	enabled_poses = p_enabled_poses;
+	update_carl_object();
+}
+
+BitField<CARLInputSample::Pose> CARLInputSample::get_enabled_posed() const {
+	return enabled_poses;
 }
 
 PackedByteArray CARLInputSample::serialize() const {
@@ -131,18 +197,8 @@ Ref<CARLInputSample> CARLInputSample::deserialize(const PackedByteArray &p_data)
 carl::InputSample *CARLInputSample::get_carl_object() const {
 	if (carl_input_sample == nullptr) {
 		carl_input_sample = new carl::InputSample();
-		carl_input_sample->HmdPose.emplace();
-		carl_input_sample->LeftWristPose.emplace();
-		carl_input_sample->RightWristPose.emplace();
 	}
-
-	print_line("Left hand joints: ", left_hand_joint_poses.size());
-	to_carl_transform(hmd_pose, *carl_input_sample->HmdPose);
-	to_carl_transform(left_hand_joint_poses[XRHandTracker::HAND_JOINT_WRIST], *carl_input_sample->LeftWristPose);
-	to_carl_transform(right_hand_joint_poses[XRHandTracker::HAND_JOINT_WRIST], *carl_input_sample->RightWristPose);
-	to_carl_hand_joint_poses(left_hand_joint_poses, carl_input_sample->LeftHandJointPoses);
-	to_carl_hand_joint_poses(right_hand_joint_poses, carl_input_sample->RightHandJointPoses);
-
+	update_carl_object();
 	return carl_input_sample;
 }
 
@@ -225,17 +281,30 @@ CARLInputSample::CARLInputSample() {
 CARLInputSample::CARLInputSample(carl::InputSample *p_carl_input_sample) : CARLInputSample() {
 	carl_input_sample = p_carl_input_sample;
 
-	from_carl_transform(*carl_input_sample->HmdPose, hmd_pose);
-	from_carl_hand_joint_poses(carl_input_sample->LeftHandJointPoses, left_hand_joint_poses);
-	from_carl_hand_joint_poses(carl_input_sample->RightHandJointPoses, right_hand_joint_poses);
+	if (carl_input_sample->HmdPose.has_value()) {
+		enabled_poses.set_flag(POSE_HMD);
+		from_carl_transform(*carl_input_sample->HmdPose, hmd_pose);
+	}
 
-	Transform3D left_wrist_pose;
-	from_carl_transform(*carl_input_sample->LeftWristPose, left_wrist_pose);
-	left_hand_joint_poses[XRHandTracker::HAND_JOINT_WRIST] = left_wrist_pose;
+	if (carl_input_sample->LeftHandJointPoses.has_value()) {
+		from_carl_hand_joint_poses(carl_input_sample->LeftHandJointPoses, left_hand_joint_poses);
+	}
 
-	Transform3D right_wrist_pose;
-	from_carl_transform(*carl_input_sample->RightWristPose, right_wrist_pose);
-	right_hand_joint_poses[XRHandTracker::HAND_JOINT_WRIST] = right_wrist_pose;
+	if (carl_input_sample->RightHandJointPoses.has_value()) {
+		from_carl_hand_joint_poses(carl_input_sample->RightHandJointPoses, right_hand_joint_poses);
+	}
+
+	if (carl_input_sample->LeftWristPose.has_value()) {
+		Transform3D left_wrist_pose;
+		from_carl_transform(*carl_input_sample->LeftWristPose, left_wrist_pose);
+		left_hand_joint_poses[XRHandTracker::HAND_JOINT_WRIST] = left_wrist_pose;
+	}
+
+	if (carl_input_sample->RightWristPose.has_value()) {
+		Transform3D right_wrist_pose;
+		from_carl_transform(*carl_input_sample->RightWristPose, right_wrist_pose);
+		right_hand_joint_poses[XRHandTracker::HAND_JOINT_WRIST] = right_wrist_pose;
+	}
 }
 
 CARLInputSample::~CARLInputSample() {
