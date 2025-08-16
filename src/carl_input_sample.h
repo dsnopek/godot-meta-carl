@@ -43,6 +43,7 @@ class CARLInputSample : public Resource {
 protected:
 	static void _bind_methods();
 
+
 public:
 	void populate_from_hand_tracker(const Ref<XRHandTracker> &p_tracker);
 
@@ -63,8 +64,11 @@ public:
 
 	carl::InputSample *get_carl_object() const;
 
-	static carl::TransformT to_carl_transform(const Transform3D &p_godot_transform);
-	static Transform3D from_carl_transform(const carl::TransformT &p_carl_transform);
+	static void to_carl_transform(const Transform3D &p_godot_transform, carl::TransformT &r_carl_transform);
+	static void from_carl_transform(const carl::TransformT &p_carl_transform, Transform3D &r_godot_transform);
+
+	static void to_carl_hand_joint_poses(const TypedArray<Transform3D> &p_godot_transforms, std::optional<std::array<carl::TransformT, static_cast<size_t>(carl::InputSample::Joint::COUNT)>> &r_carl_transforms);
+	static void from_carl_hand_joint_poses(const std::optional<std::array<carl::TransformT, static_cast<size_t>(carl::InputSample::Joint::COUNT)>> p_carl_transforms, TypedArray<Transform3D> &r_godot_transforms);
 
 	CARLInputSample();
 	~CARLInputSample();

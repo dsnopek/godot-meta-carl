@@ -43,7 +43,7 @@ double CARLInputSample::get_timestamp() const {
 void CARLInputSample::set_hmd_pose(const Transform3D &p_pose) {
 	hmd_pose = p_pose;
 	if (carl_input_sample) {
-		carl_input_sample->HmdPose = to_carl_transform(p_pose);
+		to_carl_transform(p_pose, *carl_input_sample->HmdPose);
 	}
 }
 
@@ -55,7 +55,8 @@ void CARLInputSample::set_left_hand_joint_poses(const TypedArray<Transform3D> &p
 	ERR_FAIL_COND(p_poses.size() != XRHandTracker::HAND_JOINT_MAX);
 	left_hand_joint_poses = p_poses;
 	if (carl_input_sample) {
-		// @todo Set the values on the CARL input sample.
+		to_carl_transform(p_poses[XRHandTracker::HAND_JOINT_WRIST], *carl_input_sample->LeftWristPose);
+		to_carl_hand_joint_poses(p_poses, carl_input_sample->LeftHandJointPoses);
 	}
 }
 
@@ -67,7 +68,8 @@ void CARLInputSample::set_right_hand_joint_poses(const TypedArray<Transform3D> &
 	ERR_FAIL_COND(p_poses.size() != XRHandTracker::HAND_JOINT_MAX);
 	right_hand_joint_poses = p_poses;
 	if (carl_input_sample) {
-		// @todo Set the values on the CARL input sample.
+		to_carl_transform(p_poses[XRHandTracker::HAND_JOINT_WRIST], *carl_input_sample->RightWristPose);
+		to_carl_hand_joint_poses(p_poses, carl_input_sample->RightHandJointPoses);
 	}
 }
 
@@ -89,30 +91,84 @@ carl::InputSample *CARLInputSample::get_carl_object() const {
 		carl_input_sample = new carl::InputSample();
 	}
 
-	// @todo Copy everything in
+	to_carl_transform(hmd_pose, *carl_input_sample->HmdPose);
+	to_carl_transform(left_hand_joint_poses[XRHandTracker::HAND_JOINT_WRIST], *carl_input_sample->LeftWristPose);
+	to_carl_transform(right_hand_joint_poses[XRHandTracker::HAND_JOINT_WRIST], *carl_input_sample->RightWristPose);
+	to_carl_hand_joint_poses(left_hand_joint_poses, carl_input_sample->LeftHandJointPoses);
+	to_carl_hand_joint_poses(right_hand_joint_poses, carl_input_sample->RightHandJointPoses);
 
 	return carl_input_sample;
 }
 
-carl::TransformT CARLInputSample::to_carl_transform(const Transform3D &p_godot_transform) {
-	carl::TransformT carl_transform;
+void CARLInputSample::to_carl_transform(const Transform3D &p_godot_transform, carl::TransformT &r_carl_transform) {
 	const Vector3 *b = p_godot_transform.basis.rows;
 	const Vector3 &o = p_godot_transform.origin;
-	carl_transform.matrix().col(0) = Eigen::Vector<carl::NumberT, 4>(b[0][0], b[0][1], b[0][2], static_cast<carl::NumberT>(0));
-	carl_transform.matrix().col(1) = Eigen::Vector<carl::NumberT, 4>(b[1][0], b[1][1], b[1][2], static_cast<carl::NumberT>(0));
-	carl_transform.matrix().col(2) = Eigen::Vector<carl::NumberT, 4>(b[2][0], b[2][1], b[2][2], static_cast<carl::NumberT>(0));
-	carl_transform.matrix().col(3) = Eigen::Vector<carl::NumberT, 4>(o[0], o[1], o[2], static_cast<carl::NumberT>(0));
-	return carl_transform;
+	r_carl_transform.matrix().col(0) = Eigen::Vector<carl::NumberT, 4>(b[0][0], b[0][1], b[0][2], static_cast<carl::NumberT>(0));
+	r_carl_transform.matrix().col(1) = Eigen::Vector<carl::NumberT, 4>(b[1][0], b[1][1], b[1][2], static_cast<carl::NumberT>(0));
+	r_carl_transform.matrix().col(2) = Eigen::Vector<carl::NumberT, 4>(b[2][0], b[2][1], b[2][2], static_cast<carl::NumberT>(0));
+	r_carl_transform.matrix().col(3) = Eigen::Vector<carl::NumberT, 4>(o[0], o[1], o[2], static_cast<carl::NumberT>(0));
 }
 
-Transform3D CARLInputSample::from_carl_transform(const carl::TransformT &p_carl_transform) {
+void CARLInputSample::from_carl_transform(const carl::TransformT &p_carl_transform, Transform3D &r_godot_transform) {
 	auto &m = p_carl_transform.matrix();
-	Basis b(
-		m(0, 0), m(0, 1), m(0, 2),
-		m(1, 0), m(1, 1), m(1, 2),
-		m(2, 0), m(2, 1), m(2, 2));
-	Vector3 o(m(3, 0), m(3, 1), m(3, 2));
-	return Transform3D(b, o);
+	Vector3 *b = r_godot_transform.basis.rows;
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 3; j++) {
+			b[i][j] = m(i, j);
+		}
+	}
+	r_godot_transform.origin = Vector3(m(3, 0), m(3, 1), m(3, 2));
+}
+
+void CARLInputSample::to_carl_hand_joint_poses(const TypedArray<Transform3D> &p_godot_transforms, std::optional<std::array<carl::TransformT, static_cast<size_t>(carl::InputSample::Joint::COUNT)>> &r_carl_transforms) {
+	ERR_FAIL_COND(p_godot_transforms.size() != XRHandTracker::HAND_JOINT_MAX);
+
+	if (!r_carl_transforms.has_value()) {
+		r_carl_transforms.emplace();
+	}
+
+	// The CARL joint set appears to be at least partially based on the OVR joint set, rather than the OpenXR one.
+	// It only has slots for the metacarpal joints of the thumb and pinky, but it appears not to use them anyway.
+	// The base of each finger appears to be the proximal joint.
+
+	// We fill them all, even though they are mostly unused - perhaps they will be used in the future?
+	int godot_joint = XRHandTracker::HAND_JOINT_THUMB_METACARPAL;
+	for (unsigned int i = 0; i < (unsigned int)carl::InputSample::Joint::COUNT; i++) {
+		// Skip the missing metacarpal joints.
+		if (godot_joint == XRHandTracker::HAND_JOINT_INDEX_FINGER_METACARPAL ||
+			godot_joint == XRHandTracker::HAND_JOINT_MIDDLE_FINGER_METACARPAL ||
+			godot_joint == XRHandTracker::HAND_JOINT_RING_FINGER_METACARPAL) {
+			godot_joint++;
+		}
+
+		to_carl_transform(p_godot_transforms[godot_joint], r_carl_transforms->at(i));
+
+		godot_joint++;
+	}
+}
+
+void CARLInputSample::from_carl_hand_joint_poses(const std::optional<std::array<carl::TransformT, static_cast<size_t>(carl::InputSample::Joint::COUNT)>> p_carl_transforms, TypedArray<Transform3D> &r_godot_transforms) {
+	ERR_FAIL_COND(!p_carl_transforms.has_value());
+	ERR_FAIL_COND(r_godot_transforms.size() != XRHandTracker::HAND_JOINT_MAX);
+
+	// See `to_carl_hand_joint_poses()` for an explanation of how (I think) the CARL joint set is laid out.
+
+	int godot_joint = XRHandTracker::HAND_JOINT_THUMB_METACARPAL;
+	for (unsigned int i = 0; i < (unsigned int)carl::InputSample::Joint::COUNT; i++) {
+		// Skip the missing metacarpal joints.
+		if (godot_joint == XRHandTracker::HAND_JOINT_INDEX_FINGER_METACARPAL ||
+			godot_joint == XRHandTracker::HAND_JOINT_MIDDLE_FINGER_METACARPAL ||
+			godot_joint == XRHandTracker::HAND_JOINT_RING_FINGER_METACARPAL) {
+			godot_joint++;
+		}
+
+		// We need to use this temporary, because a TypedArray<Transform3D> actually holds Variant - not Transform3D.
+		Transform3D t;
+		from_carl_transform(p_carl_transforms->at(i), t);
+		r_godot_transforms[godot_joint] = t;
+
+		godot_joint++;
+	}
 }
 
 CARLInputSample::CARLInputSample() {
