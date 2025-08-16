@@ -33,18 +33,21 @@ using namespace godot;
 class CARLInputSample : public Resource {
 	GDCLASS(CARLInputSample, Resource);
 
+	double timestamp = 0;
 	Transform3D hmd_pose;
-	Transform3D left_hand_joint_poses[XRHandTracker::HandJoint::HAND_JOINT_MAX];
-	Transform3D right_hand_joint_poses[XRHandTracker::HandJoint::HAND_JOINT_MAX];
+	TypedArray<Transform3D> left_hand_joint_poses;
+	TypedArray<Transform3D> right_hand_joint_poses;
 
-	carl::InputSample *carl_input_sample = nullptr;
-	bool dirty = false;
+	mutable carl::InputSample *carl_input_sample = nullptr;
 
 protected:
 	static void _bind_methods();
 
 public:
 	void populate_from_hand_tracker(const Ref<XRHandTracker> &p_tracker);
+
+	void set_timestamp(double p_timestamp);
+	double get_timestamp() const;
 
 	void set_hmd_pose(const Transform3D &p_pose);
 	Transform3D get_hmd_pose() const;
@@ -58,8 +61,11 @@ public:
 	PackedByteArray serialize() const;
 	static Ref<CARLInputSample> deserialize(const PackedByteArray &p_data);
 
-	carl::InputSample get_carl_object();
+	carl::InputSample *get_carl_object() const;
 
-	CARLInputSample() = default;
-	~CARLInputSample() override = default;
+	static carl::TransformT to_carl_transform(const Transform3D &p_godot_transform);
+	static Transform3D from_carl_transform(const carl::TransformT &p_carl_transform);
+
+	CARLInputSample();
+	~CARLInputSample();
 };

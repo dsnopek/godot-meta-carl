@@ -27,6 +27,7 @@ opts.Update(localEnv)
 Help(opts.GenerateHelpText(localEnv))
 
 env = localEnv.Clone()
+env['disable_exceptions'] = 'no'
 
 if not (os.path.isdir("godot-cpp") and os.listdir("godot-cpp")):
     print_error("""godot-cpp is not available within this folder, as Git submodules haven't been initialized.
@@ -37,7 +38,13 @@ Run the following command to download godot-cpp:
 
 env = SConscript("godot-cpp/SConstruct", {"env": env, "customs": customs})
 
-env.Append(CPPPATH=["src", "CARL/include"])
+env.Append(CPPPATH=[
+    "src",
+    "CARL/CARL/include",
+    "CARL/Dependencies/eigen",
+    "CARL/Dependencies/arcana.cpp/Source/Submodules/GSL/include",
+    "CARL/Dependencies/arcana.cpp/Source/Shared",
+])
 sources = Glob("src/*.cpp")
 
 if env["target"] in ["editor", "template_debug"]:
