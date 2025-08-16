@@ -79,11 +79,24 @@ TypedArray<Transform3D> CARLInputSample::get_right_hand_joint_poses() const {
 
 PackedByteArray CARLInputSample::serialize() const {
 	carl::InputSample *cis = get_carl_object();
-	return PackedByteArray();
+	std::vector<uint8_t> bytes;
+	carl::Serialization serialization{ bytes };
+	cis->serialize(serialization);
+
+	PackedByteArray ret;
+	ret.resize(bytes.size());
+	memcpy(ret.ptrw(), bytes.data(), bytes.size());
+
+	return ret;
 }
 
 Ref<CARLInputSample> CARLInputSample::deserialize(const PackedByteArray &p_data) {
-	return Ref<CARLInputSample>();
+	carl::Deserialization deserialization{ p_data.ptr() };
+	carl::InputSample *cis = new carl::InputSample(deserialization);
+
+	Ref<CARLInputSample> ret = memnew(CARLInputSample(cis));
+
+	return ret;
 }
 
 carl::InputSample *CARLInputSample::get_carl_object() const {
@@ -130,8 +143,8 @@ void CARLInputSample::to_carl_hand_joint_poses(const TypedArray<Transform3D> &p_
 	// The CARL joint set appears to be at least partially based on the OVR joint set, rather than the OpenXR one.
 	// It only has slots for the metacarpal joints of the thumb and pinky, but it appears not to use them anyway.
 	// The base of each finger appears to be the proximal joint.
-
 	// We fill them all, even though they are mostly unused - perhaps they will be used in the future?
+
 	int godot_joint = XRHandTracker::HAND_JOINT_THUMB_METACARPAL;
 	for (unsigned int i = 0; i < (unsigned int)carl::InputSample::Joint::COUNT; i++) {
 		// Skip the missing metacarpal joints.
@@ -174,6 +187,22 @@ void CARLInputSample::from_carl_hand_joint_poses(const std::optional<std::array<
 CARLInputSample::CARLInputSample() {
 	left_hand_joint_poses.resize(XRHandTracker::HAND_JOINT_MAX);
 	right_hand_joint_poses.resize(XRHandTracker::HAND_JOINT_MAX);
+}
+
+CARLInputSample::CARLInputSample(carl::InputSample *p_carl_input_sample) : CARLInputSample() {
+	carl_input_sample = p_carl_input_sample;
+
+	from_carl_transform(*carl_input_sample->HmdPose, hmd_pose);
+	from_carl_hand_joint_poses(carl_input_sample->LeftHandJointPoses, left_hand_joint_poses);
+	from_carl_hand_joint_poses(carl_input_sample->RightHandJointPoses, right_hand_joint_poses);
+
+	Transform3D left_wrist_pose;
+	from_carl_transform(*carl_input_sample->LeftWristPose, left_wrist_pose);
+	left_hand_joint_poses[XRHandTracker::HAND_JOINT_WRIST] = left_wrist_pose;
+
+	Transform3D right_wrist_pose;
+	from_carl_transform(*carl_input_sample->RightWristPose, right_wrist_pose);
+	right_hand_joint_poses[XRHandTracker::HAND_JOINT_WRIST] = right_wrist_pose;
 }
 
 CARLInputSample::~CARLInputSample() {

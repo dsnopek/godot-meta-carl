@@ -71,5 +71,6 @@ public:
 	static void from_carl_hand_joint_poses(const std::optional<std::array<carl::TransformT, static_cast<size_t>(carl::InputSample::Joint::COUNT)>> p_carl_transforms, TypedArray<Transform3D> &r_godot_transforms);
 
 	CARLInputSample();
+	CARLInputSample(carl::InputSample *p_carl_input_sample);
 	~CARLInputSample();
 };
