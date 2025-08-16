@@ -27,6 +27,14 @@ void CARLInputSample::_bind_methods() {
 }
 
 void CARLInputSample::populate_from_hand_tracker(const Ref<XRHandTracker> &p_tracker) {
+	XRPositionalTracker::TrackerHand hand = p_tracker->get_tracker_hand();
+	ERR_FAIL_COND(hand != XRPositionalTracker::TRACKER_HAND_LEFT && hand != XRPositionalTracker::TRACKER_HAND_RIGHT);
+
+	TypedArray<Transform3D> *poses = (hand == XRPositionalTracker::TRACKER_HAND_LEFT) ? &left_hand_joint_poses : &right_hand_joint_poses;
+
+	for (int i = 0; i < XRHandTracker::HAND_JOINT_MAX; i++) {
+		(*poses)[i] = p_tracker->get_hand_joint_transform((XRHandTracker::HandJoint)i);
+	}
 }
 
 void CARLInputSample::set_timestamp(double p_timestamp) {
