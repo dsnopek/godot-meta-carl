@@ -35,6 +35,9 @@ void CARLRecording::_bind_methods() {
 	ClassDB::bind_static_method("CARLRecording", D_METHOD("deserialize", "data"), &CARLRecording::deserialize);
 
 	ADD_PROPERTY(PropertyInfo(Variant::PACKED_BYTE_ARRAY, "data", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_STORAGE), "_set_data", "_get_data");
+
+	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "start_timestamp", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR | PROPERTY_USAGE_READ_ONLY), "", "get_start_timestamp");
+	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "end_timestamp", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR | PROPERTY_USAGE_READ_ONLY), "", "get_end_timestamp");
 }
 
 void CARLRecording::_set_data(const PackedByteArray &p_data) {

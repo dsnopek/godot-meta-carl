@@ -1,4 +1,4 @@
-[gd_resource type="CARLRecording" format=3]
+[gd_resource type="CARLRecording" format=3 uid="uid://j54vhgkm7mdo"]
 
 [resource]
 data = PackedByteArray(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
