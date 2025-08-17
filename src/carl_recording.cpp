@@ -24,6 +24,17 @@
 #include "carl_recording.h"
 
 void CARLRecording::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("_set_data", "data"), &CARLRecording::_set_data);
+	ClassDB::bind_method(D_METHOD("_get_data"), &CARLRecording::_get_data);
+
+	ClassDB::bind_method(D_METHOD("get_start_timestamp"), &CARLRecording::get_start_timestamp);
+	ClassDB::bind_method(D_METHOD("get_end_timestamp"), &CARLRecording::get_end_timestamp);
+	ClassDB::bind_method(D_METHOD("inspect", "timestamp"), &CARLRecording::inspect);
+
+	ClassDB::bind_method(D_METHOD("serialize"), &CARLRecording::serialize);
+	ClassDB::bind_static_method("CARLRecording", D_METHOD("deserialize", "data"), &CARLRecording::deserialize);
+
+	ADD_PROPERTY(PropertyInfo(Variant::PACKED_BYTE_ARRAY, "data", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_STORAGE), "_set_data", "_get_data");
 }
 
 void CARLRecording::_set_data(const PackedByteArray &p_data) {

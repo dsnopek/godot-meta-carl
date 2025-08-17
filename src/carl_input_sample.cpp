@@ -104,7 +104,6 @@ TypedArray<Transform3D> CARLInputSample::get_right_hand_joint_poses() const {
 
 void CARLInputSample::set_enabled_poses(BitField<Pose> p_enabled_poses) {
 	enabled_poses = p_enabled_poses;
-	update_carl_object();
 }
 
 BitField<CARLInputSample::Pose> CARLInputSample::get_enabled_posed() const {

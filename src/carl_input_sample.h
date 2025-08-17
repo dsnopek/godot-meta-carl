@@ -53,8 +53,6 @@ private:
 protected:
 	static void _bind_methods();
 
-	void update_carl_object() const;
-
 public:
 	void populate_from_hand_tracker(const Ref<XRHandTracker> &p_tracker);
 

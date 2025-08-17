@@ -40,6 +40,7 @@ bool CARLRecorder::is_recording() const {
 }
 
 void CARLRecorder::record_input_sample(const Ref<CARLInputSample> &p_input_sample) {
+	ERR_FAIL_NULL(carl_ipr);
 	carl_ipr->addSample(p_input_sample->get_carl_object());
 }
 
