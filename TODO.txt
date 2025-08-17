@@ -14,6 +14,7 @@ Phase I: Get something working
 - Demo: Test recognizing a definition in the demo
   - This should be the simplest hack to make it work!
   - We need to know that our data is even any good, and that the library even remotely works
+- Fix CI
 - At this point, let's merge `carl-slush` into `main`
 
 Phase II: Proper tooling for development

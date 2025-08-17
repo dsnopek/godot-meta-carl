@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://btrugoluitgin"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_mow34"]
+size = Vector2(0.025, 0.025)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pxq32"]
+albedo_color = Color(0, 0, 1, 1)
+
+[node name="UILayer" type="OpenXRCompositionLayerQuad" groups=["ui_layer"]]
+
+[node name="Cursor" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.45519e-11, 1.45519e-11, 0.005)
+mesh = SubResource("QuadMesh_mow34")
+surface_material_override/0 = SubResource("StandardMaterial3D_pxq32")

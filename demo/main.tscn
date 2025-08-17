@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://dh0oj81pufivs"]
+[gd_scene load_steps=7 format=3 uid="uid://dh0oj81pufivs"]
 
 [ext_resource type="Script" uid="uid://dg8sd4dknr6tj" path="res://main.gd" id="1_ig7tw"]
 [ext_resource type="Script" uid="uid://g74tr76yatrg" path="res://start_xr.gd" id="2_0xm2m"]
+[ext_resource type="PackedScene" uid="uid://btrugoluitgin" path="res://ui_layer.tscn" id="3_h2yge"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_0xm2m"]
 size = Vector3(0.01, 0.01, 10)
@@ -85,6 +86,10 @@ environment = SubResource("Environment_0xm2m")
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
 shadow_enabled = true
+
+[node name="UILayer" parent="." instance=ExtResource("3_h2yge")]
+transform = Transform3D(0.74715, 0, 0.664655, 0, 1, 0, -0.664655, 0, 0.74715, -2.777, 1.25, -1.5)
+quad_size = Vector2(1.7777, 1)
 
 [connection signal="button_pressed" from="XROrigin3D/LeftController" to="." method="_on_left_controller_button_pressed"]
 [connection signal="button_pressed" from="XROrigin3D/RightController" to="." method="_on_right_controller_button_pressed"]
