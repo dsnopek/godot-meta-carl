@@ -1,24 +1,42 @@
-[gd_resource type="OpenXRActionMap" load_steps=5 format=3 uid="uid://dmpvl8qfhs2uv"]
+[gd_resource type="OpenXRActionMap" load_steps=9 format=3 uid="uid://dmpvl8qfhs2uv"]
 
-[sub_resource type="OpenXRAction" id="OpenXRAction_ngwcy"]
-resource_name = "pointer_pose"
-localized_name = "Pointer pose"
+[sub_resource type="OpenXRAction" id="OpenXRAction_6ivru"]
+resource_name = "aim_pose"
+localized_name = "Aim pose"
 action_type = 3
-toplevel_paths = PackedStringArray("/user/hand/left")
+toplevel_paths = PackedStringArray("/user/hand/left", "/user/hand/right")
 
-[sub_resource type="OpenXRActionSet" id="OpenXRActionSet_r3qn1"]
+[sub_resource type="OpenXRAction" id="OpenXRAction_vfhwq"]
+resource_name = "select"
+localized_name = "Select"
+action_type = 0
+toplevel_paths = PackedStringArray("/user/hand/left", "/user/hand/right")
+
+[sub_resource type="OpenXRActionSet" id="OpenXRActionSet_vfhwq"]
 resource_name = "app"
 localized_name = "App"
-actions = [SubResource("OpenXRAction_ngwcy")]
+actions = [SubResource("OpenXRAction_6ivru"), SubResource("OpenXRAction_vfhwq")]
 
 [sub_resource type="OpenXRIPBinding" id="OpenXRIPBinding_6ivru"]
-action = SubResource("OpenXRAction_ngwcy")
+action = SubResource("OpenXRAction_6ivru")
 binding_path = "/user/hand/left/input/aim/pose"
 
-[sub_resource type="OpenXRInteractionProfile" id="OpenXRInteractionProfile_vfhwq"]
+[sub_resource type="OpenXRIPBinding" id="OpenXRIPBinding_vfhwq"]
+action = SubResource("OpenXRAction_vfhwq")
+binding_path = "/user/hand/left/input/aim_activate_ext/ready_ext"
+
+[sub_resource type="OpenXRIPBinding" id="OpenXRIPBinding_5w03k"]
+action = SubResource("OpenXRAction_6ivru")
+binding_path = "/user/hand/right/input/aim/pose"
+
+[sub_resource type="OpenXRIPBinding" id="OpenXRIPBinding_typ1r"]
+action = SubResource("OpenXRAction_vfhwq")
+binding_path = "/user/hand/right/input/aim_activate_ext/ready_ext"
+
+[sub_resource type="OpenXRInteractionProfile" id="OpenXRInteractionProfile_5w03k"]
 interaction_profile_path = "/interaction_profiles/ext/hand_interaction_ext"
-bindings = [SubResource("OpenXRIPBinding_6ivru")]
+bindings = [SubResource("OpenXRIPBinding_6ivru"), SubResource("OpenXRIPBinding_vfhwq"), SubResource("OpenXRIPBinding_5w03k"), SubResource("OpenXRIPBinding_typ1r")]
 
 [resource]
-action_sets = [SubResource("OpenXRActionSet_r3qn1")]
-interaction_profiles = [SubResource("OpenXRInteractionProfile_vfhwq")]
+action_sets = [SubResource("OpenXRActionSet_vfhwq")]
+interaction_profiles = [SubResource("OpenXRInteractionProfile_5w03k")]

@@ -21,17 +21,25 @@ script = ExtResource("1_ig7tw")
 
 [node name="XRCamera3D" type="XRCamera3D" parent="XROrigin3D"]
 
+[node name="LeftController" type="XRController3D" parent="XROrigin3D"]
+tracker = &"left_hand"
+pose = &"aim"
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="XROrigin3D/LeftController"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.45519e-11, 1.45519e-11, -5.02)
+mesh = SubResource("BoxMesh_0xm2m")
+skeleton = NodePath("../../LeftHand")
+surface_material_override/0 = SubResource("StandardMaterial3D_h2yge")
+
+[node name="RightController" type="XRController3D" parent="XROrigin3D"]
+tracker = &"right_hand"
+
 [node name="LeftHand" type="XRController3D" parent="XROrigin3D"]
 tracker = &"/user/hand_tracker/left"
-pose = &"pointer_pose"
 
 [node name="OpenXRFbHandTrackingMesh" type="OpenXRFbHandTrackingMesh" parent="XROrigin3D/LeftHand"]
 
 [node name="XRHandModifier3D" type="XRHandModifier3D" parent="XROrigin3D/LeftHand/OpenXRFbHandTrackingMesh"]
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="XROrigin3D/LeftHand"]
-mesh = SubResource("BoxMesh_0xm2m")
-surface_material_override/0 = SubResource("StandardMaterial3D_h2yge")
 
 [node name="RightHand" type="XRController3D" parent="XROrigin3D"]
 tracker = &"/user/hand_tracker/right"
@@ -77,3 +85,6 @@ environment = SubResource("Environment_0xm2m")
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
 shadow_enabled = true
+
+[connection signal="button_pressed" from="XROrigin3D/LeftController" to="." method="_on_left_controller_button_pressed"]
+[connection signal="button_pressed" from="XROrigin3D/RightController" to="." method="_on_right_controller_button_pressed"]
