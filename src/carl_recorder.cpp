@@ -24,6 +24,10 @@
 #include "carl_recorder.h"
 
 void CARLRecorder::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("start_recording", "max_seconds"), &CARLRecorder::start_recording);
+	ClassDB::bind_method(D_METHOD("is_recording"), &CARLRecorder::is_recording);
+	ClassDB::bind_method(D_METHOD("record_input_sample", "input_sample"), &CARLRecorder::record_input_sample);
+	ClassDB::bind_method(D_METHOD("finish_recording"), &CARLRecorder::finish_recording);
 }
 
 void CARLRecorder::start_recording(uint64_t p_max_seconds) {
@@ -36,7 +40,7 @@ bool CARLRecorder::is_recording() const {
 }
 
 void CARLRecorder::record_input_sample(const Ref<CARLInputSample> &p_input_sample) {
-	carl_ipr->addSample(*p_input_sample->get_carl_object());
+	carl_ipr->addSample(p_input_sample->get_carl_object());
 }
 
 Ref<CARLRecording> CARLRecorder::finish_recording() {

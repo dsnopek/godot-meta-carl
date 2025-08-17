@@ -35,11 +35,13 @@ class CARLRecording : public Resource {
 	GDCLASS(CARLRecording, Resource);
 
 	carl::action::Recording *carl_recording = nullptr;
+	mutable PackedByteArray data;
 
 protected:
 	static void _bind_methods();
 
 	void _set_data(const PackedByteArray &p_data);
+	PackedByteArray _get_data() const;
 
 public:
 	PackedByteArray serialize() const;

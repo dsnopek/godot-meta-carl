@@ -27,25 +27,67 @@ void CARLRecording::_bind_methods() {
 }
 
 void CARLRecording::_set_data(const PackedByteArray &p_data) {
+	if (carl_recording) {
+		delete carl_recording;
+	}
+
+	data = p_data;
+
+	carl::Deserialization deserialization{ p_data.ptr() };
+	carl_recording = new carl::action::Recording(deserialization);
+}
+
+PackedByteArray CARLRecording::_get_data() const {
+	if (!carl_recording) {
+		// Not an error because this will be called by the editor on empty objects.
+		return PackedByteArray();
+	}
+	if (data.size() > 0) {
+		return data;
+	}
+
+	std::vector<uint8_t> bytes;
+	carl::Serialization serialization{ bytes };
+	carl_recording->serialize(serialization);
+
+	PackedByteArray new_data;
+	new_data.resize(bytes.size());
+	memcpy(new_data.ptrw(), bytes.data(), bytes.size());
+	data = new_data;
+
+	return data;
 }
 
 PackedByteArray CARLRecording::serialize() const {
-	return PackedByteArray();
+	return _get_data();
 }
 
 Ref<CARLRecording> CARLRecording::deserialize(const PackedByteArray &p_data) {
-	return Ref<CARLRecording>();
+	Ref<CARLRecording> ret;
+	ret.instantiate();
+	ret->_set_data(p_data);
+	return ret;
 }
 
 double CARLRecording::get_start_timestamp() const {
+	if (carl_recording) {
+		return carl_recording->getInspector().startTimestamp();
+	}
 	return 0;
 }
 
 double CARLRecording::get_end_timestamp() const {
+	if (carl_recording) {
+		return carl_recording->getInspector().endTimestamp();
+	}
 	return 0;
 }
 
 Ref<CARLInputSample> CARLRecording::inspect(double p_timestamp) const {
+	if (carl_recording) {
+		const carl::InputSample &is = carl_recording->getInspector().inspect(p_timestamp);
+		return Ref<CARLInputSample>(memnew(CARLInputSample(is)));
+	}
 	return Ref<CARLInputSample>();
 }
 
@@ -53,7 +95,11 @@ CARLRecording::CARLRecording() {
 }
 
 CARLRecording::CARLRecording(carl::action::Recording *p_carl_recording) {
+	carl_recording = p_carl_recording;
 }
 
 CARLRecording::~CARLRecording() {
+	if (carl_recording) {
+		delete carl_recording;
+	}
 }

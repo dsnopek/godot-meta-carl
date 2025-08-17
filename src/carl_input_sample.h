@@ -23,19 +23,16 @@
 
 #pragma once
 
-#include <godot_cpp/classes/resource.hpp>
+#include <godot_cpp/classes/ref_counted.hpp>
+#include <godot_cpp/classes/xr_hand_tracker.hpp>
 #include <godot_cpp/core/type_info.hpp>
 
 #include <carl/Carl.h>
 
 using namespace godot;
 
-namespace godot {
-class XRHandTracker;
-}
-
-class CARLInputSample : public Resource {
-	GDCLASS(CARLInputSample, Resource);
+class CARLInputSample : public RefCounted {
+	GDCLASS(CARLInputSample, RefCounted);
 
 public:
 	enum Pose {
@@ -52,8 +49,6 @@ private:
 	TypedArray<Transform3D> left_hand_joint_poses;
 	TypedArray<Transform3D> right_hand_joint_poses;
 	BitField<Pose> enabled_poses = 0;
-
-	mutable carl::InputSample *carl_input_sample = nullptr;
 
 protected:
 	static void _bind_methods();
@@ -81,7 +76,7 @@ public:
 	PackedByteArray serialize() const;
 	static Ref<CARLInputSample> deserialize(const PackedByteArray &p_data);
 
-	carl::InputSample *get_carl_object() const;
+	carl::InputSample get_carl_object() const;
 
 	static void to_carl_transform(const Transform3D &p_godot_transform, carl::TransformT &r_carl_transform);
 	static void from_carl_transform(const carl::TransformT &p_carl_transform, Transform3D &r_godot_transform);
@@ -90,7 +85,7 @@ public:
 	static void from_carl_hand_joint_poses(const std::optional<std::array<carl::TransformT, static_cast<size_t>(carl::InputSample::Joint::COUNT)>> p_carl_transforms, TypedArray<Transform3D> &r_godot_transforms);
 
 	CARLInputSample();
-	CARLInputSample(carl::InputSample *p_carl_input_sample);
+	CARLInputSample(const carl::InputSample &p_carl_input_sample);
 	~CARLInputSample();
 };
 
