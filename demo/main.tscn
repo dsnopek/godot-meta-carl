@@ -23,7 +23,7 @@ script = ExtResource("1_ig7tw")
 
 [node name="LeftHand" type="XRController3D" parent="XROrigin3D"]
 tracker = &"/user/hand_tracker/left"
-pose = &"aim"
+pose = &"pointer_pose"
 
 [node name="OpenXRFbHandTrackingMesh" type="OpenXRFbHandTrackingMesh" parent="XROrigin3D/LeftHand"]
 
