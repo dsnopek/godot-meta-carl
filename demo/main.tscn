@@ -1,6 +1,66 @@
-[gd_scene load_steps=2 format=3 uid="uid://dh0oj81pufivs"]
+[gd_scene load_steps=4 format=3 uid="uid://dh0oj81pufivs"]
 
 [ext_resource type="Script" uid="uid://dg8sd4dknr6tj" path="res://main.gd" id="1_ig7tw"]
+[ext_resource type="Script" uid="uid://g74tr76yatrg" path="res://start_xr.gd" id="2_0xm2m"]
 
-[node name="Main" type="Node"]
+[sub_resource type="Environment" id="Environment_0xm2m"]
+tonemap_mode = 2
+
+[node name="Main" type="Node3D"]
 script = ExtResource("1_ig7tw")
+
+[node name="XROrigin3D" type="XROrigin3D" parent="."]
+
+[node name="XRCamera3D" type="XRCamera3D" parent="XROrigin3D"]
+
+[node name="LeftHand" type="XRController3D" parent="XROrigin3D"]
+tracker = &"/user/hand_tracker/left"
+
+[node name="OpenXRFbHandTrackingMesh" type="OpenXRFbHandTrackingMesh" parent="XROrigin3D/LeftHand"]
+
+[node name="XRHandModifier3D" type="XRHandModifier3D" parent="XROrigin3D/LeftHand/OpenXRFbHandTrackingMesh"]
+
+[node name="RightHand" type="XRController3D" parent="XROrigin3D"]
+tracker = &"/user/hand_tracker/right"
+
+[node name="OpenXRFbHandTrackingMesh2" type="OpenXRFbHandTrackingMesh" parent="XROrigin3D/RightHand"]
+hand = 1
+bones/0/name = "RightPalm"
+bones/1/name = "RightHand"
+bones/2/name = "RightThumbMetacarpal"
+bones/3/name = "RightThumbProximal"
+bones/4/name = "RightThumbDistal"
+bones/5/name = "RightThumbTip"
+bones/6/name = "RightIndexMetacarpal"
+bones/7/name = "RightIndexProximal"
+bones/8/name = "RightIndexIntermediate"
+bones/9/name = "RightIndexDistal"
+bones/10/name = "RightIndexTip"
+bones/11/name = "RightMiddleMetacarpal"
+bones/12/name = "RightMiddleProximal"
+bones/13/name = "RightMiddleIntermediate"
+bones/14/name = "RightMiddleDistal"
+bones/15/name = "RightMiddleTip"
+bones/16/name = "RightRingMetacarpal"
+bones/17/name = "RightRingProximal"
+bones/18/name = "RightRingIntermediate"
+bones/19/name = "RightRingDistal"
+bones/20/name = "RightRingTip"
+bones/21/name = "RightLittleMetacarpal"
+bones/22/name = "RightLittleProximal"
+bones/23/name = "RightLittleIntermediate"
+bones/24/name = "RightLittleDistal"
+bones/25/name = "RightLittleTip"
+
+[node name="XRHandModifier3D" type="XRHandModifier3D" parent="XROrigin3D/RightHand/OpenXRFbHandTrackingMesh2"]
+hand_tracker = &"/user/hand_tracker/right"
+
+[node name="StartXR" type="Node3D" parent="."]
+script = ExtResource("2_0xm2m")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_0xm2m")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
+shadow_enabled = true

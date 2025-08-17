@@ -1,4 +1,4 @@
-extends Node
+extends Node3D
 
 func _ready() -> void:
 	var input_sample := CARLInputSample.new()

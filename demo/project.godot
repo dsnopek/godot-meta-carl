@@ -10,7 +10,27 @@ config_version=5
 
 [application]
 
-config/name="godot cpp template"
+config/name="Godot CARL Studio"
 run/main_scene="uid://dh0oj81pufivs"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/vram_compression/import_etc2_astc=true
+
+[xr]
+
+openxr/enabled=true
+openxr/reference_space=2
+openxr/foveation_level=3
+openxr/foveation_dynamic=true
+openxr/extensions/hand_tracking=true
+openxr/extensions/hand_tracking_unobstructed_data_source=true
+openxr/extensions/hand_tracking_controller_data_source=true
+openxr/extensions/hand_interaction_profile=true
+shaders/enabled=true
+openxr/extensions/meta/hand_tracking_mesh=true
+openxr/extensions/meta/color_space/starting_color_space=3
