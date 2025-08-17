@@ -24,12 +24,15 @@
 #pragma once
 
 #include <godot_cpp/classes/resource.hpp>
-#include <godot_cpp/classes/xr_hand_tracker.hpp>
 #include <godot_cpp/core/type_info.hpp>
 
 #include <carl/Carl.h>
 
 using namespace godot;
+
+namespace godot {
+class XRHandTracker;
+}
 
 class CARLInputSample : public Resource {
 	GDCLASS(CARLInputSample, Resource);

@@ -5,6 +5,12 @@ Phase I: Get something working
 ---
 
 - Implement `CARLRecorder` and `CARLRecording`
+  - Rethink CARLInputSample:
+    - Perhaps it isn't a `Resource` with a persistent `carl::InputSample` but instead just a `RefCounted` that we can convert to/from a `carl::InputSample`
+    - We don't need to be able to get the original input samples out, only inspect recordings
+    - Also, we're passing `carl::InputSample`s into the session to be processed by the recognizer
+    - Besides, storing the `CARLInputSample` as a .tres is hugely wasteful - having full recordings as binary data is better
+    - We also should have a way to bypass `CARLInputSample` when recording, since in most cases, we're just reading the trackers
 - Demo: Allow recording and playing back in demo
   - Should allow selecting which poses are enabled
 - Implement `CARLExample`

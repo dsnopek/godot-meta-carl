@@ -23,6 +23,8 @@
 
 #include "carl_input_sample.h"
 
+#include <godot_cpp/classes/xr_hand_tracker.hpp>
+
 void CARLInputSample::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_timestamp", "timestamp"), &CARLInputSample::set_timestamp);
 	ClassDB::bind_method(D_METHOD("get_timestamp"), &CARLInputSample::get_timestamp);
