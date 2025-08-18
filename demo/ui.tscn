@@ -37,4 +37,7 @@ layout_mode = 2
 text = "Button
 "
 
+[node name="HSlider" type="HSlider" parent="VBoxContainer"]
+layout_mode = 2
+
 [connection signal="pressed" from="VBoxContainer/Button" to="." method="_on_button_pressed"]

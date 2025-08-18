@@ -30,10 +30,12 @@ func pointer_intersects(p_pointer: Node3D) -> bool:
 	var pt := p_pointer.global_transform
 	var intersection := intersects_ray(pt.origin, -pt.basis.z)
 	if intersection != NO_INTERSECTION:
+		# If there was no current pointer, let's take this one.
 		if _pointer == null:
 			_pointer = p_pointer
 			_cursor.visible = true
 
+		# If this pointer is the current pointer, then the cursor and mouse events move with it.
 		if p_pointer == _pointer:
 			_cursor.global_position = _intersect_to_global_pos(intersection, CURSOR_DISTANCE)
 
@@ -51,7 +53,12 @@ func pointer_intersects(p_pointer: Node3D) -> bool:
 
 		return true
 
+	# If this pointer is the current pointer, but there was no intersection, then that pointer
+	# should leave.
 	if p_pointer == _pointer:
+		# Except if it's pressed - we'll hang on to it until it's released.
+		if _pointer_pressed:
+			return true
 		pointer_leave(p_pointer)
 
 	return false
@@ -70,10 +77,13 @@ func _send_mouse_button_event(p_pressed: bool) -> void:
 
 
 func pointer_leave(p_pointer: Node3D) -> void:
+	# We only need to do anything, if the pointer leaving is the current pointer.
 	if _pointer == p_pointer:
+		# If the pointer was pressed, then send the mouse event to release the button.
 		if _pointer_pressed and _prev_intersection != NO_INTERSECTION:
 			_send_mouse_button_event(false)
 
+		# And clear everything out.
 		_pointer = null
 		_pointer_pressed = false
 		_cursor.visible = false
@@ -82,6 +92,17 @@ func pointer_leave(p_pointer: Node3D) -> void:
 
 func pointer_set_pressed(p_pointer: Node3D, p_pressed: bool) -> void:
 	if p_pointer == _pointer:
+		# If this is the current pointer, then update our pressed state and send the mouse
+		# events, if this is a change in state.
 		if p_pressed != _pointer_pressed:
 			_pointer_pressed = p_pressed
 			_send_mouse_button_event(p_pressed)
+	elif p_pressed:
+		# If another pointer presses, then allow it to take over.
+		if _pointer:
+			# The current pointer leaves (this will send the mouse up event).
+			pointer_leave(_pointer)
+		if pointer_intersects(p_pointer):
+			_pointer_pressed = true
+			_send_mouse_button_event(true)
+
