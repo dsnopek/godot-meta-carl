@@ -2,15 +2,9 @@
 
 [ext_resource type="Script" uid="uid://dg8sd4dknr6tj" path="res://main.gd" id="1_ig7tw"]
 [ext_resource type="Script" uid="uid://g74tr76yatrg" path="res://start_xr.gd" id="2_0xm2m"]
+[ext_resource type="PackedScene" uid="uid://cqs8c3rq6cxvk" path="res://function_pointer.tscn" id="3_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://btrugoluitgin" path="res://ui_layer.tscn" id="3_h2yge"]
-
-[sub_resource type="BoxMesh" id="BoxMesh_0xm2m"]
-size = Vector3(0.01, 0.01, 10)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h2yge"]
-shading_mode = 0
-albedo_color = Color(1, 0, 0, 1)
-disable_receive_shadows = true
+[ext_resource type="PackedScene" uid="uid://ciab6rk7831n" path="res://ui.tscn" id="3_lquwl"]
 
 [sub_resource type="Environment" id="Environment_0xm2m"]
 tonemap_mode = 2
@@ -22,27 +16,42 @@ script = ExtResource("1_ig7tw")
 
 [node name="XRCamera3D" type="XRCamera3D" parent="XROrigin3D"]
 
+[node name="UILayer" parent="XROrigin3D" node_paths=PackedStringArray("layer_viewport") instance=ExtResource("3_h2yge")]
+transform = Transform3D(0.74715, 0, 0.664655, 0, 1, 0, -0.664655, 0, 0.74715, -2.777, 1.25, -1.5)
+layer_viewport = NodePath("SubViewport")
+sort_order = -1
+enable_hole_punch = true
+quad_size = Vector2(1.7777, 1)
+
+[node name="SubViewport" type="SubViewport" parent="XROrigin3D/UILayer"]
+disable_3d = true
+size = Vector2i(1152, 648)
+render_target_update_mode = 4
+
+[node name="UI" parent="XROrigin3D/UILayer/SubViewport" instance=ExtResource("3_lquwl")]
+
 [node name="LeftController" type="XRController3D" parent="XROrigin3D"]
 tracker = &"left_hand"
 pose = &"aim"
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="XROrigin3D/LeftController"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.45519e-11, 1.45519e-11, -5.02)
-mesh = SubResource("BoxMesh_0xm2m")
-skeleton = NodePath("../../LeftHand")
-surface_material_override/0 = SubResource("StandardMaterial3D_h2yge")
+[node name="FunctionPointer" parent="XROrigin3D/LeftController" instance=ExtResource("3_1bvp3")]
+select_action = "select"
 
 [node name="RightController" type="XRController3D" parent="XROrigin3D"]
 tracker = &"right_hand"
+pose = &"aim"
 
-[node name="LeftHand" type="XRController3D" parent="XROrigin3D"]
+[node name="FunctionPointer" parent="XROrigin3D/RightController" instance=ExtResource("3_1bvp3")]
+select_action = "select"
+
+[node name="LeftHand" type="XRNode3D" parent="XROrigin3D"]
 tracker = &"/user/hand_tracker/left"
 
 [node name="OpenXRFbHandTrackingMesh" type="OpenXRFbHandTrackingMesh" parent="XROrigin3D/LeftHand"]
 
 [node name="XRHandModifier3D" type="XRHandModifier3D" parent="XROrigin3D/LeftHand/OpenXRFbHandTrackingMesh"]
 
-[node name="RightHand" type="XRController3D" parent="XROrigin3D"]
+[node name="RightHand" type="XRNode3D" parent="XROrigin3D"]
 tracker = &"/user/hand_tracker/right"
 
 [node name="OpenXRFbHandTrackingMesh2" type="OpenXRFbHandTrackingMesh" parent="XROrigin3D/RightHand"]
@@ -86,10 +95,3 @@ environment = SubResource("Environment_0xm2m")
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
 shadow_enabled = true
-
-[node name="UILayer" parent="." instance=ExtResource("3_h2yge")]
-transform = Transform3D(0.74715, 0, 0.664655, 0, 1, 0, -0.664655, 0, 0.74715, -2.777, 1.25, -1.5)
-quad_size = Vector2(1.7777, 1)
-
-[connection signal="button_pressed" from="XROrigin3D/LeftController" to="." method="_on_left_controller_button_pressed"]
-[connection signal="button_pressed" from="XROrigin3D/RightController" to="." method="_on_right_controller_button_pressed"]

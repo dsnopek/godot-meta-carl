@@ -15,11 +15,3 @@ func _ready() -> void:
 
 	var err = ResourceSaver.save(recording, 'res://new_carl_recording.tres')
 	print("Error: ", err)
-
-
-func _on_left_controller_button_pressed(p_name: String) -> void:
-	print("Left Pressed: ", p_name)
-
-
-func _on_right_controller_button_pressed(p_name: String) -> void:
-	print("Right Pressed: ", p_name)

@@ -1,10 +1,22 @@
 extends Node3D
 
-var enabled := true
+const UILayer = preload("res://ui_layer.gd")
+
+@export var enabled := true:
+	set = set_enabled
+
+@export var select_action := "trigger_click"
 
 var _controller: XRController3D
-var _ui_layer = null
+var _cur_layer: UILayer = null
 var _pressed := false
+
+
+func set_enabled(p_enabled: bool) -> void:
+	enabled = p_enabled
+	if not enabled and _cur_layer:
+		_cur_layer.pointer_leave(self)
+		_cur_layer = null
 
 
 func _enter_tree() -> void:
@@ -25,11 +37,22 @@ func _exit_tree() -> void:
 
 func _process(_delta: float) -> void:
 	if enabled:
-		var ui_layers := _get_ui_layers()
-		pass
+		for layer in _get_ui_layers():
+			if not layer is UILayer:
+				continue
+			if layer.pointer_intersects(self):
+				if _cur_layer and _cur_layer != layer:
+					_cur_layer.pointer_leave(self)
+				_cur_layer = layer
+				break
+			elif _cur_layer == layer:
+				print("Leave")
+				_cur_layer.pointer_leave(self)
+				_cur_layer = null
 
 
 func _get_ui_layers() -> Array:
+	#print("Get ui")
 	if not is_inside_tree():
 		return []
 
@@ -46,8 +69,14 @@ func _get_ui_layers() -> Array:
 
 
 func _on_controller_button_pressed(p_name: String) -> void:
-	pass
+	print(get_path(), ": button pressed: ", p_name)
+	if p_name == select_action:
+		if _cur_layer:
+			_cur_layer.pointer_set_pressed(self, true)
 
 
 func _on_controller_button_released(p_name: String) -> void:
-	pass
+	print(get_path(), ": button released: ", p_name)
+	if p_name == select_action:
+		if _cur_layer:
+			_cur_layer.pointer_set_pressed(self, false)
