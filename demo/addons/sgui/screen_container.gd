@@ -35,6 +35,7 @@ func _update_children() -> void:
 
 	for child in children:
 		if not _screens.has(child) and child is Control:
+			# @todo Connect to signal to track name changes
 			_screens.push_back(child)
 
 
