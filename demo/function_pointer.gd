@@ -46,13 +46,11 @@ func _process(_delta: float) -> void:
 				_cur_layer = layer
 				break
 			elif _cur_layer == layer:
-				print("Leave")
 				_cur_layer.pointer_leave(self)
 				_cur_layer = null
 
 
 func _get_ui_layers() -> Array:
-	#print("Get ui")
 	if not is_inside_tree():
 		return []
 
@@ -69,14 +67,12 @@ func _get_ui_layers() -> Array:
 
 
 func _on_controller_button_pressed(p_name: String) -> void:
-	print(get_path(), ": button pressed: ", p_name)
 	if p_name == select_action:
 		if _cur_layer:
 			_cur_layer.pointer_set_pressed(self, true)
 
 
 func _on_controller_button_released(p_name: String) -> void:
-	print(get_path(), ": button released: ", p_name)
 	if p_name == select_action:
 		if _cur_layer:
 			_cur_layer.pointer_set_pressed(self, false)
