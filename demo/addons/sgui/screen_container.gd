@@ -39,6 +39,9 @@ func _update_children(p_first := false) -> void:
 			removed.push_back(screen)
 
 	for screen in removed:
+		screen.renamed.disconnect(_on_screen_renamed.bind(screen))
+		_screens.erase(screen)
+
 		if screen == _current_screen_control:
 			# In this case, we don't want to call `_hide_screen()`, so just clear it.
 			_current_screen_control = null
@@ -46,10 +49,11 @@ func _update_children(p_first := false) -> void:
 				show_screen(get_child(0).name)
 			else:
 				_current_screen = ''
-		_screens.erase(screen)
 
 	for child in children:
 		if not _screens.has(child) and child is Control:
+			child.visible = false
+			child.renamed.connect(_on_screen_renamed.bind(child))
 			_screens.push_back(child)
 
 	if children.size() > 0 and show_first_screen:
@@ -110,3 +114,9 @@ func _notification(p_what: int) -> void:
 		NOTIFICATION_CHILD_ORDER_CHANGED:
 			if is_node_ready():
 				_update_children()
+
+
+func _on_screen_renamed(p_screen: Control) -> void:
+	if _current_screen_control == p_screen:
+		_current_screen = p_screen.name
+	notify_property_list_changed()
