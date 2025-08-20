@@ -50,11 +50,11 @@ void CARLInputSample::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "right_hand_joint_poses", PROPERTY_HINT_ARRAY_TYPE, vformat("%s", Variant::TRANSFORM3D)), "set_right_hand_joint_poses", "get_right_hand_joint_poses");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "enabled_poses", PROPERTY_HINT_FLAGS, "HMD,Left Wrist,Right Wrist,Left Joints,Right Joints"), "set_enabled_poses", "get_enabled_poses");
 
-	BIND_BITFIELD_FLAG(Pose::POSE_HMD);
-	BIND_BITFIELD_FLAG(Pose::POSE_LEFT_WRIST);
-	BIND_BITFIELD_FLAG(Pose::POSE_RIGHT_WRIST);
-	BIND_BITFIELD_FLAG(Pose::POSE_LEFT_JOINTS);
-	BIND_BITFIELD_FLAG(Pose::POSE_RIGHT_JOINTS);
+	BIND_BITFIELD_FLAG(POSE_HMD);
+	BIND_BITFIELD_FLAG(POSE_LEFT_WRIST);
+	BIND_BITFIELD_FLAG(POSE_RIGHT_WRIST);
+	BIND_BITFIELD_FLAG(POSE_LEFT_JOINTS);
+	BIND_BITFIELD_FLAG(POSE_RIGHT_JOINTS);
 }
 
 void CARLInputSample::populate_from_hand_tracker(const Ref<XRHandTracker> &p_tracker) {

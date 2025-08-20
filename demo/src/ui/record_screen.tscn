@@ -1,0 +1,37 @@
+[gd_scene load_steps=2 format=3 uid="uid://dvs4xr156b56d"]
+
+[ext_resource type="Script" uid="uid://cb8wfsjel7cvc" path="res://src/ui/record_screen.gd" id="1_k2vba"]
+
+[node name="RecordScreen" type="VBoxContainer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -53.5
+offset_top = -29.0
+offset_right = 53.5
+offset_bottom = 29.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+script = ExtResource("1_k2vba")
+
+[node name="Label" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Starting in 3..."
+horizontal_alignment = 1
+
+[node name="StopButton" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Cancel"
+
+[node name="Timer" type="Timer" parent="."]
+unique_name_in_owner = true
+
+[connection signal="pressed" from="StopButton" to="." method="_on_stop_button_pressed"]
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
