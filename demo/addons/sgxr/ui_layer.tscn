@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://btrugoluitgin"]
 
-[ext_resource type="Script" uid="uid://cle66q30x1ow3" path="res://ui_layer.gd" id="1_pxq32"]
-[ext_resource type="Texture2D" uid="uid://ygh2w2bgty4x" path="res://cursor.svg" id="2_pmv6g"]
+[ext_resource type="Script" uid="uid://cle66q30x1ow3" path="res://addons/sgxr/ui_layer.gd" id="1_pxq32"]
+[ext_resource type="Texture2D" uid="uid://ygh2w2bgty4x" path="res://addons/sgxr/cursor.svg" id="2_pmv6g"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_mow34"]
 size = Vector2(0.03, 0.03)

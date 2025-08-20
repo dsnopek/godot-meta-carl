@@ -1,6 +1,6 @@
 extends Node3D
 
-const UILayer = preload("res://ui_layer.gd")
+const UILayer = preload("res://addons/sgxr/ui_layer.gd")
 
 @export var enabled := true:
 	set = set_enabled
