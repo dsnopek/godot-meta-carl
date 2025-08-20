@@ -40,6 +40,7 @@ func _update_children(p_first := false) -> void:
 
 	for screen in removed:
 		screen.renamed.disconnect(_on_screen_renamed.bind(screen))
+		screen.visibility_changed.disconnect(_on_screen_visibility_changed.bind(screen))
 		_screens.erase(screen)
 
 		if screen == _current_screen_control:
@@ -54,6 +55,7 @@ func _update_children(p_first := false) -> void:
 		if not _screens.has(child) and child is Control:
 			child.visible = false
 			child.renamed.connect(_on_screen_renamed.bind(child))
+			child.visibility_changed.connect(_on_screen_visibility_changed.bind(child))
 			_screens.push_back(child)
 
 	if children.size() > 0 and show_first_screen:
@@ -93,14 +95,16 @@ func show_screen(p_name: String, p_info: Dictionary = {}) -> bool:
 		if _current_screen_control.has_method('_hide_screen'):
 			_current_screen_control._hide_screen()
 
-	for child in get_children():
-		child.visible = (screen == child)
-
 	_current_screen = p_name
 	_current_screen_control = screen
 
+	for child in get_children():
+		child.visible = (screen == child)
+
 	if screen and screen.has_method("_show_screen"):
 		screen._show_screen(p_info)
+
+	update_minimum_size()
 
 	return true
 
@@ -115,8 +119,27 @@ func _notification(p_what: int) -> void:
 			if is_node_ready():
 				_update_children()
 
+		NOTIFICATION_SORT_CHILDREN:
+			if _current_screen_control:
+				var size := get_size()
+				fit_child_in_rect(_current_screen_control, Rect2(0, 0, size.x, size.y))
+
+
+func _get_minimum_size() -> Vector2:
+	var minimum_size: Vector2
+	for child in get_children():
+		var cms: Vector2 = child.get_combined_minimum_size()
+		minimum_size.x = maxf(minimum_size.x, cms.x)
+		minimum_size.y = maxf(minimum_size.y, cms.y)
+	return minimum_size
+
 
 func _on_screen_renamed(p_screen: Control) -> void:
 	if _current_screen_control == p_screen:
 		_current_screen = p_screen.name
 	notify_property_list_changed()
+
+
+func _on_screen_visibility_changed(p_screen: Control) -> void:
+	if p_screen.visible and _current_screen_control != p_screen:
+		show_screen(p_screen.name)

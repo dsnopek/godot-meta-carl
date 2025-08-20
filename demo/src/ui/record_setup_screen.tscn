@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://dg6f4jtiqh7y"]
+
+[node name="RecordSetupScreen" type="VBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GridContainer" type="GridContainer" parent="."]
+layout_mode = 2
+columns = 2
+
+[node name="MaxLengthLabel" type="Label" parent="GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Max Length"
+
+[node name="MaxLengthField" type="LineEdit" parent="GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "5"
+
+[node name="DelayStartLabel" type="Label" parent="GridContainer"]
+layout_mode = 2
+text = "Delay Start"
+
+[node name="DelayStartField" type="LineEdit" parent="GridContainer"]
+layout_mode = 2
+text = "3"
