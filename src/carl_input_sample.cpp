@@ -133,6 +133,8 @@ Ref<CARLInputSample> CARLInputSample::deserialize(const PackedByteArray &p_data)
 carl::InputSample CARLInputSample::get_carl_object() const {
 	carl::InputSample cis;
 
+	cis.Timestamp = timestamp;
+
 	if (enabled_poses.has_flag(POSE_HMD)) {
 		cis.HmdPose.emplace();
 		to_carl_transform(hmd_pose, *cis.HmdPose);
@@ -246,6 +248,8 @@ CARLInputSample::CARLInputSample() {
 }
 
 CARLInputSample::CARLInputSample(const carl::InputSample &p_cis) : CARLInputSample() {
+	timestamp = p_cis.Timestamp;
+
 	if (p_cis.HmdPose.has_value()) {
 		enabled_poses.set_flag(POSE_HMD);
 		from_carl_transform(*p_cis.HmdPose, hmd_pose);

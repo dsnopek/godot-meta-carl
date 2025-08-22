@@ -4,17 +4,8 @@ TODO
 Phase I: Get something working
 ---
 
-- Re-organize some code into reusable addons
-  - It's time! I'm tired of copying and/or rebuilding these in every project
-  - Should I use the CamelCase naming scheme?
-  - sgui
-    - `ScreenContainer`
-  - sgxr
-    - `StartXR`
-    - `FunctionPointer`
-    - `UILayer`
 - Demo: Allow recording and playing back in demo
-  - Should allow selecting which poses are enabled
+  - Add a "player" to show the recording that was made
 - Implement `CARLExample`
 - Demo: Allow cropping and saving examples in demo
   - Should be as simple as possible: maybe just scrub through recording and press button for "start" / "stop"

@@ -1,17 +1,44 @@
 extends Node3D
 
+var recorder: CARLRecorder
+var recording_poses: int
+var recording_start: int
+
+var current_recording: CARLRecording
+
 func _ready() -> void:
-	var input_sample := CARLInputSample.new()
-	var bytes := input_sample.serialize();
-	print(bytes)
+	recorder = CARLRecorder.new()
 
-	var recorder := CARLRecorder.new();
-	recorder.start_recording(3)
-	print(recorder.is_recording())
-	recorder.record_input_sample(input_sample);
 
-	var recording: CARLRecording = recorder.finish_recording()
-	print(recorder.is_recording())
+func _process(_delta: float) -> void:
+	if recorder.is_recording():
+		var hmd_tracker: XRPositionalTracker = XRServer.get_tracker('head')
+		var left_hand: XRHandTracker = XRServer.get_tracker('/user/hand_tracker/left')
+		var right_hand: XRHandTracker = XRServer.get_tracker('/user/hand_tracker/right')
 
-	var err = ResourceSaver.save(recording, 'res://new_carl_recording.tres')
-	print("Error: ", err)
+		var input_sample := CARLInputSample.new()
+		input_sample.enabled_poses = recording_poses
+		input_sample.timestamp = float(Time.get_ticks_usec() - recording_start) / 1000000.0
+
+		if hmd_tracker:
+			input_sample.hmd_pose = hmd_tracker.get_pose('default').transform
+
+		if left_hand:
+			input_sample.populate_from_hand_tracker(left_hand)
+
+		if right_hand:
+			input_sample.populate_from_hand_tracker(right_hand)
+
+		recorder.record_input_sample(input_sample)
+
+
+func _on_ui_record_start(p_info: Dictionary) -> void:
+	recorder.start_recording(p_info['max_seconds'])
+	recording_poses = p_info['enabled_poses']
+	recording_start = Time.get_ticks_usec()
+
+
+func _on_ui_record_stop() -> void:
+	current_recording = recorder.finish_recording()
+
+	print(current_recording.serialize())
