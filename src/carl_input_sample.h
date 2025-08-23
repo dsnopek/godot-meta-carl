@@ -46,6 +46,8 @@ public:
 private:
 	double timestamp = 0;
 	Transform3D hmd_pose;
+	Transform3D left_wrist_pose;
+	Transform3D right_wrist_pose;
 	TypedArray<Transform3D> left_hand_joint_poses;
 	TypedArray<Transform3D> right_hand_joint_poses;
 	BitField<Pose> enabled_poses = 0;
@@ -61,6 +63,12 @@ public:
 
 	void set_hmd_pose(const Transform3D &p_pose);
 	Transform3D get_hmd_pose() const;
+
+	void set_left_wrist_pose(const Transform3D &p_pose);
+	Transform3D get_left_wrist_pose() const;
+
+	void set_right_wrist_pose(const Transform3D &p_pose);
+	Transform3D get_right_wrist_pose() const;
 
 	void set_left_hand_joint_poses(const TypedArray<Transform3D> &p_poses);
 	TypedArray<Transform3D> get_left_hand_joint_poses() const;

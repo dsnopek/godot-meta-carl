@@ -27,8 +27,14 @@ void CARLInputSample::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_timestamp", "timestamp"), &CARLInputSample::set_timestamp);
 	ClassDB::bind_method(D_METHOD("get_timestamp"), &CARLInputSample::get_timestamp);
 
-	ClassDB::bind_method(D_METHOD("set_hmd_pose", "hmd_pose"), &CARLInputSample::set_hmd_pose);
+	ClassDB::bind_method(D_METHOD("set_hmd_pose", "post"), &CARLInputSample::set_hmd_pose);
 	ClassDB::bind_method(D_METHOD("get_hmd_pose"), &CARLInputSample::get_hmd_pose);
+
+	ClassDB::bind_method(D_METHOD("set_left_wrist_pose", "post"), &CARLInputSample::set_left_wrist_pose);
+	ClassDB::bind_method(D_METHOD("get_left_wrist_pose"), &CARLInputSample::get_left_wrist_pose);
+
+	ClassDB::bind_method(D_METHOD("set_right_wrist_pose", "pose"), &CARLInputSample::set_right_wrist_pose);
+	ClassDB::bind_method(D_METHOD("get_right_wrist_post"), &CARLInputSample::get_right_wrist_pose);
 
 	ClassDB::bind_method(D_METHOD("set_left_hand_joint_poses", "poses"), &CARLInputSample::set_left_hand_joint_poses);
 	ClassDB::bind_method(D_METHOD("get_left_hand_joint_poses"), &CARLInputSample::get_left_hand_joint_poses);
@@ -58,8 +64,22 @@ void CARLInputSample::_bind_methods() {
 }
 
 void CARLInputSample::populate_from_hand_tracker(const Ref<XRHandTracker> &p_tracker) {
+	ERR_FAIL_COND(p_tracker.is_null());
 	XRPositionalTracker::TrackerHand hand = p_tracker->get_tracker_hand();
 	ERR_FAIL_COND(hand != XRPositionalTracker::TRACKER_HAND_LEFT && hand != XRPositionalTracker::TRACKER_HAND_RIGHT);
+
+	// The CARL joint set appears to be at least partially based on the OVR joint set, rather than the OpenXR one.
+	// It only has slots for the metacarpal joints of the thumb and pinky, but it appears not to use them anyway.
+	// The base of each finger appears to be the proximal joint.
+	// We fill them all, even though they are mostly unused - perhaps they will be used in the future?
+
+	/*
+		// Skip the missing metacarpal joints.
+		if (godot_joint == XRHandTracker::HAND_JOINT_INDEX_FINGER_METACARPAL ||
+			godot_joint == XRHandTracker::HAND_JOINT_MIDDLE_FINGER_METACARPAL ||
+			godot_joint == XRHandTracker::HAND_JOINT_RING_FINGER_METACARPAL) {
+			godot_joint++;
+		}
 
 	TypedArray<Transform3D> *poses = (hand == XRPositionalTracker::TRACKER_HAND_LEFT) ? &left_hand_joint_poses : &right_hand_joint_poses;
 
@@ -70,6 +90,7 @@ void CARLInputSample::populate_from_hand_tracker(const Ref<XRHandTracker> &p_tra
 			(*poses)[i] = p_tracker->get_hand_joint_transform((XRHandTracker::HandJoint)i);
 		//}
 	}
+	*/
 }
 
 void CARLInputSample::set_timestamp(double p_timestamp) {
@@ -86,6 +107,22 @@ void CARLInputSample::set_hmd_pose(const Transform3D &p_pose) {
 
 Transform3D CARLInputSample::get_hmd_pose() const {
 	return hmd_pose;
+}
+
+void CARLInputSample::set_left_wrist_pose(const Transform3D &p_pose) {
+	left_wrist_pose = p_pose;
+}
+
+Transform3D CARLInputSample::get_left_wrist_pose() const {
+	return left_wrist_pose;
+}
+
+void CARLInputSample::set_right_wrist_pose(const Transform3D &p_pose) {
+	right_wrist_pose = p_pose;
+}
+
+Transform3D CARLInputSample::get_right_wrist_pose() const {
+	return right_wrist_pose;
 }
 
 void CARLInputSample::set_left_hand_joint_poses(const TypedArray<Transform3D> &p_poses) {
@@ -148,14 +185,14 @@ carl::InputSample CARLInputSample::get_carl_object() const {
 
 	if (enabled_poses.has_flag(POSE_LEFT_WRIST)) {
 		cis.LeftWristPose.emplace();
-		to_carl_transform(left_hand_joint_poses[XRHandTracker::HAND_JOINT_WRIST], *cis.LeftWristPose);
+		to_carl_transform(left_wrist_pose, *cis.LeftWristPose);
 	} else {
 		cis.LeftWristPose.reset();
 	}
 
 	if (enabled_poses.has_flag(POSE_RIGHT_WRIST)) {
 		cis.RightWristPose.emplace();
-		to_carl_transform(right_hand_joint_poses[XRHandTracker::HAND_JOINT_WRIST], *cis.RightWristPose);
+		to_carl_transform(right_wrist_pose, *cis.RightWristPose);
 	} else {
 		cis.RightWristPose.reset();
 	}
@@ -227,54 +264,27 @@ void CARLInputSample::from_carl_transform(const carl::TransformT &p_carl_transfo
 }
 
 void CARLInputSample::to_carl_hand_joint_poses(const TypedArray<Transform3D> &p_godot_transforms, std::array<carl::TransformT, static_cast<size_t>(carl::InputSample::Joint::COUNT)> &r_carl_transforms) {
-	ERR_FAIL_COND(p_godot_transforms.size() != XRHandTracker::HAND_JOINT_MAX);
+	ERR_FAIL_COND(p_godot_transforms.size() != static_cast<int64_t>(carl::InputSample::Joint::COUNT));
 
-	// The CARL joint set appears to be at least partially based on the OVR joint set, rather than the OpenXR one.
-	// It only has slots for the metacarpal joints of the thumb and pinky, but it appears not to use them anyway.
-	// The base of each finger appears to be the proximal joint.
-	// We fill them all, even though they are mostly unused - perhaps they will be used in the future?
-
-	int godot_joint = XRHandTracker::HAND_JOINT_THUMB_METACARPAL;
-	for (uint64_t i = 1; i < (uint64_t)carl::InputSample::Joint::COUNT; i++) {
-		// Skip the missing metacarpal joints.
-		if (godot_joint == XRHandTracker::HAND_JOINT_INDEX_FINGER_METACARPAL ||
-			godot_joint == XRHandTracker::HAND_JOINT_MIDDLE_FINGER_METACARPAL ||
-			godot_joint == XRHandTracker::HAND_JOINT_RING_FINGER_METACARPAL) {
-			godot_joint++;
-		}
-
-		to_carl_transform(p_godot_transforms[godot_joint], r_carl_transforms.at(i));
-
-		godot_joint++;
+	for (uint64_t i = 0; i < static_cast<uint64_t>(carl::InputSample::Joint::COUNT); i++) {
+		to_carl_transform(p_godot_transforms[i], r_carl_transforms.at(i));
 	}
 }
 
 void CARLInputSample::from_carl_hand_joint_poses(const std::array<carl::TransformT, static_cast<size_t>(carl::InputSample::Joint::COUNT)> &p_carl_transforms, TypedArray<Transform3D> &r_godot_transforms) {
-	ERR_FAIL_COND(r_godot_transforms.size() != XRHandTracker::HAND_JOINT_MAX);
+	ERR_FAIL_COND(r_godot_transforms.size() != static_cast<int64_t>(carl::InputSample::Joint::COUNT));
 
-	// See `to_carl_hand_joint_poses()` for an explanation of how (I think) the CARL joint set is laid out.
-
-	int godot_joint = XRHandTracker::HAND_JOINT_THUMB_METACARPAL;
-	for (uint64_t i = 1; i < (uint64_t)carl::InputSample::Joint::COUNT; i++) {
-		// Skip the missing metacarpal joints.
-		if (godot_joint == XRHandTracker::HAND_JOINT_INDEX_FINGER_METACARPAL ||
-			godot_joint == XRHandTracker::HAND_JOINT_MIDDLE_FINGER_METACARPAL ||
-			godot_joint == XRHandTracker::HAND_JOINT_RING_FINGER_METACARPAL) {
-			godot_joint++;
-		}
-
+	for (uint64_t i = 0; i < static_cast<uint64_t>(carl::InputSample::Joint::COUNT); i++) {
 		// We need to use this temporary, because a TypedArray<Transform3D> actually holds Variant - not Transform3D.
 		Transform3D t;
 		from_carl_transform(p_carl_transforms.at(i), t);
-		r_godot_transforms[godot_joint] = t;
-
-		godot_joint++;
+		r_godot_transforms[i] = t;
 	}
 }
 
 CARLInputSample::CARLInputSample() {
-	left_hand_joint_poses.resize(XRHandTracker::HAND_JOINT_MAX);
-	right_hand_joint_poses.resize(XRHandTracker::HAND_JOINT_MAX);
+	left_hand_joint_poses.resize(static_cast<int64_t>(carl::InputSample::Joint::COUNT));
+	right_hand_joint_poses.resize(static_cast<int64_t>(carl::InputSample::Joint::COUNT));
 }
 
 CARLInputSample::CARLInputSample(const carl::InputSample &p_cis) : CARLInputSample() {
@@ -297,18 +307,12 @@ CARLInputSample::CARLInputSample(const carl::InputSample &p_cis) : CARLInputSamp
 
 	if (p_cis.LeftWristPose.has_value()) {
 		enabled_poses.set_flag(POSE_LEFT_WRIST);
-
-		Transform3D left_wrist_pose;
 		from_carl_transform(*p_cis.LeftWristPose, left_wrist_pose);
-		left_hand_joint_poses[XRHandTracker::HAND_JOINT_WRIST] = left_wrist_pose;
 	}
 
 	if (p_cis.RightWristPose.has_value()) {
 		enabled_poses.set_flag(POSE_RIGHT_WRIST);
-
-		Transform3D right_wrist_pose;
 		from_carl_transform(*p_cis.RightWristPose, right_wrist_pose);
-		right_hand_joint_poses[XRHandTracker::HAND_JOINT_WRIST] = right_wrist_pose;
 	}
 }
 
