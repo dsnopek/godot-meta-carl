@@ -6,6 +6,12 @@ Phase I: Get something working
 
 - Demo: Allow recording and playing back in demo
   - Add a "player" to show the recording that was made
+  - Rework CARLInputSample
+    - Make separate fields for the wrist transform
+    - Have joint array only cover the CARL joint enum (use only index to refer to them)
+    - In conversion from Tracker to CARL, make all the joint transforms relative to the wrist
+      - TODO: determine if they should be relative to their "parents"? We'll need to get to the recognizer stuff first
+    - In conversion form CARL to Tracker, make the joint transforms global again
 - Implement `CARLExample`
 - Demo: Allow cropping and saving examples in demo
   - Should be as simple as possible: maybe just scrub through recording and press button for "start" / "stop"
