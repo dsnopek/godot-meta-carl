@@ -4,7 +4,7 @@
 
 [sub_resource type="CARLExample" id="CARLExample_x1w5n"]
 recording = ExtResource("1_qkjne")
-end_timestamp = 20.0
 
 [resource]
 examples = Array[CARLExample]([SubResource("CARLExample_x1w5n")])
+default_sensitivity = 2.0

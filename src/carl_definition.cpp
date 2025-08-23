@@ -36,9 +36,13 @@ void CARLDefinition::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_counter_examples", "examples"), &CARLDefinition::set_counter_examples);
 	ClassDB::bind_method(D_METHOD("get_counter_examples"), &CARLDefinition::get_counter_examples);
 
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "action_type", PROPERTY_HINT_ENUM, "Left Hand Pose,Left Hand Gesture,Right Hand Pose,Right Hand Gesture,Two Hand Gesture,Left Controller Gesture,Right Controller Gesture,Two Controller Gesture,Left Wrist Trajectory,Right Wrist Trajectory,Left Hand Shape,Right Hand Shape"), "get_action_type", "set_action_type");
+	ClassDB::bind_method(D_METHOD("set_default_sensitivity", "sensitivity"), &CARLDefinition::set_default_sensitivity);
+	ClassDB::bind_method(D_METHOD("get_default_sensitivity"), &CARLDefinition::get_default_sensitivity);
+
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "action_type", PROPERTY_HINT_ENUM, "Left Hand Pose,Left Hand Gesture,Right Hand Pose,Right Hand Gesture,Two Hand Gesture,Left Controller Gesture,Right Controller Gesture,Two Controller Gesture,Left Wrist Trajectory,Right Wrist Trajectory,Left Hand Shape,Right Hand Shape"), "set_action_type", "get_action_type");
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "examples", PROPERTY_HINT_ARRAY_TYPE, vformat("%d/%d:%s", Variant::OBJECT, PROPERTY_HINT_RESOURCE_TYPE, "CARLExample")), "set_examples", "get_examples");
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "counter_examples", PROPERTY_HINT_ARRAY_TYPE, vformat("%d/%d:%s", Variant::OBJECT, PROPERTY_HINT_RESOURCE_TYPE, "CARLExample")), "set_counter_examples", "get_counter_examples");
+	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "default_sensitivity"), "set_default_sensitivity", "get_default_sensitivity");
 }
 
 void CARLDefinition::set_action_type(ActionType p_action_type) {
@@ -63,4 +67,12 @@ void CARLDefinition::set_counter_examples(const TypedArray<CARLExample> &p_examp
 
 TypedArray<CARLExample> CARLDefinition::get_counter_examples() const {
 	return counter_examples;
+}
+
+void CARLDefinition::set_default_sensitivity(double p_sensitivity) {
+	default_sensitivity = p_sensitivity;
+}
+
+double CARLDefinition::get_default_sensitivity() const {
+	return default_sensitivity;
 }

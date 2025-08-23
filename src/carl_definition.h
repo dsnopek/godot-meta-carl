@@ -52,6 +52,7 @@ private:
 	ActionType action_type = ACTION_LEFT_HAND_POSE;
 	TypedArray<CARLExample> examples;
 	TypedArray<CARLExample> counter_examples;
+	double default_sensitivity = 1.0;
 
 protected:
 	static void _bind_methods();
@@ -65,6 +66,9 @@ public:
 
 	void set_counter_examples(const TypedArray<CARLExample> &p_examples);
 	TypedArray<CARLExample> get_counter_examples() const;
+
+	void set_default_sensitivity(double p_sensitivity);
+	double get_default_sensitivity() const;
 };
 
 VARIANT_ENUM_CAST(CARLDefinition::ActionType);
