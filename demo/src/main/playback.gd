@@ -31,8 +31,8 @@ func play_input_sample(p_input_sample: CARLInputSample) -> void:
 	else:
 		hmd_node.visible = false
 
-	left_hand.visible = enabled_poses & CARLInputSample.POSE_LEFT_WRIST or enabled_poses & CARLInputSample.POSE_LEFT_JOINTS
-	right_hand.visible = enabled_poses & CARLInputSample.POSE_RIGHT_JOINTS or enabled_poses & CARLInputSample.POSE_RIGHT_JOINTS
+	left_hand.visible = (enabled_poses & CARLInputSample.POSE_LEFT_WRIST) or (enabled_poses & CARLInputSample.POSE_LEFT_JOINTS)
+	right_hand.visible = (enabled_poses & CARLInputSample.POSE_RIGHT_JOINTS) or (enabled_poses & CARLInputSample.POSE_RIGHT_JOINTS)
 
 	# @todo How to handle the wrist position?
 
@@ -42,5 +42,6 @@ func play_input_sample(p_input_sample: CARLInputSample) -> void:
 
 func _play_hand_joints(p_tracker: XRHandTracker, p_joint_transforms: Array[Transform3D]) -> void:
 	for joint in range(XRHandTracker.HAND_JOINT_MAX):
+		#print(p_joint_transforms[joint])
 		p_tracker.set_hand_joint_transform(joint, p_joint_transforms[joint])
 		p_tracker.set_hand_joint_flags(joint, XRHandTracker.HAND_JOINT_FLAG_POSITION_TRACKED | XRHandTracker.HAND_JOINT_FLAG_POSITION_VALID | XRHandTracker.HAND_JOINT_FLAG_ORIENTATION_TRACKED | XRHandTracker.HAND_JOINT_FLAG_ORIENTATION_VALID)

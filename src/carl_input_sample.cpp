@@ -256,20 +256,26 @@ CARLInputSample::CARLInputSample(const carl::InputSample &p_cis) : CARLInputSamp
 	}
 
 	if (p_cis.LeftHandJointPoses.has_value()) {
+		enabled_poses.set_flag(POSE_LEFT_JOINTS);
 		from_carl_hand_joint_poses(p_cis.LeftHandJointPoses, left_hand_joint_poses);
 	}
 
 	if (p_cis.RightHandJointPoses.has_value()) {
+		enabled_poses.set_flag(POSE_RIGHT_JOINTS);
 		from_carl_hand_joint_poses(p_cis.RightHandJointPoses, right_hand_joint_poses);
 	}
 
 	if (p_cis.LeftWristPose.has_value()) {
+		enabled_poses.set_flag(POSE_LEFT_WRIST);
+
 		Transform3D left_wrist_pose;
 		from_carl_transform(*p_cis.LeftWristPose, left_wrist_pose);
 		left_hand_joint_poses[XRHandTracker::HAND_JOINT_WRIST] = left_wrist_pose;
 	}
 
 	if (p_cis.RightWristPose.has_value()) {
+		enabled_poses.set_flag(POSE_RIGHT_WRIST);
+
 		Transform3D right_wrist_pose;
 		from_carl_transform(*p_cis.RightWristPose, right_wrist_pose);
 		right_hand_joint_poses[XRHandTracker::HAND_JOINT_WRIST] = right_wrist_pose;
