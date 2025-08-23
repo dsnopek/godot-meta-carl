@@ -7,6 +7,7 @@
 #include "carl_input_sample.h"
 #include "carl_recorder.h"
 #include "carl_recording.h"
+#include "carl_example.h"
 
 using namespace godot;
 
@@ -18,6 +19,7 @@ void initialize_godot_meta_carl_types(ModuleInitializationLevel p_level) {
 	GDREGISTER_CLASS(CARLInputSample);
 	GDREGISTER_CLASS(CARLRecording);
 	GDREGISTER_CLASS(CARLRecorder);
+	GDREGISTER_CLASS(CARLExample);
 }
 
 void uninitialize_godot_meta_carl_types(ModuleInitializationLevel p_level) {

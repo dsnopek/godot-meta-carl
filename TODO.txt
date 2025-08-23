@@ -4,7 +4,6 @@ TODO
 Phase I: Get something working
 ---
 
-- Implement `CARLExample`
 - Demo: Allow cropping and saving examples in demo
   - Should be as simple as possible: maybe just scrub through recording and press button for "start" / "stop"
   - Or, can we get away without cropping them for testing purposes? Maybe just record the right hand?
