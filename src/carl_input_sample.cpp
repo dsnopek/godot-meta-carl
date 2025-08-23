@@ -174,23 +174,52 @@ carl::InputSample CARLInputSample::get_carl_object() const {
 }
 
 void CARLInputSample::to_carl_transform(const Transform3D &p_godot_transform, carl::TransformT &r_carl_transform) {
-	const Vector3 *b = p_godot_transform.basis.rows;
-	const Vector3 &o = p_godot_transform.origin;
-	r_carl_transform.matrix().col(0) = Eigen::Vector<carl::NumberT, 4>(b[0][0], b[0][1], b[0][2], static_cast<carl::NumberT>(0));
-	r_carl_transform.matrix().col(1) = Eigen::Vector<carl::NumberT, 4>(b[1][0], b[1][1], b[1][2], static_cast<carl::NumberT>(0));
-	r_carl_transform.matrix().col(2) = Eigen::Vector<carl::NumberT, 4>(b[2][0], b[2][1], b[2][2], static_cast<carl::NumberT>(0));
-	r_carl_transform.matrix().col(3) = Eigen::Vector<carl::NumberT, 4>(o[0], o[1], o[2], static_cast<carl::NumberT>(0));
+	const Vector3 c0 = p_godot_transform.basis.get_column(0);
+	const Vector3 c1 = p_godot_transform.basis.get_column(1);
+	const Vector3 c2 = p_godot_transform.basis.get_column(2);
+
+	r_carl_transform.linear().col(0) <<
+		static_cast<carl::NumberT>(c0.x),
+		static_cast<carl::NumberT>(c0.y),
+		static_cast<carl::NumberT>(c0.z);
+
+	r_carl_transform.linear().col(1) <<
+		static_cast<carl::NumberT>(c1.x),
+		static_cast<carl::NumberT>(c1.y),
+		static_cast<carl::NumberT>(c1.z);
+
+	r_carl_transform.linear().col(2) <<
+		static_cast<carl::NumberT>(c2.x),
+		static_cast<carl::NumberT>(c2.y),
+		static_cast<carl::NumberT>(c2.z);
+
+	r_carl_transform.translation() <<
+		static_cast<carl::NumberT>(p_godot_transform.origin.x),
+		static_cast<carl::NumberT>(p_godot_transform.origin.y),
+		static_cast<carl::NumberT>(p_godot_transform.origin.z);
 }
 
 void CARLInputSample::from_carl_transform(const carl::TransformT &p_carl_transform, Transform3D &r_godot_transform) {
-	auto &m = p_carl_transform.matrix();
-	Vector3 *b = r_godot_transform.basis.rows;
-	for (int i = 0; i < 3; i++) {
-		for (int j = 0; j < 3; j++) {
-			b[i][j] = m(j, i);
-		}
-	}
-	r_godot_transform.origin = Vector3(m(0, 3), m(1, 3), m(2, 3));
+	const auto& m = p_carl_transform.linear();
+	const auto& o = p_carl_transform.translation();
+
+	r_godot_transform.basis.set_column(0, Vector3(
+		static_cast<real_t>(m(0,0)),
+		static_cast<real_t>(m(1,0)),
+		static_cast<real_t>(m(2,0))));
+	r_godot_transform.basis.set_column(1, Vector3(
+		static_cast<real_t>(m(0,1)),
+		static_cast<real_t>(m(1,1)),
+		static_cast<real_t>(m(2,1))));
+	r_godot_transform.basis.set_column(2, Vector3(
+		static_cast<real_t>(m(0,2)),
+		static_cast<real_t>(m(1,2)),
+		static_cast<real_t>(m(2,2))));
+
+	r_godot_transform.origin = Vector3(
+		static_cast<real_t>(o(0)),
+		static_cast<real_t>(o(1)),
+		static_cast<real_t>(o(2)));
 }
 
 void CARLInputSample::to_carl_hand_joint_poses(const TypedArray<Transform3D> &p_godot_transforms, std::array<carl::TransformT, static_cast<size_t>(carl::InputSample::Joint::COUNT)> &r_carl_transforms) {
@@ -211,7 +240,6 @@ void CARLInputSample::to_carl_hand_joint_poses(const TypedArray<Transform3D> &p_
 		}
 
 		to_carl_transform(p_godot_transforms[godot_joint], r_carl_transforms.at(i));
-		//r_carl_transforms.at(i).matrix().col(3) = Eigen::Vector<carl::NumberT, 4>(55.55, 55.55, 55.55, static_cast<carl::NumberT>(0));
 
 		godot_joint++;
 	}
