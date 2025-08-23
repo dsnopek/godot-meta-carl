@@ -157,13 +157,15 @@ carl::InputSample CARLInputSample::get_carl_object() const {
 	}
 
 	if (enabled_poses.has_flag(POSE_LEFT_JOINTS)) {
-		to_carl_hand_joint_poses(left_hand_joint_poses, cis.LeftHandJointPoses);
+		cis.LeftHandJointPoses.emplace();
+		to_carl_hand_joint_poses(left_hand_joint_poses, *cis.LeftHandJointPoses);
 	} else {
 		cis.LeftHandJointPoses.reset();
 	}
 
 	if (enabled_poses.has_flag(POSE_RIGHT_JOINTS)) {
-		to_carl_hand_joint_poses(right_hand_joint_poses, cis.RightHandJointPoses);
+		cis.RightHandJointPoses.emplace();
+		to_carl_hand_joint_poses(right_hand_joint_poses, *cis.RightHandJointPoses);
 	} else {
 		cis.RightHandJointPoses.reset();
 	}
@@ -185,18 +187,14 @@ void CARLInputSample::from_carl_transform(const carl::TransformT &p_carl_transfo
 	Vector3 *b = r_godot_transform.basis.rows;
 	for (int i = 0; i < 3; i++) {
 		for (int j = 0; j < 3; j++) {
-			b[i][j] = m(i, j);
+			b[i][j] = m(j, i);
 		}
 	}
-	r_godot_transform.origin = Vector3(m(3, 0), m(3, 1), m(3, 2));
+	r_godot_transform.origin = Vector3(m(0, 3), m(1, 3), m(2, 3));
 }
 
-void CARLInputSample::to_carl_hand_joint_poses(const TypedArray<Transform3D> &p_godot_transforms, std::optional<std::array<carl::TransformT, static_cast<size_t>(carl::InputSample::Joint::COUNT)>> &r_carl_transforms) {
+void CARLInputSample::to_carl_hand_joint_poses(const TypedArray<Transform3D> &p_godot_transforms, std::array<carl::TransformT, static_cast<size_t>(carl::InputSample::Joint::COUNT)> &r_carl_transforms) {
 	ERR_FAIL_COND(p_godot_transforms.size() != XRHandTracker::HAND_JOINT_MAX);
-
-	if (!r_carl_transforms.has_value()) {
-		r_carl_transforms.emplace();
-	}
 
 	// The CARL joint set appears to be at least partially based on the OVR joint set, rather than the OpenXR one.
 	// It only has slots for the metacarpal joints of the thumb and pinky, but it appears not to use them anyway.
@@ -204,7 +202,7 @@ void CARLInputSample::to_carl_hand_joint_poses(const TypedArray<Transform3D> &p_
 	// We fill them all, even though they are mostly unused - perhaps they will be used in the future?
 
 	int godot_joint = XRHandTracker::HAND_JOINT_THUMB_METACARPAL;
-	for (uint64_t i = i; i < (uint64_t)carl::InputSample::Joint::COUNT; i++) {
+	for (uint64_t i = 1; i < (uint64_t)carl::InputSample::Joint::COUNT; i++) {
 		// Skip the missing metacarpal joints.
 		if (godot_joint == XRHandTracker::HAND_JOINT_INDEX_FINGER_METACARPAL ||
 			godot_joint == XRHandTracker::HAND_JOINT_MIDDLE_FINGER_METACARPAL ||
@@ -212,14 +210,14 @@ void CARLInputSample::to_carl_hand_joint_poses(const TypedArray<Transform3D> &p_
 			godot_joint++;
 		}
 
-		to_carl_transform(p_godot_transforms[godot_joint], r_carl_transforms->at(i));
+		to_carl_transform(p_godot_transforms[godot_joint], r_carl_transforms.at(i));
+		//r_carl_transforms.at(i).matrix().col(3) = Eigen::Vector<carl::NumberT, 4>(55.55, 55.55, 55.55, static_cast<carl::NumberT>(0));
 
 		godot_joint++;
 	}
 }
 
-void CARLInputSample::from_carl_hand_joint_poses(const std::optional<std::array<carl::TransformT, static_cast<size_t>(carl::InputSample::Joint::COUNT)>> p_carl_transforms, TypedArray<Transform3D> &r_godot_transforms) {
-	ERR_FAIL_COND(!p_carl_transforms.has_value());
+void CARLInputSample::from_carl_hand_joint_poses(const std::array<carl::TransformT, static_cast<size_t>(carl::InputSample::Joint::COUNT)> &p_carl_transforms, TypedArray<Transform3D> &r_godot_transforms) {
 	ERR_FAIL_COND(r_godot_transforms.size() != XRHandTracker::HAND_JOINT_MAX);
 
 	// See `to_carl_hand_joint_poses()` for an explanation of how (I think) the CARL joint set is laid out.
@@ -235,7 +233,7 @@ void CARLInputSample::from_carl_hand_joint_poses(const std::optional<std::array<
 
 		// We need to use this temporary, because a TypedArray<Transform3D> actually holds Variant - not Transform3D.
 		Transform3D t;
-		from_carl_transform(p_carl_transforms->at(i), t);
+		from_carl_transform(p_carl_transforms.at(i), t);
 		r_godot_transforms[godot_joint] = t;
 
 		godot_joint++;
@@ -257,12 +255,12 @@ CARLInputSample::CARLInputSample(const carl::InputSample &p_cis) : CARLInputSamp
 
 	if (p_cis.LeftHandJointPoses.has_value()) {
 		enabled_poses.set_flag(POSE_LEFT_JOINTS);
-		from_carl_hand_joint_poses(p_cis.LeftHandJointPoses, left_hand_joint_poses);
+		from_carl_hand_joint_poses(*p_cis.LeftHandJointPoses, left_hand_joint_poses);
 	}
 
 	if (p_cis.RightHandJointPoses.has_value()) {
 		enabled_poses.set_flag(POSE_RIGHT_JOINTS);
-		from_carl_hand_joint_poses(p_cis.RightHandJointPoses, right_hand_joint_poses);
+		from_carl_hand_joint_poses(*p_cis.RightHandJointPoses, right_hand_joint_poses);
 	}
 
 	if (p_cis.LeftWristPose.has_value()) {

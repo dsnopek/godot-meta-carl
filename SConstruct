@@ -28,6 +28,7 @@ Help(opts.GenerateHelpText(localEnv))
 
 env = localEnv.Clone()
 env['disable_exceptions'] = 'no'
+env.Append(CXXFLAGS=['-Wall', '-Wuninitialized'])
 
 if not (os.path.isdir("godot-cpp") and os.listdir("godot-cpp")):
     print_error("""godot-cpp is not available within this folder, as Git submodules haven't been initialized.
