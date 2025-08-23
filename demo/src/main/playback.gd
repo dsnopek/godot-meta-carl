@@ -7,6 +7,9 @@ const DEFAULT_WRIST_OFFSET := 0.2
 @onready var left_hand: XRNode3D = %LeftHand
 @onready var right_hand: XRNode3D = %RightHand
 
+@onready var left_hand_default_transform: Transform3D = left_hand.transform
+@onready var right_hand_default_transform: Transform3D = right_hand.transform
+
 var left_hand_tracker: XRHandTracker
 var right_hand_tracker: XRHandTracker
 
@@ -34,14 +37,34 @@ func play_input_sample(p_input_sample: CARLInputSample) -> void:
 	left_hand.visible = (enabled_poses & CARLInputSample.POSE_LEFT_WRIST) or (enabled_poses & CARLInputSample.POSE_LEFT_JOINTS)
 	right_hand.visible = (enabled_poses & CARLInputSample.POSE_RIGHT_JOINTS) or (enabled_poses & CARLInputSample.POSE_RIGHT_JOINTS)
 
-	# @todo How to handle the wrist position?
-
 	_play_hand_joints(left_hand_tracker, p_input_sample.left_hand_joint_poses)
 	_play_hand_joints(right_hand_tracker, p_input_sample.right_hand_joint_poses)
 
+	if enabled_poses & CARLInputSample.POSE_LEFT_WRIST:
+		left_hand_tracker.set_pose("default", p_input_sample.left_hand_joint_poses[XRHandTracker.HAND_JOINT_WRIST], Vector3.ZERO, Vector3.ZERO, XRPose.XR_TRACKING_CONFIDENCE_HIGH)
+	else:
+		left_hand_tracker.set_pose("default", left_hand_default_transform, Vector3.ZERO, Vector3.ZERO, XRPose.XR_TRACKING_CONFIDENCE_HIGH)
+		#left_hand_tracker.set_pose("default", Transform3D(), Vector3.ZERO, Vector3.ZERO, XRPose.XR_TRACKING_CONFIDENCE_HIGH)
+		#left_hand.transform = left_hand_default_transform
+
+	if enabled_poses & CARLInputSample.POSE_RIGHT_WRIST:
+		right_hand_tracker.set_pose("default", p_input_sample.right_hand_joint_poses[XRHandTracker.HAND_JOINT_WRIST], Vector3.ZERO, Vector3.ZERO, XRPose.XR_TRACKING_CONFIDENCE_HIGH)
+	else:
+		right_hand_tracker.set_pose("default", right_hand_default_transform, Vector3.ZERO, Vector3.ZERO, XRPose.XR_TRACKING_CONFIDENCE_HIGH)
+		#right_hand_tracker.set_pose("default", Transform3D(), Vector3.ZERO, Vector3.ZERO, XRPose.XR_TRACKING_CONFIDENCE_HIGH)
+		#right_hand.transform = right_hand_default_transform
+
 
 func _play_hand_joints(p_tracker: XRHandTracker, p_joint_transforms: Array[Transform3D]) -> void:
+	p_tracker.has_tracking_data = true
 	for joint in range(XRHandTracker.HAND_JOINT_MAX):
-		#print(p_joint_transforms[joint])
+		# We treat the wrist joint special.
+		#if joint == XRHandTracker.HAND_JOINT_WRIST:
+		#	continue
+
+		#var t: Transform3D = p_joint_transforms[joint]
+		#if joint == XRHandTracker.HAND_JOINT_PALM:
+		#	t = p_joint_transforms[XRHandTracker.HAND_JOINT_WRIST]
+
 		p_tracker.set_hand_joint_transform(joint, p_joint_transforms[joint])
 		p_tracker.set_hand_joint_flags(joint, XRHandTracker.HAND_JOINT_FLAG_POSITION_TRACKED | XRHandTracker.HAND_JOINT_FLAG_POSITION_VALID | XRHandTracker.HAND_JOINT_FLAG_ORIENTATION_TRACKED | XRHandTracker.HAND_JOINT_FLAG_ORIENTATION_VALID)

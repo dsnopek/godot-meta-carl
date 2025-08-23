@@ -64,7 +64,11 @@ void CARLInputSample::populate_from_hand_tracker(const Ref<XRHandTracker> &p_tra
 	TypedArray<Transform3D> *poses = (hand == XRPositionalTracker::TRACKER_HAND_LEFT) ? &left_hand_joint_poses : &right_hand_joint_poses;
 
 	for (int i = 0; i < XRHandTracker::HAND_JOINT_MAX; i++) {
-		(*poses)[i] = p_tracker->get_hand_joint_transform((XRHandTracker::HandJoint)i);
+		//if (i == XRHandTracker::HAND_JOINT_PALM || i == XRHandTracker::HAND_JOINT_WRIST) {
+		//	(*poses)[i] = p_tracker->get_pose("default")->get_transform();
+		//} else {
+			(*poses)[i] = p_tracker->get_hand_joint_transform((XRHandTracker::HandJoint)i);
+		//}
 	}
 }
 
