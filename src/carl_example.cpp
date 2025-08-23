@@ -37,7 +37,7 @@ void CARLExample::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_end_timestamp", "timestamp"), &CARLExample::set_end_timestamp);
 	ClassDB::bind_method(D_METHOD("get_end_timestamp"), &CARLExample::get_end_timestamp);
 
-	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "start_timestamp", PROPERTY_HINT_RESOURCE_TYPE, "CARLRecording"), "set_recording", "get_recording");
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "recording", PROPERTY_HINT_RESOURCE_TYPE, "CARLRecording"), "set_recording", "get_recording");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "start_timestamp"), "set_start_timestamp", "get_start_timestamp");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "end_timestamp"), "set_end_timestamp", "get_end_timestamp");
 }
@@ -45,8 +45,8 @@ void CARLExample::_bind_methods() {
 void CARLExample::set_recording(const Ref<CARLRecording> &p_recording) {
 	recording = p_recording;
 	if (recording.is_valid()) {
-		start_timestamp = std::max(recording->get_start_timestamp(), start_timestamp);
-		end_timestamp = std::min(recording->get_end_timestamp(), end_timestamp);
+		start_timestamp = std::clamp(start_timestamp, recording->get_start_timestamp(), recording->get_end_timestamp());
+		end_timestamp = std::clamp(end_timestamp, recording->get_start_timestamp(), recording->get_end_timestamp());
 	}
 }
 
@@ -56,7 +56,7 @@ Ref<CARLRecording> CARLExample::get_recording() const {
 
 void CARLExample::set_start_timestamp(double p_timestamp) {
 	if (recording.is_valid()) {
-		start_timestamp = std::max(recording->get_start_timestamp(), p_timestamp);
+		start_timestamp = std::clamp(start_timestamp, recording->get_start_timestamp(), recording->get_end_timestamp());
 	} else {
 		start_timestamp = p_timestamp;
 	}
@@ -68,7 +68,7 @@ double CARLExample::get_start_timestamp() const {
 
 void CARLExample::set_end_timestamp(double p_timestamp) {
 	if (recording.is_valid()) {
-		end_timestamp = std::max(recording->get_end_timestamp(), p_timestamp);
+		end_timestamp = std::clamp(end_timestamp, recording->get_start_timestamp(), recording->get_end_timestamp());
 	} else {
 		end_timestamp = p_timestamp;
 	}

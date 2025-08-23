@@ -1,0 +1,10 @@
+[gd_resource type="CARLDefinition" load_steps=3 format=3 uid="uid://da0ujtwv20twb"]
+
+[ext_resource type="CARLRecording" uid="uid://j54vhgkm7mdo" path="res://new_carl_recording.tres" id="1_qkjne"]
+
+[sub_resource type="CARLExample" id="CARLExample_x1w5n"]
+recording = ExtResource("1_qkjne")
+end_timestamp = 20.0
+
+[resource]
+examples = Array[CARLExample]([SubResource("CARLExample_x1w5n")])
