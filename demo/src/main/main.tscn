@@ -1,9 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://dh0oj81pufivs"]
+[gd_scene load_steps=8 format=3 uid="uid://dh0oj81pufivs"]
 
-[ext_resource type="Script" uid="uid://dg8sd4dknr6tj" path="res://src/main.gd" id="1_ig7tw"]
+[ext_resource type="Script" uid="uid://dg8sd4dknr6tj" path="res://src/main/main.gd" id="1_ig7tw"]
 [ext_resource type="PackedScene" uid="uid://cqs8c3rq6cxvk" path="res://addons/sgxr/function_pointer.tscn" id="3_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://btrugoluitgin" path="res://addons/sgxr/ui_layer.tscn" id="3_h2yge"]
 [ext_resource type="PackedScene" uid="uid://ciab6rk7831n" path="res://src/ui/ui.tscn" id="3_lquwl"]
+[ext_resource type="PackedScene" uid="uid://gyggpun5wh6o" path="res://src/main/playback.tscn" id="5_jqarl"]
 [ext_resource type="PackedScene" uid="uid://br72i82f12kke" path="res://addons/sgxr/start_xr.tscn" id="5_lquwl"]
 
 [sub_resource type="Environment" id="Environment_0xm2m"]
@@ -54,7 +55,7 @@ tracker = &"/user/hand_tracker/left"
 [node name="RightHand" type="XRNode3D" parent="XROrigin3D"]
 tracker = &"/user/hand_tracker/right"
 
-[node name="OpenXRFbHandTrackingMesh2" type="OpenXRFbHandTrackingMesh" parent="XROrigin3D/RightHand"]
+[node name="OpenXRFbHandTrackingMesh" type="OpenXRFbHandTrackingMesh" parent="XROrigin3D/RightHand"]
 hand = 1
 bones/0/name = "RightPalm"
 bones/1/name = "RightHand"
@@ -83,8 +84,11 @@ bones/23/name = "RightLittleIntermediate"
 bones/24/name = "RightLittleDistal"
 bones/25/name = "RightLittleTip"
 
-[node name="XRHandModifier3D" type="XRHandModifier3D" parent="XROrigin3D/RightHand/OpenXRFbHandTrackingMesh2"]
+[node name="XRHandModifier3D" type="XRHandModifier3D" parent="XROrigin3D/RightHand/OpenXRFbHandTrackingMesh"]
 hand_tracker = &"/user/hand_tracker/right"
+
+[node name="Playback" parent="." instance=ExtResource("5_jqarl")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, -1.89646)
 
 [node name="StartXR" parent="." instance=ExtResource("5_lquwl")]
 

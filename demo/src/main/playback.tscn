@@ -1,0 +1,50 @@
+[gd_scene load_steps=6 format=3 uid="uid://gyggpun5wh6o"]
+
+[ext_resource type="Script" uid="uid://bauedty1xatjn" path="res://src/main/playback.gd" id="1_cp4rk"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_cp4rk"]
+radius = 0.2
+height = 0.4
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_b30vt"]
+albedo_color = Color(1, 0, 0, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_hcalp"]
+top_radius = 0.0
+bottom_radius = 0.05
+height = 0.1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_axhu7"]
+albedo_color = Color(0, 0, 1, 1)
+
+[node name="Playback" type="Node3D"]
+script = ExtResource("1_cp4rk")
+
+[node name="LeftHand" type="XRNode3D" parent="."]
+unique_name_in_owner = true
+tracker = &"/playback/left_hand"
+
+[node name="OpenXRFbHandTrackingMesh" type="OpenXRFbHandTrackingMesh" parent="LeftHand"]
+
+[node name="XRHandModifier3D" type="XRHandModifier3D" parent="LeftHand/OpenXRFbHandTrackingMesh"]
+hand_tracker = &"/playback/left_hand"
+
+[node name="RightHand" type="XRNode3D" parent="."]
+unique_name_in_owner = true
+tracker = &"/playback/right_hand"
+
+[node name="OpenXRFbHandTrackingMesh" type="OpenXRFbHandTrackingMesh" parent="RightHand"]
+
+[node name="XRHandModifier3D" type="XRHandModifier3D" parent="RightHand/OpenXRFbHandTrackingMesh"]
+hand_tracker = &"/playback/right_hand"
+
+[node name="HMD" type="MeshInstance3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.45519e-11, 1.5, 1.45519e-11)
+mesh = SubResource("SphereMesh_cp4rk")
+surface_material_override/0 = SubResource("StandardMaterial3D_b30vt")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="HMD"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, -0.241968)
+mesh = SubResource("CylinderMesh_hcalp")
+surface_material_override/0 = SubResource("StandardMaterial3D_axhu7")
