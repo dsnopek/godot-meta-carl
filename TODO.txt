@@ -6,7 +6,6 @@ Phase I: Get something working
 
 - Demo: Allow recording and playing back in demo
   - Add a "player" to show the recording that was made
-  - Restructure app so we have a `GameState` which everything interacts with?
 - Implement `CARLExample`
 - Demo: Allow cropping and saving examples in demo
   - Should be as simple as possible: maybe just scrub through recording and press button for "start" / "stop"

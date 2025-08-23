@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://ciab6rk7831n"]
+[gd_scene load_steps=6 format=3 uid="uid://ciab6rk7831n"]
 
 [ext_resource type="Script" uid="uid://jwd0vn4g1nil" path="res://src/ui/ui.gd" id="1_fyqef"]
 [ext_resource type="PackedScene" uid="uid://dsx810267tjit" path="res://addons/sgui/screen_container.tscn" id="2_qemve"]
 [ext_resource type="PackedScene" uid="uid://dg6f4jtiqh7y" path="res://src/ui/record_setup_screen.tscn" id="3_8wxmc"]
+[ext_resource type="PackedScene" uid="uid://c4mf0ifovvbi1" path="res://src/ui/definition_screen.tscn" id="3_sjdex"]
 [ext_resource type="PackedScene" uid="uid://dvs4xr156b56d" path="res://src/ui/record_screen.tscn" id="4_8wxmc"]
 
 [node name="UI" type="Control"]
@@ -21,9 +22,13 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-current_screen = "RecordSetupScreen"
+current_screen = "DefinitionScreen"
+
+[node name="DefinitionScreen" parent="Screens" instance=ExtResource("3_sjdex")]
+layout_mode = 2
 
 [node name="RecordSetupScreen" parent="Screens" instance=ExtResource("3_8wxmc")]
+visible = false
 layout_mode = 2
 
 [node name="RecordScreen" parent="Screens" instance=ExtResource("4_8wxmc")]
@@ -51,6 +56,4 @@ text = "Button
 [node name="HSlider" type="HSlider" parent="Screens/TestScreen"]
 layout_mode = 2
 
-[connection signal="record_start" from="Screens/RecordScreen" to="." method="_on_record_screen_record_start"]
-[connection signal="record_stop" from="Screens/RecordScreen" to="." method="_on_record_screen_record_stop"]
 [connection signal="pressed" from="Screens/TestScreen/Button" to="." method="_on_button_pressed"]

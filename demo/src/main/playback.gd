@@ -1,6 +1,6 @@
 extends Node3D
 
-const DEFAULT_WRIST_HEIGHT := 1.2
+const DEFAULT_WRIST_HEIGHT := 1.1
 const DEFAULT_WRIST_OFFSET := 0.2
 
 @onready var hmd_node: MeshInstance3D = %HMD

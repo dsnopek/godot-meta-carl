@@ -1,0 +1,38 @@
+[gd_scene load_steps=2 format=3 uid="uid://dcs3ocqukin1k"]
+
+[ext_resource type="Script" uid="uid://s5lmoucanwim" path="res://src/ui/player_ui.gd" id="1_354od"]
+
+[node name="PlayerUI" type="VBoxContainer"]
+offset_right = 341.0
+offset_bottom = 91.0
+script = ExtResource("1_354od")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="TimelineSlider" type="HSlider" parent="MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 3.0
+step = 0.01389
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="PlayButton" type="Button" parent="HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Play"
+
+[node name="StopButton" type="Button" parent="HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Stop"
+
+[connection signal="value_changed" from="MarginContainer/TimelineSlider" to="." method="_on_timeline_slider_value_changed"]
+[connection signal="pressed" from="HBoxContainer/PlayButton" to="." method="play"]
+[connection signal="pressed" from="HBoxContainer/StopButton" to="." method="stop"]

@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://dh0oj81pufivs"]
 
-[ext_resource type="Script" uid="uid://dg8sd4dknr6tj" path="res://src/main/main.gd" id="1_ig7tw"]
+[ext_resource type="Script" uid="uid://4osxenmr6ido" path="res://src/main/main.gd" id="1_ig7tw"]
 [ext_resource type="PackedScene" uid="uid://cqs8c3rq6cxvk" path="res://addons/sgxr/function_pointer.tscn" id="3_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://btrugoluitgin" path="res://addons/sgxr/ui_layer.tscn" id="3_h2yge"]
 [ext_resource type="PackedScene" uid="uid://ciab6rk7831n" path="res://src/ui/ui.tscn" id="3_lquwl"]
@@ -18,7 +18,7 @@ script = ExtResource("1_ig7tw")
 [node name="XRCamera3D" type="XRCamera3D" parent="XROrigin3D"]
 
 [node name="UILayer" parent="XROrigin3D" node_paths=PackedStringArray("layer_viewport") instance=ExtResource("3_h2yge")]
-transform = Transform3D(0.74715, 0, 0.664655, 0, 1, 0, -0.664655, 0, 0.74715, -2.777, 1.25, -1.5)
+transform = Transform3D(0.84894, 0, 0.528488, 0, 1, 0, -0.528488, 0, 0.84894, -1.79071, 1.25, -1.5)
 layer_viewport = NodePath("SubViewport")
 sort_order = -1
 enable_hole_punch = true
@@ -88,6 +88,7 @@ bones/25/name = "RightLittleTip"
 hand_tracker = &"/user/hand_tracker/right"
 
 [node name="Playback" parent="." instance=ExtResource("5_jqarl")]
+unique_name_in_owner = true
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, -1.89646)
 
 [node name="StartXR" parent="." instance=ExtResource("5_lquwl")]
@@ -98,6 +99,3 @@ environment = SubResource("Environment_0xm2m")
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
 shadow_enabled = true
-
-[connection signal="record_start" from="XROrigin3D/UILayer/SubViewport/UI" to="." method="_on_ui_record_start"]
-[connection signal="record_stop" from="XROrigin3D/UILayer/SubViewport/UI" to="." method="_on_ui_record_stop"]
