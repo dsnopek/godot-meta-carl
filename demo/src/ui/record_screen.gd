@@ -67,7 +67,7 @@ func populate_from_tracker(p_input_sample: CARLInputSample, p_tracker: XRHandTra
 
 	var jts: Array[Transform3D] = p_input_sample.left_hand_joint_poses if hand == XRPositionalTracker.TRACKER_HAND_LEFT else p_input_sample.right_hand_joint_poses
 
-	var ht: Transform3D = p_tracker.get_pose("default").transform
+	var ht: Transform3D = p_tracker.get_hand_joint_transform(XRHandTracker.HAND_JOINT_WRIST)
 	var hti := ht.affine_inverse()
 
 	var carl_joint := 0
@@ -75,8 +75,6 @@ func populate_from_tracker(p_input_sample: CARLInputSample, p_tracker: XRHandTra
 		if godot_joint == XRHandTracker.HAND_JOINT_INDEX_FINGER_METACARPAL or godot_joint == XRHandTracker.HAND_JOINT_MIDDLE_FINGER_METACARPAL or godot_joint == XRHandTracker.HAND_JOINT_RING_FINGER_METACARPAL:
 			continue
 
-		#jts[carl_joint] = p_tracker.get_hand_joint_transform(godot_joint)
-		#jts[carl_joint] = p_tracker.get_hand_joint_transform(godot_joint) * hti
 		jts[carl_joint] = hti * p_tracker.get_hand_joint_transform(godot_joint)
 
 		carl_joint += 1

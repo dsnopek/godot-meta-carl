@@ -27,14 +27,14 @@ void CARLInputSample::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_timestamp", "timestamp"), &CARLInputSample::set_timestamp);
 	ClassDB::bind_method(D_METHOD("get_timestamp"), &CARLInputSample::get_timestamp);
 
-	ClassDB::bind_method(D_METHOD("set_hmd_pose", "post"), &CARLInputSample::set_hmd_pose);
+	ClassDB::bind_method(D_METHOD("set_hmd_pose", "pose"), &CARLInputSample::set_hmd_pose);
 	ClassDB::bind_method(D_METHOD("get_hmd_pose"), &CARLInputSample::get_hmd_pose);
 
-	ClassDB::bind_method(D_METHOD("set_left_wrist_pose", "post"), &CARLInputSample::set_left_wrist_pose);
+	ClassDB::bind_method(D_METHOD("set_left_wrist_pose", "pose"), &CARLInputSample::set_left_wrist_pose);
 	ClassDB::bind_method(D_METHOD("get_left_wrist_pose"), &CARLInputSample::get_left_wrist_pose);
 
 	ClassDB::bind_method(D_METHOD("set_right_wrist_pose", "pose"), &CARLInputSample::set_right_wrist_pose);
-	ClassDB::bind_method(D_METHOD("get_right_wrist_post"), &CARLInputSample::get_right_wrist_pose);
+	ClassDB::bind_method(D_METHOD("get_right_wrist_pose"), &CARLInputSample::get_right_wrist_pose);
 
 	ClassDB::bind_method(D_METHOD("set_left_hand_joint_poses", "poses"), &CARLInputSample::set_left_hand_joint_poses);
 	ClassDB::bind_method(D_METHOD("get_left_hand_joint_poses"), &CARLInputSample::get_left_hand_joint_poses);
@@ -52,6 +52,8 @@ void CARLInputSample::_bind_methods() {
 
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "timestamp"), "set_timestamp", "get_timestamp");
 	ADD_PROPERTY(PropertyInfo(Variant::TRANSFORM3D, "hmd_pose"), "set_hmd_pose", "get_hmd_pose");
+	ADD_PROPERTY(PropertyInfo(Variant::TRANSFORM3D, "left_wrist_pose"), "set_left_wrist_pose", "get_left_wrist_pose");
+	ADD_PROPERTY(PropertyInfo(Variant::TRANSFORM3D, "right_wrist_pose"), "set_right_wrist_pose", "get_right_wrist_pose");
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "left_hand_joint_poses", PROPERTY_HINT_ARRAY_TYPE, vformat("%s", Variant::TRANSFORM3D)), "set_left_hand_joint_poses", "get_left_hand_joint_poses");
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "right_hand_joint_poses", PROPERTY_HINT_ARRAY_TYPE, vformat("%s", Variant::TRANSFORM3D)), "set_right_hand_joint_poses", "get_right_hand_joint_poses");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "enabled_poses", PROPERTY_HINT_FLAGS, "HMD,Left Wrist,Right Wrist,Left Joints,Right Joints"), "set_enabled_poses", "get_enabled_poses");
