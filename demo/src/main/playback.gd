@@ -42,8 +42,6 @@ func play_input_sample(p_input_sample: CARLInputSample) -> void:
 
 
 func _play_hand_joints(p_tracker: XRHandTracker, p_joint_transforms: Array[Transform3D], p_wrist_pose: Transform3D) -> void:
-	p_tracker.has_tracking_data = true
-
 	var valid_flags: int = XRHandTracker.HAND_JOINT_FLAG_POSITION_TRACKED | XRHandTracker.HAND_JOINT_FLAG_POSITION_VALID | XRHandTracker.HAND_JOINT_FLAG_ORIENTATION_TRACKED | XRHandTracker.HAND_JOINT_FLAG_ORIENTATION_VALID
 
 	var carl_joint := 0
@@ -70,3 +68,4 @@ func _play_hand_joints(p_tracker: XRHandTracker, p_joint_transforms: Array[Trans
 	p_tracker.set_hand_joint_transform(XRHandTracker.HAND_JOINT_PALM, palm_t)
 	p_tracker.set_hand_joint_flags(XRHandTracker.HAND_JOINT_PALM, valid_flags)
 	p_tracker.set_pose("default", palm_t, Vector3.ZERO, Vector3.ZERO, XRPose.XR_TRACKING_CONFIDENCE_HIGH)
+	p_tracker.has_tracking_data = true

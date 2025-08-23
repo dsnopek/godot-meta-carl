@@ -58,6 +58,30 @@ void CARLInputSample::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "right_hand_joint_poses", PROPERTY_HINT_ARRAY_TYPE, vformat("%s", Variant::TRANSFORM3D)), "set_right_hand_joint_poses", "get_right_hand_joint_poses");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "enabled_poses", PROPERTY_HINT_FLAGS, "HMD,Left Wrist,Right Wrist,Left Joints,Right Joints"), "set_enabled_poses", "get_enabled_poses");
 
+	BIND_ENUM_CONSTANT(HAND_JOINT_THUMB0);
+	BIND_ENUM_CONSTANT(HAND_JOINT_THUMB1);
+	BIND_ENUM_CONSTANT(HAND_JOINT_THUMB2);
+	BIND_ENUM_CONSTANT(HAND_JOINT_THUMB3);
+	BIND_ENUM_CONSTANT(HAND_JOINT_THUMB4);
+	BIND_ENUM_CONSTANT(HAND_JOINT_INDEX1);
+	BIND_ENUM_CONSTANT(HAND_JOINT_INDEX2);
+	BIND_ENUM_CONSTANT(HAND_JOINT_INDEX3);
+	BIND_ENUM_CONSTANT(HAND_JOINT_INDEX4);
+	BIND_ENUM_CONSTANT(HAND_JOINT_MIDDLE1);
+	BIND_ENUM_CONSTANT(HAND_JOINT_MIDDLE2);
+	BIND_ENUM_CONSTANT(HAND_JOINT_MIDDLE3);
+	BIND_ENUM_CONSTANT(HAND_JOINT_MIDDLE4);
+	BIND_ENUM_CONSTANT(HAND_JOINT_RING1);
+	BIND_ENUM_CONSTANT(HAND_JOINT_RING2);
+	BIND_ENUM_CONSTANT(HAND_JOINT_RING3);
+	BIND_ENUM_CONSTANT(HAND_JOINT_RING4);
+	BIND_ENUM_CONSTANT(HAND_JOINT_PINKY0);
+	BIND_ENUM_CONSTANT(HAND_JOINT_PINKY1);
+	BIND_ENUM_CONSTANT(HAND_JOINT_PINKY2);
+	BIND_ENUM_CONSTANT(HAND_JOINT_PINKY3);
+	BIND_ENUM_CONSTANT(HAND_JOINT_PINKY4);
+	BIND_ENUM_CONSTANT(HAND_JOINT_MAX);
+
 	BIND_BITFIELD_FLAG(POSE_HMD);
 	BIND_BITFIELD_FLAG(POSE_LEFT_WRIST);
 	BIND_BITFIELD_FLAG(POSE_RIGHT_WRIST);
@@ -67,32 +91,40 @@ void CARLInputSample::_bind_methods() {
 
 void CARLInputSample::populate_from_hand_tracker(const Ref<XRHandTracker> &p_tracker) {
 	ERR_FAIL_COND(p_tracker.is_null());
+
 	XRPositionalTracker::TrackerHand hand = p_tracker->get_tracker_hand();
 	ERR_FAIL_COND(hand != XRPositionalTracker::TRACKER_HAND_LEFT && hand != XRPositionalTracker::TRACKER_HAND_RIGHT);
+
+	TypedArray<Transform3D> &jts = (hand == XRPositionalTracker::TRACKER_HAND_LEFT) ? left_hand_joint_poses : right_hand_joint_poses;
+
+	Transform3D ht = p_tracker->get_hand_joint_transform(XRHandTracker::HAND_JOINT_WRIST);
+	Transform3D hti = ht.affine_inverse();
 
 	// The CARL joint set appears to be at least partially based on the OVR joint set, rather than the OpenXR one.
 	// It only has slots for the metacarpal joints of the thumb and pinky, but it appears not to use them anyway.
 	// The base of each finger appears to be the proximal joint.
 	// We fill them all, even though they are mostly unused - perhaps they will be used in the future?
 
-	/*
+	int carl_joint = 0;
+	for (int godot_joint = XRHandTracker::HAND_JOINT_THUMB_METACARPAL; godot_joint < XRHandTracker::HAND_JOINT_MAX; godot_joint++) {
 		// Skip the missing metacarpal joints.
 		if (godot_joint == XRHandTracker::HAND_JOINT_INDEX_FINGER_METACARPAL ||
 			godot_joint == XRHandTracker::HAND_JOINT_MIDDLE_FINGER_METACARPAL ||
 			godot_joint == XRHandTracker::HAND_JOINT_RING_FINGER_METACARPAL) {
-			godot_joint++;
+			continue;
 		}
 
-	TypedArray<Transform3D> *poses = (hand == XRPositionalTracker::TRACKER_HAND_LEFT) ? &left_hand_joint_poses : &right_hand_joint_poses;
+		// We make the joints relative to the wrist.
+		jts[carl_joint] = hti * p_tracker->get_hand_joint_transform(static_cast<XRHandTracker::HandJoint>(godot_joint));
 
-	for (int i = 0; i < XRHandTracker::HAND_JOINT_MAX; i++) {
-		//if (i == XRHandTracker::HAND_JOINT_PALM || i == XRHandTracker::HAND_JOINT_WRIST) {
-		//	(*poses)[i] = p_tracker->get_pose("default")->get_transform();
-		//} else {
-			(*poses)[i] = p_tracker->get_hand_joint_transform((XRHandTracker::HandJoint)i);
-		//}
+		carl_joint++;
 	}
-	*/
+
+	if (hand == XRPositionalTracker::TRACKER_HAND_LEFT) {
+		left_wrist_pose = ht;
+	} else {
+		right_wrist_pose = ht;
+	}
 }
 
 void CARLInputSample::set_timestamp(double p_timestamp) {

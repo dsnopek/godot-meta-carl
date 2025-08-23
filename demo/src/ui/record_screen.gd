@@ -62,31 +62,6 @@ func _process(_delta: float) -> void:
 		record_input_sample(timestamp)
 
 
-func populate_from_tracker(p_input_sample: CARLInputSample, p_tracker: XRHandTracker) -> void:
-	var hand: XRPositionalTracker.TrackerHand = p_tracker.hand
-
-	var jts: Array[Transform3D] = p_input_sample.left_hand_joint_poses if hand == XRPositionalTracker.TRACKER_HAND_LEFT else p_input_sample.right_hand_joint_poses
-
-	var ht: Transform3D = p_tracker.get_hand_joint_transform(XRHandTracker.HAND_JOINT_WRIST)
-	var hti := ht.affine_inverse()
-
-	var carl_joint := 0
-	for godot_joint in range(XRHandTracker.HAND_JOINT_THUMB_METACARPAL, XRHandTracker.HAND_JOINT_MAX):
-		if godot_joint == XRHandTracker.HAND_JOINT_INDEX_FINGER_METACARPAL or godot_joint == XRHandTracker.HAND_JOINT_MIDDLE_FINGER_METACARPAL or godot_joint == XRHandTracker.HAND_JOINT_RING_FINGER_METACARPAL:
-			continue
-
-		jts[carl_joint] = hti * p_tracker.get_hand_joint_transform(godot_joint)
-
-		carl_joint += 1
-
-	if hand == XRPositionalTracker.TRACKER_HAND_LEFT:
-		p_input_sample.left_wrist_pose = ht
-		p_input_sample.left_hand_joint_poses = jts
-	else:
-		p_input_sample.right_wrist_pose = ht
-		p_input_sample.right_hand_joint_poses = jts
-
-
 func record_input_sample(p_timestamp: float) -> void:
 	var hmd_tracker: XRPositionalTracker = XRServer.get_tracker('head')
 	var left_hand: XRHandTracker = XRServer.get_tracker('/user/hand_tracker/left')
@@ -100,13 +75,10 @@ func record_input_sample(p_timestamp: float) -> void:
 		input_sample.hmd_pose = hmd_tracker.get_pose('default').transform
 
 	if left_hand:
-		#input_sample.populate_from_hand_tracker(left_hand)
-		populate_from_tracker(input_sample, left_hand)
+		input_sample.populate_from_hand_tracker(left_hand)
 
 	if right_hand:
-		#input_sample.populate_from_hand_tracker(right_hand)
-		populate_from_tracker(input_sample, right_hand)
-
+		input_sample.populate_from_hand_tracker(right_hand)
 
 	_recorder.record_input_sample(input_sample)
 
