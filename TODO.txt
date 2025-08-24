@@ -4,13 +4,12 @@ TODO
 Phase I: Get something working
 ---
 
-- Demo: Allow cropping and saving examples in demo
-  - Should be as simple as possible: maybe just scrub through recording and press button for "start" / "stop"
-  - Or, can we get away without cropping them for testing purposes? Maybe just record the right hand?
-- Implement `CARLDefinition`, `CARLSession`, `CARLRecognizer`
+- Implement `CARLRecognizer`
 - Demo: Test recognizing a definition in the demo
   - This should be the simplest hack to make it work!
   - We need to know that our data is even any good, and that the library even remotely works
+- Demo: Allow cropping and saving examples in demo
+  - Should be as simple as possible: maybe just scrub through recording and press button for "set start" / "set end"
 - Fix CI
 - At this point, let's merge `carl-slush` into `main`
 
