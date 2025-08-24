@@ -5,11 +5,20 @@ Phase I: Get something working
 ---
 
 - Implement `CARLRecognizer`
+  - Create the object from a definition on the session
+  - The object will get created immediately, but not be "ready" until later (because its an async operation)
+  - Need `is_ready()` method and `ready` signal
+  - Add note that the example is "copied" and further changes won't affect the recognizer
 - Demo: Test recognizing a definition in the demo
   - This should be the simplest hack to make it work!
   - We need to know that our data is even any good, and that the library even remotely works
 - Demo: Allow cropping and saving examples in demo
   - Should be as simple as possible: maybe just scrub through recording and press button for "set start" / "set end"
+- Demo: Fill in the rest of the UI
+  - New, open, save
+  - Add counter example
+  - playing different examples
+  - Deleting different examples
 - Fix CI
 - At this point, let's merge `carl-slush` into `main`
 
