@@ -10,7 +10,7 @@ var _playing := false
 
 
 func _ready() -> void:
-	GameState.current_recording_changed.connect(_on_game_state_current_recording_changed)
+	GameState.current_example_changed.connect(_on_game_state_current_example_changed)
 
 
 func _process(p_delta: float) -> void:
@@ -21,17 +21,18 @@ func _process(p_delta: float) -> void:
 			timeline_slider.value += p_delta
 
 
-func _on_game_state_current_recording_changed(p_recording: CARLRecording) -> void:
-	timeline_slider.min_value = p_recording.start_timestamp
-	timeline_slider.max_value = p_recording.end_timestamp
-	timeline_slider.value = p_recording.start_timestamp
+func _on_game_state_current_example_changed(p_example: CARLExample) -> void:
+	var recording: CARLRecording = p_example.recording
+	timeline_slider.min_value = recording.start_timestamp
+	timeline_slider.max_value = recording.end_timestamp
+	timeline_slider.value = recording.start_timestamp
 
 
 func _on_timeline_slider_value_changed(p_value: float) -> void:
-	if GameState.current_recording == null:
+	if GameState.current_example == null:
 		return
 
-	var input_sample = GameState.current_recording.inspect(p_value)
+	var input_sample = GameState.current_example.recording.inspect(p_value)
 	GameState.play_input_sample(input_sample)
 
 

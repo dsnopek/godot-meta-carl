@@ -43,6 +43,9 @@ void CARLDefinition::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "examples", PROPERTY_HINT_ARRAY_TYPE, vformat("%d/%d:%s", Variant::OBJECT, PROPERTY_HINT_RESOURCE_TYPE, "CARLExample")), "set_examples", "get_examples");
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "counter_examples", PROPERTY_HINT_ARRAY_TYPE, vformat("%d/%d:%s", Variant::OBJECT, PROPERTY_HINT_RESOURCE_TYPE, "CARLExample")), "set_counter_examples", "get_counter_examples");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "default_sensitivity"), "set_default_sensitivity", "get_default_sensitivity");
+
+	ClassDB::bind_method(D_METHOD("add_example", "example"), &CARLDefinition::add_example);
+	ClassDB::bind_method(D_METHOD("add_counter_example", "example"), &CARLDefinition::add_counter_example);
 }
 
 void CARLDefinition::set_action_type(ActionType p_action_type) {
@@ -67,6 +70,14 @@ void CARLDefinition::set_counter_examples(const TypedArray<CARLExample> &p_examp
 
 TypedArray<CARLExample> CARLDefinition::get_counter_examples() const {
 	return counter_examples;
+}
+
+void CARLDefinition::add_example(const Ref<CARLExample> &p_example) {
+	examples.push_back(p_example);
+}
+
+void CARLDefinition::add_counter_example(const Ref<CARLExample> &p_example) {
+	counter_examples.push_back(p_example);
 }
 
 void CARLDefinition::set_default_sensitivity(double p_sensitivity) {

@@ -28,7 +28,8 @@ Help(opts.GenerateHelpText(localEnv))
 
 env = localEnv.Clone()
 env['disable_exceptions'] = 'no'
-env.Append(CXXFLAGS=['-Wall', '-Wuninitialized'])
+# @todo Why doesn't this work?
+env['ndk_version'] = '28.1.13356709'
 
 if not (os.path.isdir("godot-cpp") and os.listdir("godot-cpp")):
     print_error("""godot-cpp is not available within this folder, as Git submodules haven't been initialized.
@@ -39,6 +40,7 @@ Run the following command to download godot-cpp:
 
 env = SConscript("godot-cpp/SConstruct", {"env": env, "customs": customs})
 
+env.Append(CXXFLAGS=['-Wall', '-Wuninitialized'])
 env.Append(CPPPATH=[
     "src",
     "CARL/CARL/include",
@@ -46,6 +48,11 @@ env.Append(CPPPATH=[
     "CARL/Dependencies/arcana.cpp/Source/Submodules/GSL/include",
     "CARL/Dependencies/arcana.cpp/Source/Shared",
 ])
+
+# Include suffix in object files, so we can build for multiple platforms in one checkout.
+env['OBJSUFFIX'] = env['suffix'] + env['OBJSUFFIX']
+env['SHOBJSUFFIX'] = env['suffix'] + env['SHOBJSUFFIX']
+
 sources = Glob("src/*.cpp")
 
 if env["target"] in ["editor", "template_debug"]:
@@ -61,6 +68,14 @@ else:
     env.Append(LIBPATH=['CARL_build/CARL'])
 
 env.Append(LIBS=['carl_core'])
+
+env.Append(
+    LINKFLAGS=[
+        "-Wl,--no-undefined",
+        "-static-libgcc",
+        "-static-libstdc++",
+    ]
+)
 
 # .dev doesn't inhibit compatibility, so we don't need to key it.
 # .universal just means "compatible with all relevant arches" so we don't need to key it.

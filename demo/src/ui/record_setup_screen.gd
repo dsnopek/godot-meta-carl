@@ -33,5 +33,4 @@ func _on_record_button_pressed() -> void:
 
 
 func _on_cancel_button_pressed() -> void:
-	# @todo Return to definition screen
-	pass
+	get_parent().show_screen("DefinitionScreen")

@@ -23,55 +23,32 @@
 
 #pragma once
 
-#include <godot_cpp/classes/resource.hpp>
+#include <godot_cpp/classes/ref_counted.hpp>
+
+#include <carl/Carl.h>
 
 using namespace godot;
 
-class CARLExample;
+class CARLInputSample;
 
-class CARLDefinition : public Resource {
-	GDCLASS(CARLDefinition, Resource);
+class CARLSession : public RefCounted {
+	GDCLASS(CARLSession, RefCounted);
 
-public:
-	enum ActionType {
-		ACTION_LEFT_HAND_POSE,
-		ACTION_LEFT_HAND_GESTURE,
-		ACTION_RIGHT_HAND_POSE,
-		ACTION_RIGHT_HAND_GESTURE,
-		ACTION_TWO_HAND_GESTURE,
-		ACTION_LEFT_CONTROLLER_GESTURE,
-		ACTION_RIGHT_CONTROLLER_GESTURE,
-		ACTION_TWO_CONTROLLER_GESTURE,
-		ACTION_LEFT_WRIST_TRAJECTORY,
-		ACTION_RIGHT_WRIST_TRAJECTORY,
-		ACTION_LEFT_HAND_SHAPE,
-		ACTION_RIGHT_HAND_SHAPE,
-	};
+	carl::Session *carl_session = nullptr;
+	bool single_threaded = false;
 
-private:
-	ActionType action_type = ACTION_LEFT_HAND_POSE;
-	TypedArray<CARLExample> examples;
-	TypedArray<CARLExample> counter_examples;
-	double default_sensitivity = 1.0;
+	void _log_message(const String &p_message);
 
 protected:
 	static void _bind_methods();
 
 public:
-	void set_action_type(ActionType p_action_type);
-	ActionType get_action_type() const;
+	void initialize(bool p_single_threaded = false);
 
-	void set_examples(const TypedArray<CARLExample> &p_examples);
-	TypedArray<CARLExample> get_examples() const;
+	void add_input(const Ref<CARLInputSample> &p_input_sample);
+	void process();
 
-	void set_counter_examples(const TypedArray<CARLExample> &p_examples);
-	TypedArray<CARLExample> get_counter_examples() const;
+	//Ref<CARLRecognizer> create_recognizer(const Ref<CARLDefinition> &p_definition);
 
-	void set_default_sensitivity(double p_sensitivity);
-	double get_default_sensitivity() const;
-
-	void add_example(const Ref<CARLExample> &p_example);
-	void add_counter_example(const Ref<CARLExample> &p_example);
+	~CARLSession();
 };
-
-VARIANT_ENUM_CAST(CARLDefinition::ActionType);

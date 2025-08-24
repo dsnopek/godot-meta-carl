@@ -85,8 +85,14 @@ func record_input_sample(p_timestamp: float) -> void:
 
 func stop_recording() -> void:
 	if _recorder.is_recording():
-		GameState.current_recording = _recorder.finish_recording()
-		print(GameState.current_recording.serialize())
+		var new_recording: CARLRecording = _recorder.finish_recording()
+		var new_example := CARLExample.new()
+		new_example.recording = new_recording
+		new_example.start_timestamp = new_recording.start_timestamp
+		new_example.end_timestamp = new_recording.end_timestamp
+
+		GameState.add_example(new_example, _record_info['example_type'])
+		GameState.current_example = new_example
 
 	set_process(false)
 	get_parent().show_screen("DefinitionScreen", { play = true })

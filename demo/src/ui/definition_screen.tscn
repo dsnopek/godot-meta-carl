@@ -52,4 +52,5 @@ text = "Add Counter Example"
 unique_name_in_owner = true
 layout_mode = 2
 
+[connection signal="pressed" from="HBoxContainer/TestButton" to="." method="_on_test_button_pressed"]
 [connection signal="pressed" from="HBoxContainer2/ExampleContainer/AddExampleButton" to="." method="_on_add_example_button_pressed"]

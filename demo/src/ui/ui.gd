@@ -1,5 +1,12 @@
 extends Control
 
-# @todo Test stuff - remove
-func _on_button_pressed() -> void:
-	%Label.text = str(randi_range(0, 100000))
+signal screen_hidden (screen_control: Control)
+signal screen_shown (screen_control: Control)
+
+
+func _on_screens_screen_hidden(p_screen_control: Control) -> void:
+	screen_hidden.emit(p_screen_control)
+
+
+func _on_screens_screen_shown(p_screen_control: Control) -> void:
+	screen_shown.emit(p_screen_control)

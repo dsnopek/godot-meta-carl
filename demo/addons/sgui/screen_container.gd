@@ -14,6 +14,10 @@ var _current_screen: String
 var _current_screen_control: Control
 var _screens: Array[Control]
 
+signal screen_hidden (screen_control: Control)
+signal screen_shown (screen_control: Control)
+
+
 func _ready() -> void:
 	_update_children(true)
 
@@ -94,6 +98,7 @@ func show_screen(p_name: String, p_info: Dictionary = {}) -> bool:
 	if _current_screen_control:
 		if _current_screen_control.has_method('_hide_screen'):
 			_current_screen_control._hide_screen()
+		screen_hidden.emit(_current_screen_control)
 
 	_current_screen = p_name
 	_current_screen_control = screen
@@ -101,8 +106,10 @@ func show_screen(p_name: String, p_info: Dictionary = {}) -> bool:
 	for child in get_children():
 		child.visible = (screen == child)
 
-	if screen and screen.has_method("_show_screen"):
-		screen._show_screen(p_info)
+	if screen:
+		if screen.has_method("_show_screen"):
+			screen._show_screen(p_info)
+		screen_shown.emit(_current_screen_control)
 
 	update_minimum_size()
 
