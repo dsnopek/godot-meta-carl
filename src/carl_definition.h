@@ -25,6 +25,8 @@
 
 #include <godot_cpp/classes/resource.hpp>
 
+#include <carl/Carl.h>
+
 using namespace godot;
 
 class CARLExample;
@@ -72,6 +74,8 @@ public:
 
 	void add_example(const Ref<CARLExample> &p_example);
 	void add_counter_example(const Ref<CARLExample> &p_example);
+
+	carl::action::Definition *create_carl_definition() const;
 };
 
 VARIANT_ENUM_CAST(CARLDefinition::ActionType);

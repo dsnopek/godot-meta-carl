@@ -30,6 +30,8 @@
 using namespace godot;
 
 class CARLInputSample;
+class CARLDefinition;
+class CARLRecognizer;
 
 class CARLSession : public RefCounted {
 	GDCLASS(CARLSession, RefCounted);
@@ -48,7 +50,9 @@ public:
 	void add_input(const Ref<CARLInputSample> &p_input_sample);
 	void process();
 
-	//Ref<CARLRecognizer> create_recognizer(const Ref<CARLDefinition> &p_definition);
+	Ref<CARLRecognizer> create_recognizer(const Ref<CARLDefinition> &p_definition);
+
+	carl::Session *get_carl_session() const { return carl_session; }
 
 	~CARLSession();
 };

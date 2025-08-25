@@ -10,6 +10,7 @@
 #include "carl_example.h"
 #include "carl_definition.h"
 #include "carl_session.h"
+#include "carl_recognizer.h"
 
 using namespace godot;
 
@@ -24,6 +25,7 @@ void initialize_godot_meta_carl_types(ModuleInitializationLevel p_level) {
 	GDREGISTER_CLASS(CARLExample);
 	GDREGISTER_CLASS(CARLDefinition);
 	GDREGISTER_CLASS(CARLSession);
+	GDREGISTER_CLASS(CARLRecognizer);
 }
 
 void uninitialize_godot_meta_carl_types(ModuleInitializationLevel p_level) {

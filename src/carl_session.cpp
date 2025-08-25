@@ -24,11 +24,14 @@
 #include "carl_session.h"
 
 #include "carl_input_sample.h"
+#include "carl_definition.h"
+#include "carl_recognizer.h"
 
 void CARLSession::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("initialize", "single_threaded"), &CARLSession::initialize, DEFVAL(false));
 	ClassDB::bind_method(D_METHOD("add_input", "input_sample"), &CARLSession::add_input);
 	ClassDB::bind_method(D_METHOD("process"), &CARLSession::process);
+	ClassDB::bind_method(D_METHOD("create_recognizer", "definition"), &CARLSession::create_recognizer);
 }
 
 void CARLSession::_log_message(const String &p_message) {
@@ -60,6 +63,13 @@ void CARLSession::process() {
 	ERR_FAIL_COND_MSG(!single_threaded, "Can only call process() on single-threaded sessions");
 
 	carl_session->tickCallbacks(arcana::cancellation::none());
+}
+
+Ref<CARLRecognizer> CARLSession::create_recognizer(const Ref<CARLDefinition> &p_definition) {
+	Ref<CARLRecognizer> recognizer;
+	recognizer.instantiate();
+	recognizer->initialize(this, p_definition);
+	return recognizer;
 }
 
 CARLSession::~CARLSession() {

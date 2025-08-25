@@ -63,23 +63,9 @@ func _process(_delta: float) -> void:
 
 
 func record_input_sample(p_timestamp: float) -> void:
-	var hmd_tracker: XRPositionalTracker = XRServer.get_tracker('head')
-	var left_hand: XRHandTracker = XRServer.get_tracker('/user/hand_tracker/left')
-	var right_hand: XRHandTracker = XRServer.get_tracker('/user/hand_tracker/right')
-
-	var input_sample := CARLInputSample.new()
+	var input_sample := GameState.capture_input_sample()
 	input_sample.enabled_poses = _record_info['enabled_poses']
 	input_sample.timestamp = p_timestamp
-
-	if hmd_tracker:
-		input_sample.hmd_pose = hmd_tracker.get_pose('default').transform
-
-	if left_hand:
-		input_sample.populate_from_hand_tracker(left_hand)
-
-	if right_hand:
-		input_sample.populate_from_hand_tracker(right_hand)
-
 	_recorder.record_input_sample(input_sample)
 
 

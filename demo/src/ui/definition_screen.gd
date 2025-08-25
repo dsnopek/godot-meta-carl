@@ -8,6 +8,8 @@ const PlayerUI = preload("res://src/ui/player_ui.gd")
 func _ready() -> void:
 	if not GameState.current_definition:
 		GameState.current_definition = CARLDefinition.new()
+		# @todo The user should actually pick this
+		GameState.current_definition.action_type = CARLDefinition.ACTION_RIGHT_HAND_POSE
 
 
 func _show_screen(p_info: Dictionary) -> void:

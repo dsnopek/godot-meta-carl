@@ -23,38 +23,43 @@
 
 #pragma once
 
-#include <godot_cpp/classes/resource.hpp>
+#include <godot_cpp/classes/ref_counted.hpp>
+#include <godot_cpp/core/mutex_lock.hpp>
 
 #include <carl/Carl.h>
 
-#include "carl_input_sample.h"
-
 using namespace godot;
 
-class CARLRecording : public Resource {
-	GDCLASS(CARLRecording, Resource);
+class CARLSession;
+class CARLDefinition;
 
-	carl::action::Recording *carl_recording = nullptr;
-	mutable PackedByteArray data;
+class CARLRecognizer : public RefCounted {
+	GDCLASS(CARLRecognizer, RefCounted);
+
+	friend class CARLSession;
+
+	Ref<CARLSession> session;
+	double sensitivity = 1.0;
+
+	mutable Ref<Mutex> mutex;
+
+	carl::action::Recognizer *carl_recognizer = nullptr;
+	carl::action::Definition *carl_definition = nullptr;
 
 protected:
 	static void _bind_methods();
 
-	void _set_data(const PackedByteArray &p_data);
-	PackedByteArray _get_data() const;
+	void initialize(const Ref<CARLSession> &p_session, const Ref<CARLDefinition> &p_definition);
+	void _set_carl_recognizer(carl::action::Recognizer *p_carl_recognizer);
 
 public:
-	PackedByteArray serialize() const;
-	static Ref<CARLRecording> deserialize(const PackedByteArray &p_data);
+	bool is_ready() const;
 
-	double get_start_timestamp() const;
-	double get_end_timestamp() const;
+	void set_sensitivity(double p_sensitivity);
+	double get_sensitivity() const;
 
-	Ref<CARLInputSample> inspect(double p_timestamp) const;
+	double get_current_score() const;
 
-	const carl::action::Recording *get_carl_recording() const { return carl_recording; }
-
-	CARLRecording();
-	CARLRecording(carl::action::Recording *p_carl_recording);
-	~CARLRecording();
+	CARLRecognizer();
+	~CARLRecognizer();
 };

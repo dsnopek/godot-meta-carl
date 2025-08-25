@@ -27,6 +27,25 @@ signal example_addded (example: CARLExample, type: ExampleType)
 var _play_cb: Callable
 
 
+func capture_input_sample() -> CARLInputSample:
+	var hmd_tracker: XRPositionalTracker = XRServer.get_tracker('head')
+	var left_hand: XRHandTracker = XRServer.get_tracker('/user/hand_tracker/left')
+	var right_hand: XRHandTracker = XRServer.get_tracker('/user/hand_tracker/right')
+
+	var input_sample := CARLInputSample.new()
+
+	if hmd_tracker:
+		input_sample.hmd_pose = hmd_tracker.get_pose('default').transform
+
+	if left_hand:
+		input_sample.populate_from_hand_tracker(left_hand)
+
+	if right_hand:
+		input_sample.populate_from_hand_tracker(right_hand)
+
+	return input_sample
+
+
 func set_play_input_sample_callback(p_callable: Callable) -> void:
 	_play_cb = p_callable
 

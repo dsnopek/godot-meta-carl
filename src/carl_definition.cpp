@@ -46,6 +46,19 @@ void CARLDefinition::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("add_example", "example"), &CARLDefinition::add_example);
 	ClassDB::bind_method(D_METHOD("add_counter_example", "example"), &CARLDefinition::add_counter_example);
+
+	BIND_ENUM_CONSTANT(ACTION_LEFT_HAND_POSE);
+	BIND_ENUM_CONSTANT(ACTION_LEFT_HAND_GESTURE);
+	BIND_ENUM_CONSTANT(ACTION_RIGHT_HAND_POSE);
+	BIND_ENUM_CONSTANT(ACTION_RIGHT_HAND_GESTURE);
+	BIND_ENUM_CONSTANT(ACTION_TWO_HAND_GESTURE);
+	BIND_ENUM_CONSTANT(ACTION_LEFT_CONTROLLER_GESTURE);
+	BIND_ENUM_CONSTANT(ACTION_RIGHT_CONTROLLER_GESTURE);
+	BIND_ENUM_CONSTANT(ACTION_TWO_CONTROLLER_GESTURE);
+	BIND_ENUM_CONSTANT(ACTION_LEFT_WRIST_TRAJECTORY);
+	BIND_ENUM_CONSTANT(ACTION_RIGHT_WRIST_TRAJECTORY);
+	BIND_ENUM_CONSTANT(ACTION_LEFT_HAND_SHAPE);
+	BIND_ENUM_CONSTANT(ACTION_RIGHT_HAND_SHAPE);
 }
 
 void CARLDefinition::set_action_type(ActionType p_action_type) {
@@ -86,4 +99,20 @@ void CARLDefinition::set_default_sensitivity(double p_sensitivity) {
 
 double CARLDefinition::get_default_sensitivity() const {
 	return default_sensitivity;
+}
+
+carl::action::Definition *CARLDefinition::create_carl_definition() const {
+	carl::action::Definition *ret = new carl::action::Definition(static_cast<carl::action::Definition::ActionType>(action_type));
+
+	for (const Variant &v : examples) {
+		Ref<CARLExample> example = v;
+		ret->addExample(carl::action::Example(*example->get_recording()->get_carl_recording(), example->get_start_timestamp(), example->get_end_timestamp()));
+	}
+
+	for (const Variant &v : counter_examples) {
+		Ref<CARLExample> example = v;
+		ret->addCounterexample(carl::action::Example(*example->get_recording()->get_carl_recording(), example->get_start_timestamp(), example->get_end_timestamp()));
+	}
+
+	return ret;
 }
