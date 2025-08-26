@@ -52,5 +52,20 @@ text = "Add Counter Example"
 unique_name_in_owner = true
 layout_mode = 2
 
+[node name="LineEdit" type="LineEdit" parent="."]
+layout_mode = 2
+
+[node name="FileDialog" type="FileDialog" parent="."]
+unique_name_in_owner = true
+access = 2
+filters = PackedStringArray("*.tres;Godot Resource;application/x-godot-resource")
+
+[node name="AcceptDialog" type="AcceptDialog" parent="."]
+unique_name_in_owner = true
+
+[connection signal="pressed" from="HBoxContainer/NewButton" to="." method="_on_new_button_pressed"]
+[connection signal="pressed" from="HBoxContainer/OpenButton" to="." method="_on_open_button_pressed"]
+[connection signal="pressed" from="HBoxContainer/SaveButton" to="." method="_on_save_button_pressed"]
 [connection signal="pressed" from="HBoxContainer/TestButton" to="." method="_on_test_button_pressed"]
 [connection signal="pressed" from="HBoxContainer2/ExampleContainer/AddExampleButton" to="." method="_on_add_example_button_pressed"]
+[connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]

@@ -42,10 +42,8 @@ void CARLRecognizer::_bind_methods() {
 }
 
 bool CARLRecognizer::is_ready() const {
-	bool ready = false;
-
 	mutex->lock();
-	ready = static_cast<bool>(carl_recognizer);
+	bool ready = static_cast<bool>(carl_recognizer);
 	mutex->unlock();
 
 	return ready;

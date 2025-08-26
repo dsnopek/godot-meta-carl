@@ -2,12 +2,18 @@ extends OpenXRCompositionLayerQuad
 
 const NO_INTERSECTION = Vector2(-1.0, -1.0)
 const CURSOR_DISTANCE = 0.005
+const DOUBLE_CLICK_TIME = 400
+const DOUBLE_CLICK_DIST = 5.0
+
+@export var forward_keyboard_input := true
 
 @onready var _cursor: MeshInstance3D = $Cursor
 
 var _pointer: Node3D
 var _pointer_pressed := false
 var _prev_intersection: Vector2 = NO_INTERSECTION
+var _prev_pressed_pos: Vector2
+var _prev_pressed_time: int = 0
 
 
 func _intersect_to_global_pos(p_intersection: Vector2, p_distance: float = 0.0) -> Vector3:
@@ -73,6 +79,17 @@ func _send_mouse_button_event(p_pressed: bool) -> void:
 	event.button_mask = MOUSE_BUTTON_MASK_LEFT
 	event.pressed = p_pressed
 	event.position = _intersect_to_viewport_pos(_prev_intersection)
+
+	if p_pressed:
+		var time := Time.get_ticks_msec()
+		#print("Click time: ", time - _prev_pressed_time)
+		#print("Click dist: ", (event.position - _prev_pressed_pos).length())
+		if time - _prev_pressed_time < DOUBLE_CLICK_TIME and (event.position - _prev_pressed_pos).length() < DOUBLE_CLICK_DIST:
+			event.double_click = true
+
+		_prev_pressed_time = time
+		_prev_pressed_pos = event.position
+
 	layer_viewport.push_input(event)
 
 
@@ -88,6 +105,7 @@ func pointer_leave(p_pointer: Node3D) -> void:
 		_pointer_pressed = false
 		_cursor.visible = false
 		_prev_intersection = NO_INTERSECTION
+		_prev_pressed_time = 0
 
 
 func pointer_set_pressed(p_pointer: Node3D, p_pressed: bool) -> void:
@@ -104,5 +122,14 @@ func pointer_set_pressed(p_pointer: Node3D, p_pressed: bool) -> void:
 			pointer_leave(_pointer)
 		if pointer_intersects(p_pointer):
 			_pointer_pressed = true
+			_prev_pressed_time = 0
 			_send_mouse_button_event(true)
 
+
+func _input(p_event: InputEvent) -> void:
+	print("Received input: ", p_event)
+
+	if forward_keyboard_input and layer_viewport:
+		if p_event is InputEventKey or p_event is InputEventShortcut:
+			print("Received keyboard input: ", p_event)
+			layer_viewport.push_input(p_event)
