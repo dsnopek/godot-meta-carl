@@ -127,9 +127,6 @@ func pointer_set_pressed(p_pointer: Node3D, p_pressed: bool) -> void:
 
 
 func _input(p_event: InputEvent) -> void:
-	print("Received input: ", p_event)
-
 	if forward_keyboard_input and layer_viewport:
 		if p_event is InputEventKey or p_event is InputEventShortcut:
-			print("Received keyboard input: ", p_event)
 			layer_viewport.push_input(p_event)

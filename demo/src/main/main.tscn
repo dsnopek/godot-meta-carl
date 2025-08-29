@@ -18,6 +18,7 @@ script = ExtResource("1_ig7tw")
 [node name="XRCamera3D" type="XRCamera3D" parent="XROrigin3D"]
 
 [node name="UILayer" parent="XROrigin3D" node_paths=PackedStringArray("layer_viewport") instance=ExtResource("3_h2yge")]
+process_mode = 3
 transform = Transform3D(0.84894, 0, 0.528488, 0, 1, 0, -0.528488, 0, 0.84894, -1.79071, 1.25, -1.5)
 layer_viewport = NodePath("SubViewport")
 sort_order = -1

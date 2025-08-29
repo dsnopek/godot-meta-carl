@@ -52,11 +52,10 @@ text = "Add Counter Example"
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="LineEdit" type="LineEdit" parent="."]
-layout_mode = 2
-
 [node name="FileDialog" type="FileDialog" parent="."]
 unique_name_in_owner = true
+exclusive = false
+unresizable = true
 access = 2
 filters = PackedStringArray("*.tres;Godot Resource;application/x-godot-resource")
 
