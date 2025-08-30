@@ -14,6 +14,7 @@ disable_receive_shadows = true
 script = ExtResource("1_pjipa")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.45519e-11, 1.45519e-11, -5.02)
 mesh = SubResource("BoxMesh_6h6mo")
 skeleton = NodePath("../../LeftHand")

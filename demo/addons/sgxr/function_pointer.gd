@@ -6,6 +6,15 @@ const UILayer = preload("res://addons/sgxr/ui_layer.gd")
 	set = set_enabled
 
 @export var select_action := "trigger_click"
+@export var select_pressed_threshold := 0.9
+@export var select_release_threshold := 0.6
+
+@export var show_always := false:
+	set(v):
+		show_always = v
+		_update_pointer_visibility()
+
+@onready var _mesh_instance: MeshInstance3D = %MeshInstance3D
 
 var _controller: XRController3D
 var _cur_layer: UILayer = null
@@ -17,12 +26,18 @@ func set_enabled(p_enabled: bool) -> void:
 	if not enabled and _cur_layer:
 		_cur_layer.pointer_leave(self)
 		_cur_layer = null
+	_update_pointer_visibility()
+
+
+func _ready() -> void:
+	_update_pointer_visibility()
 
 
 func _enter_tree() -> void:
 	var parent = get_parent()
 	if parent is XRController3D:
 		_controller = parent
+		_controller.input_float_changed.connect(_on_controller_input_float_changed)
 		_controller.button_pressed.connect(_on_controller_button_pressed)
 		_controller.button_released.connect(_on_controller_button_released)
 	else:
@@ -31,6 +46,7 @@ func _enter_tree() -> void:
 
 func _exit_tree() -> void:
 	if _controller:
+		_controller.input_float_changed.disconnect(_on_controller_input_float_changed)
 		_controller.button_pressed.disconnect(_on_controller_button_pressed)
 		_controller.button_released.disconnect(_on_controller_button_released)
 
@@ -41,13 +57,16 @@ func _process(_delta: float) -> void:
 			if not layer is UILayer:
 				continue
 			if layer.pointer_intersects(self):
-				if _cur_layer and _cur_layer != layer:
-					_cur_layer.pointer_leave(self)
-				_cur_layer = layer
+				if layer != _cur_layer:
+					if _cur_layer:
+						_cur_layer.pointer_leave(self)
+					_cur_layer = layer
+					_update_pointer_visibility()
 				break
 			elif _cur_layer == layer:
 				_cur_layer.pointer_leave(self)
 				_cur_layer = null
+				_update_pointer_visibility()
 
 
 func _get_ui_layers() -> Array:
@@ -66,13 +85,42 @@ func _get_ui_layers() -> Array:
 	return nodes
 
 
+func _update_pointer_visibility() -> void:
+	if _mesh_instance:
+		_mesh_instance.visible = _check_pointer_visibility()
+
+
+func _check_pointer_visibility() -> bool:
+	if not enabled:
+		return false
+
+	if not show_always and not _cur_layer:
+		return false
+
+	return true
+
+
+func _on_controller_input_float_changed(p_name: String, p_value: float) -> void:
+	if p_name == select_action:
+		if not _pressed and p_value > select_pressed_threshold:
+			_pressed = true
+			if _cur_layer:
+				_cur_layer.pointer_set_pressed(self, true)
+		elif _pressed and p_value < select_release_threshold:
+			_pressed = false
+			if _cur_layer:
+				_cur_layer.pointer_set_pressed(self, false)
+
+
 func _on_controller_button_pressed(p_name: String) -> void:
 	if p_name == select_action:
+		_pressed = true
 		if _cur_layer:
 			_cur_layer.pointer_set_pressed(self, true)
 
 
 func _on_controller_button_released(p_name: String) -> void:
 	if p_name == select_action:
+		_pressed = false
 		if _cur_layer:
 			_cur_layer.pointer_set_pressed(self, false)
