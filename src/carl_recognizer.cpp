@@ -86,6 +86,7 @@ void CARLRecognizer::initialize(const Ref<CARLSession> &p_session, const Ref<CAR
 void CARLRecognizer::_set_carl_recognizer(carl::action::Recognizer *p_carl_recognizer) {
 	mutex->lock();
 	carl_recognizer = p_carl_recognizer;
+	carl_recognizer->setSensitivity(sensitivity);
 	mutex->unlock();
 }
 

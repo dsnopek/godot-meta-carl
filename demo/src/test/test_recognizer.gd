@@ -1,6 +1,7 @@
 extends Control
 
 const TEST_DEFINITION = preload("res://src/test/carl_right_peace_sign.tres")
+const TEST_PLAYBACK = preload("res://src/test/carl_full_playback.tres")
 
 @onready var status_label: Label = %StatusLabel
 @onready var score_field: Label = %ScoreField
@@ -25,7 +26,7 @@ func _ready() -> void:
 	recognizer.ready.connect(_on_recognizer_is_ready)
 	print("Recognizer ready: ", recognizer.is_ready())
 
-	recording = TEST_DEFINITION.examples[0].recording
+	recording = TEST_PLAYBACK.examples[0].recording
 
 	session_start = Time.get_ticks_usec()
 
