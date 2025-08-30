@@ -33,7 +33,8 @@ func update_score_field() -> void:
 
 
 func _process(_delta: float) -> void:
-	session.process()
+	if session:
+		session.process()
 
 	if recognizer:
 		var input_sample := GameState.capture_input_sample()
