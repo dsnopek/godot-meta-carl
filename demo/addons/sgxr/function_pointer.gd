@@ -14,6 +14,16 @@ const UILayer = preload("res://addons/sgxr/ui_layer.gd")
 		show_when_intersecting = v
 		_update_pointer_visibility()
 
+@export var released_material: Material:
+	set(v):
+		released_material = v
+		_update_pointer_material()
+
+@export var pressed_material: Material:
+	set(v):
+		pressed_material = v
+		_update_pointer_material()
+
 @onready var _mesh_instance: MeshInstance3D = %MeshInstance3D
 
 var _controller: XRController3D
@@ -27,6 +37,7 @@ func set_enabled(p_enabled: bool) -> void:
 		_cur_layer.pointer_leave(self)
 		_cur_layer = null
 	_update_pointer_visibility()
+	_update_pointer_material()
 
 
 func _ready() -> void:
@@ -100,14 +111,21 @@ func _check_pointer_visibility() -> bool:
 	return true
 
 
+func _update_pointer_material() -> void:
+	if _mesh_instance:
+		_mesh_instance.set_surface_override_material(0, pressed_material if _pressed else released_material)
+
+
 func _on_controller_input_float_changed(p_name: String, p_value: float) -> void:
 	if p_name == select_action:
 		if not _pressed and p_value > select_pressed_threshold:
 			_pressed = true
+			_update_pointer_material()
 			if _cur_layer:
 				_cur_layer.pointer_set_pressed(self, true)
 		elif _pressed and p_value < select_release_threshold:
 			_pressed = false
+			_update_pointer_material()
 			if _cur_layer:
 				_cur_layer.pointer_set_pressed(self, false)
 
@@ -115,6 +133,7 @@ func _on_controller_input_float_changed(p_name: String, p_value: float) -> void:
 func _on_controller_button_pressed(p_name: String) -> void:
 	if p_name == select_action:
 		_pressed = true
+		_update_pointer_material()
 		if _cur_layer:
 			_cur_layer.pointer_set_pressed(self, true)
 
@@ -122,5 +141,6 @@ func _on_controller_button_pressed(p_name: String) -> void:
 func _on_controller_button_released(p_name: String) -> void:
 	if p_name == select_action:
 		_pressed = false
+		_update_pointer_material()
 		if _cur_layer:
 			_cur_layer.pointer_set_pressed(self, false)
