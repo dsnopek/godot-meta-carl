@@ -44,7 +44,7 @@ func play_input_sample(p_input_sample: CARLInputSample) -> void:
 func _play_hand_joints(p_tracker: XRHandTracker, p_joint_transforms: Array[Transform3D], p_wrist_pose: Transform3D) -> void:
 	var valid_flags: int = XRHandTracker.HAND_JOINT_FLAG_POSITION_TRACKED | XRHandTracker.HAND_JOINT_FLAG_POSITION_VALID | XRHandTracker.HAND_JOINT_FLAG_ORIENTATION_TRACKED | XRHandTracker.HAND_JOINT_FLAG_ORIENTATION_VALID
 
-	var carl_joint := 0
+	var carl_joint := 1
 	for godot_joint in range(XRHandTracker.HAND_JOINT_THUMB_METACARPAL, XRHandTracker.HAND_JOINT_MAX):
 		if godot_joint == XRHandTracker.HAND_JOINT_INDEX_FINGER_METACARPAL or godot_joint == XRHandTracker.HAND_JOINT_MIDDLE_FINGER_METACARPAL or godot_joint == XRHandTracker.HAND_JOINT_RING_FINGER_METACARPAL:
 			continue

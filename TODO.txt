@@ -4,21 +4,24 @@ TODO
 Phase I: Get something working
 ---
 
-- Implement `CARLRecognizer`
-  - Create the object from a definition on the session
-  - The object will get created immediately, but not be "ready" until later (because its an async operation)
-  - Need `is_ready()` method and `ready` signal
-  - Add note that the example is "copied" and further changes won't affect the recognizer
-- Demo: Test recognizing a definition in the demo
-  - This should be the simplest hack to make it work!
-  - We need to know that our data is even any good, and that the library even remotely works
-- Demo: Allow cropping and saving examples in demo
-  - Should be as simple as possible: maybe just scrub through recording and press button for "set start" / "set end"
 - Demo: Fill in the rest of the UI
-  - New, open, save
+  - Improve pointer
+    - Use a different signal for pinch? (We can use hand tracking aim if nothing on hand interaction works well enough)
+    - Use a different signal for the file dialog? Seems to happen to early?
+    - Have aim mesh start a little further away from hand
+    - Make aim mesh white and blue (for pressed and not pressed)
+    - Hide pointer when not hitting UI layer
+    - Hide hands and pointer when we lose OpenXR focus
+  - Making new definitions
+    - Automatically configure the enabled poses based on the action type
+  - Cropping examples
+    - Add auto-trimming?
+    - Player should allow playing whole thing or limiting to the crop
+    - Player should allow enabling or disabling looping
+    - Player should allow incrementing or decrementing by a single sample
+  - Select example to play
   - Add counter example
-  - playing different examples
-  - Deleting different examples
+  - Deleting examples
 - Fix CI
 - At this point, let's merge `carl-slush` into `main`
 

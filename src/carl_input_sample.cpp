@@ -105,7 +105,7 @@ void CARLInputSample::populate_from_hand_tracker(const Ref<XRHandTracker> &p_tra
 	// The base of each finger appears to be the proximal joint.
 	// We fill them all, even though they are mostly unused - perhaps they will be used in the future?
 
-	int carl_joint = 0;
+	int carl_joint = 1;
 	for (int godot_joint = XRHandTracker::HAND_JOINT_THUMB_METACARPAL; godot_joint < XRHandTracker::HAND_JOINT_MAX; godot_joint++) {
 		// Skip the missing metacarpal joints.
 		if (godot_joint == XRHandTracker::HAND_JOINT_INDEX_FINGER_METACARPAL ||
@@ -119,6 +119,9 @@ void CARLInputSample::populate_from_hand_tracker(const Ref<XRHandTracker> &p_tra
 
 		carl_joint++;
 	}
+
+	// Duplicate the thumb metacarpal joint.
+	jts[0] = jts[1];
 
 	if (hand == XRPositionalTracker::TRACKER_HAND_LEFT) {
 		left_wrist_pose = ht;
