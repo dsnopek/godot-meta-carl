@@ -23,6 +23,10 @@ GameState="*res://src/autoload/game_state.tscn"
 
 settings/stdout/verbose_stdout=true
 
+[gui]
+
+theme/default_font_multichannel_signed_distance_field=true
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
@@ -38,7 +42,6 @@ openxr/foveation_dynamic=true
 openxr/startup_alert=false
 openxr/extensions/hand_tracking=true
 openxr/extensions/hand_tracking_unobstructed_data_source=true
-openxr/extensions/hand_tracking_controller_data_source=true
 openxr/extensions/hand_interaction_profile=true
 shaders/enabled=true
 openxr/extensions/meta/hand_tracking_mesh=true

@@ -9,9 +9,9 @@ const UILayer = preload("res://addons/sgxr/ui_layer.gd")
 @export var select_pressed_threshold := 0.9
 @export var select_release_threshold := 0.6
 
-@export var show_always := false:
+@export var show_when_intersecting := true:
 	set(v):
-		show_always = v
+		show_when_intersecting = v
 		_update_pointer_visibility()
 
 @onready var _mesh_instance: MeshInstance3D = %MeshInstance3D
@@ -94,7 +94,7 @@ func _check_pointer_visibility() -> bool:
 	if not enabled:
 		return false
 
-	if not show_always and not _cur_layer:
+	if show_when_intersecting and not _cur_layer:
 		return false
 
 	return true

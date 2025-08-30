@@ -27,14 +27,19 @@ func _on_new_button_pressed() -> void:
 	pass
 
 
-func _on_open_button_pressed() -> void:
-	file_dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE
+func _show_file_dialog(p_file_mode: FileDialog.FileMode) -> void:
+	file_dialog.file_mode = p_file_mode
+	file_dialog.get_line_edit().virtual_keyboard_enabled = false
 	file_dialog.popup_centered()
+	file_dialog.get_line_edit().virtual_keyboard_enabled = true
+
+
+func _on_open_button_pressed() -> void:
+	_show_file_dialog(FileDialog.FILE_MODE_OPEN_FILE)
 
 
 func _on_save_button_pressed() -> void:
-	file_dialog.file_mode = FileDialog.FILE_MODE_SAVE_FILE
-	file_dialog.popup_centered()
+	_show_file_dialog(FileDialog.FILE_MODE_SAVE_FILE)
 
 
 func _on_test_button_pressed() -> void:

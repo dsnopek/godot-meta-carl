@@ -6,10 +6,7 @@ Phase I: Get something working
 
 - Demo: Fill in the rest of the UI
   - Improve pointer
-    - Use a different signal for the file dialog? Seems to happen to early?
-    - Have aim mesh start a little further away from hand
     - Make aim mesh white and blue (for pressed and not pressed)
-    - Do something sane with controllers?
   - Making new definitions
     - Automatically configure the enabled poses based on the action type
   - Cropping examples

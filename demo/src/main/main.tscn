@@ -48,14 +48,18 @@ pose = &"aim"
 select_action = "select"
 
 [node name="LeftHand" type="XRNode3D" parent="XROrigin3D" groups=["hand"]]
+unique_name_in_owner = true
 tracker = &"/user/hand_tracker/left"
+show_when_tracked = true
 
 [node name="OpenXRFbHandTrackingMesh" type="OpenXRFbHandTrackingMesh" parent="XROrigin3D/LeftHand"]
 
 [node name="XRHandModifier3D" type="XRHandModifier3D" parent="XROrigin3D/LeftHand/OpenXRFbHandTrackingMesh"]
 
 [node name="RightHand" type="XRNode3D" parent="XROrigin3D" groups=["hand"]]
+unique_name_in_owner = true
 tracker = &"/user/hand_tracker/right"
+show_when_tracked = true
 
 [node name="OpenXRFbHandTrackingMesh" type="OpenXRFbHandTrackingMesh" parent="XROrigin3D/RightHand"]
 hand = 1
@@ -89,6 +93,14 @@ bones/25/name = "RightLittleTip"
 [node name="XRHandModifier3D" type="XRHandModifier3D" parent="XROrigin3D/RightHand/OpenXRFbHandTrackingMesh"]
 hand_tracker = &"/user/hand_tracker/right"
 
+[node name="HandTrackingMessage" type="Label3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.86999, -1.52301)
+visible = false
+text = "Please switch to 
+hand tracking"
+outline_size = 3
+
 [node name="Playback" parent="." instance=ExtResource("5_jqarl")]
 unique_name_in_owner = true
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, -1.89646)
@@ -104,5 +116,7 @@ shadow_enabled = true
 
 [connection signal="screen_hidden" from="XROrigin3D/UILayer/SubViewport/UI" to="." method="_on_ui_screen_hidden"]
 [connection signal="screen_shown" from="XROrigin3D/UILayer/SubViewport/UI" to="." method="_on_ui_screen_shown"]
+[connection signal="tracking_changed" from="XROrigin3D/LeftHand" to="." method="_on_hand_tracking_changed"]
+[connection signal="tracking_changed" from="XROrigin3D/RightHand" to="." method="_on_hand_tracking_changed"]
 [connection signal="focus_gained" from="StartXR" to="." method="_on_start_xr_focus_gained"]
 [connection signal="focus_lost" from="StartXR" to="." method="_on_start_xr_focus_lost"]
