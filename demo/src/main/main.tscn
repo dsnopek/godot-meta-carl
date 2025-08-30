@@ -33,28 +33,28 @@ render_target_update_mode = 4
 
 [node name="UI" parent="XROrigin3D/UILayer/SubViewport" instance=ExtResource("3_lquwl")]
 
-[node name="LeftController" type="XRController3D" parent="XROrigin3D"]
+[node name="LeftController" type="XRController3D" parent="XROrigin3D" groups=["hand"]]
 tracker = &"left_hand"
 pose = &"aim"
 
 [node name="FunctionPointer" parent="XROrigin3D/LeftController" instance=ExtResource("3_1bvp3")]
 select_action = "select"
 
-[node name="RightController" type="XRController3D" parent="XROrigin3D"]
+[node name="RightController" type="XRController3D" parent="XROrigin3D" groups=["hand"]]
 tracker = &"right_hand"
 pose = &"aim"
 
 [node name="FunctionPointer" parent="XROrigin3D/RightController" instance=ExtResource("3_1bvp3")]
 select_action = "select"
 
-[node name="LeftHand" type="XRNode3D" parent="XROrigin3D"]
+[node name="LeftHand" type="XRNode3D" parent="XROrigin3D" groups=["hand"]]
 tracker = &"/user/hand_tracker/left"
 
 [node name="OpenXRFbHandTrackingMesh" type="OpenXRFbHandTrackingMesh" parent="XROrigin3D/LeftHand"]
 
 [node name="XRHandModifier3D" type="XRHandModifier3D" parent="XROrigin3D/LeftHand/OpenXRFbHandTrackingMesh"]
 
-[node name="RightHand" type="XRNode3D" parent="XROrigin3D"]
+[node name="RightHand" type="XRNode3D" parent="XROrigin3D" groups=["hand"]]
 tracker = &"/user/hand_tracker/right"
 
 [node name="OpenXRFbHandTrackingMesh" type="OpenXRFbHandTrackingMesh" parent="XROrigin3D/RightHand"]
@@ -104,3 +104,5 @@ shadow_enabled = true
 
 [connection signal="screen_hidden" from="XROrigin3D/UILayer/SubViewport/UI" to="." method="_on_ui_screen_hidden"]
 [connection signal="screen_shown" from="XROrigin3D/UILayer/SubViewport/UI" to="." method="_on_ui_screen_shown"]
+[connection signal="focus_gained" from="StartXR" to="." method="_on_start_xr_focus_gained"]
+[connection signal="focus_lost" from="StartXR" to="." method="_on_start_xr_focus_lost"]
