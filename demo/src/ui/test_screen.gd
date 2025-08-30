@@ -33,6 +33,8 @@ func update_score_field() -> void:
 
 
 func _process(_delta: float) -> void:
+	session.process()
+
 	if recognizer:
 		var input_sample := GameState.capture_input_sample()
 		input_sample.timestamp = (Time.get_ticks_usec() - session_start) / 1000000.0

@@ -47,6 +47,8 @@ protected:
 public:
 	void initialize(bool p_single_threaded = false);
 
+	bool is_single_threaded() const { return single_threaded; }
+
 	void add_input(const Ref<CARLInputSample> &p_input_sample);
 	void process();
 

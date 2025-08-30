@@ -29,6 +29,7 @@
 
 void CARLSession::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("initialize", "single_threaded"), &CARLSession::initialize, DEFVAL(false));
+	ClassDB::bind_method(D_METHOD("is_single_threaded"), &CARLSession::is_single_threaded);
 	ClassDB::bind_method(D_METHOD("add_input", "input_sample"), &CARLSession::add_input);
 	ClassDB::bind_method(D_METHOD("process"), &CARLSession::process);
 	ClassDB::bind_method(D_METHOD("create_recognizer", "definition"), &CARLSession::create_recognizer);
@@ -60,7 +61,6 @@ void CARLSession::add_input(const Ref<CARLInputSample> &p_input_sample) {
 
 void CARLSession::process() {
 	ERR_FAIL_COND_MSG(carl_session == nullptr, "CARLSession must be initialized");
-	ERR_FAIL_COND_MSG(!single_threaded, "Can only call process() on single-threaded sessions");
 
 	carl_session->tickCallbacks(arcana::cancellation::none());
 }

@@ -213,36 +213,26 @@ carl::InputSample CARLInputSample::get_carl_object() const {
 	if (enabled_poses.has_flag(POSE_HMD)) {
 		cis.HmdPose.emplace();
 		to_carl_transform(hmd_pose, *cis.HmdPose);
-	} else {
-		cis.HmdPose.reset();
 	}
 
 	if (enabled_poses.has_flag(POSE_LEFT_WRIST)) {
 		cis.LeftWristPose.emplace();
 		to_carl_transform(left_wrist_pose, *cis.LeftWristPose);
-	} else {
-		cis.LeftWristPose.reset();
 	}
 
 	if (enabled_poses.has_flag(POSE_RIGHT_WRIST)) {
 		cis.RightWristPose.emplace();
 		to_carl_transform(right_wrist_pose, *cis.RightWristPose);
-	} else {
-		cis.RightWristPose.reset();
 	}
 
 	if (enabled_poses.has_flag(POSE_LEFT_JOINTS)) {
 		cis.LeftHandJointPoses.emplace();
 		to_carl_hand_joint_poses(left_hand_joint_poses, *cis.LeftHandJointPoses);
-	} else {
-		cis.LeftHandJointPoses.reset();
 	}
 
 	if (enabled_poses.has_flag(POSE_RIGHT_JOINTS)) {
 		cis.RightHandJointPoses.emplace();
 		to_carl_hand_joint_poses(right_hand_joint_poses, *cis.RightHandJointPoses);
-	} else {
-		cis.RightHandJointPoses.reset();
 	}
 
 	return cis;

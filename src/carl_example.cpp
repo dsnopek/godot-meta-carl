@@ -47,6 +47,9 @@ void CARLExample::set_recording(const Ref<CARLRecording> &p_recording) {
 	if (recording.is_valid()) {
 		start_timestamp = std::clamp(start_timestamp, recording->get_start_timestamp(), recording->get_end_timestamp());
 		end_timestamp = std::clamp(end_timestamp, recording->get_start_timestamp(), recording->get_end_timestamp());
+		if (end_timestamp <= start_timestamp) {
+			end_timestamp = recording->get_end_timestamp();
+		}
 	}
 }
 
@@ -56,7 +59,7 @@ Ref<CARLRecording> CARLExample::get_recording() const {
 
 void CARLExample::set_start_timestamp(double p_timestamp) {
 	if (recording.is_valid()) {
-		start_timestamp = std::clamp(start_timestamp, recording->get_start_timestamp(), recording->get_end_timestamp());
+		start_timestamp = std::clamp(p_timestamp, recording->get_start_timestamp(), recording->get_end_timestamp());
 	} else {
 		start_timestamp = p_timestamp;
 	}
@@ -68,7 +71,7 @@ double CARLExample::get_start_timestamp() const {
 
 void CARLExample::set_end_timestamp(double p_timestamp) {
 	if (recording.is_valid()) {
-		end_timestamp = std::clamp(end_timestamp, recording->get_start_timestamp(), recording->get_end_timestamp());
+		end_timestamp = std::clamp(p_timestamp, recording->get_start_timestamp(), recording->get_end_timestamp());
 	} else {
 		end_timestamp = p_timestamp;
 	}
