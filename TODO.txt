@@ -5,14 +5,14 @@ Phase I: Get something working
 ---
 
 - Demo: Fill in the rest of the UI
+  - Select example to play
+  - Add counter example
+  - Deleting examples
   - Cropping examples
     - Add auto-trimming?
     - Player should allow playing whole thing or limiting to the crop
     - Player should allow enabling or disabling looping
     - Player should allow incrementing or decrementing by a single sample
-  - Select example to play
-  - Add counter example
-  - Deleting examples
   - Fix ScreenContainer in the editor
     - Changing visibility on screens doesn't trigger hiding of others any more
     - Changing "Current Screen" field doesn't work any more
