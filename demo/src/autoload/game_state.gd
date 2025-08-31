@@ -19,8 +19,8 @@ var current_example: CARLExample:
 			current_example = v
 			current_example_changed.emit(v)
 
-signal current_definition_changed (recording: CARLDefinition)
-signal current_example_changed (recording: CARLRecording)
+signal current_definition_changed (definiton: CARLDefinition)
+signal current_example_changed (example: CARLExample)
 signal input_sample_played (input_sample: CARLInputSample)
 signal example_addded (example: CARLExample, type: ExampleType)
 

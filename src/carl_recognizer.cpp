@@ -73,11 +73,11 @@ void CARLRecognizer::initialize(const Ref<CARLSession> &p_session, const Ref<CAR
 	carl_definition = p_definition->create_carl_definition();
 
 	// Schedule the creation of the recognizer.
-	Ref<CARLRecognizer> self = this;
+	Ref<CARLRecognizer> self_ref = this;
 	carl::Session *carl_session = session->get_carl_session();
 	arcana::make_task(carl_session->processingScheduler(), arcana::cancellation::none(), [carl_session, carl_definition = this->carl_definition]() {
 		return new carl::action::Recognizer(*carl_session, *carl_definition);
-	}).then(carl_session->callbackScheduler(), arcana::cancellation::none(), [self](carl::action::Recognizer *carl_recognizer) {
+	}).then(carl_session->callbackScheduler(), arcana::cancellation::none(), [self = self_ref](carl::action::Recognizer *carl_recognizer) {
 		self->_set_carl_recognizer(carl_recognizer);
 		self->emit_signal("ready");
 	});
@@ -94,12 +94,22 @@ CARLRecognizer::CARLRecognizer() {
 	mutex.instantiate();
 }
 
+static void _carl_recognizer_keep_session_alive(const Ref<CARLSession> &p_session) {
+	// This is just here so we can store the reference in a Callable.
+	// It will be cleaned up when the Callable is destroyed.
+}
+
 CARLRecognizer::~CARLRecognizer() {
 	if (is_ready()) {
-		carl::Session *carl_session = session->get_carl_session();
-		arcana::make_task(carl_session->processingScheduler(), arcana::cancellation::none(), [carl_recognizer = this->carl_recognizer, carl_definition = this->carl_definition]() {
+		// Attempt to keep the session alive until this is done.
+		Ref<CARLSession> session_ref = session;
+		arcana::make_task(session->get_carl_session()->processingScheduler(), arcana::cancellation::none(), [session = session_ref, carl_recognizer = this->carl_recognizer, carl_definition = this->carl_definition]() {
 			delete carl_recognizer;
 			delete carl_definition;
+
+			// This will keep the reference alive, and defer to the main thread, so that the
+			// reference is ultimately decremented and cleaned up there.
+			callable_mp_static(&_carl_recognizer_keep_session_alive).bind(session).call_deferred();
 		});
 	}
 }

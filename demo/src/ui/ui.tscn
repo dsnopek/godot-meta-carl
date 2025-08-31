@@ -1,10 +1,11 @@
-[gd_scene load_steps=7 format=3 uid="uid://ciab6rk7831n"]
+[gd_scene load_steps=8 format=3 uid="uid://ciab6rk7831n"]
 
 [ext_resource type="Script" uid="uid://d23gc5t3ljtuq" path="res://src/ui/ui.gd" id="1_7abqo"]
 [ext_resource type="PackedScene" uid="uid://dsx810267tjit" path="res://addons/sgui/screen_container.tscn" id="2_qemve"]
 [ext_resource type="PackedScene" uid="uid://dg6f4jtiqh7y" path="res://src/ui/record_setup_screen.tscn" id="3_8wxmc"]
 [ext_resource type="PackedScene" uid="uid://c4mf0ifovvbi1" path="res://src/ui/definition_screen.tscn" id="3_sjdex"]
 [ext_resource type="PackedScene" uid="uid://dvs4xr156b56d" path="res://src/ui/record_screen.tscn" id="4_8wxmc"]
+[ext_resource type="PackedScene" uid="uid://dr4dse6aky5wy" path="res://src/ui/new_screen.tscn" id="4_gucsq"]
 [ext_resource type="PackedScene" uid="uid://cqksetty2la4q" path="res://src/ui/test_screen.tscn" id="5_sjdex"]
 
 [node name="UI" type="Control"]
@@ -27,6 +28,12 @@ grow_vertical = 2
 current_screen = "DefinitionScreen"
 
 [node name="DefinitionScreen" parent="Screens" instance=ExtResource("3_sjdex")]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="NewScreen" parent="Screens" instance=ExtResource("4_gucsq")]
+visible = false
 layout_mode = 2
 
 [node name="RecordSetupScreen" parent="Screens" instance=ExtResource("3_8wxmc")]

@@ -4,51 +4,74 @@
 [ext_resource type="PackedScene" uid="uid://dcs3ocqukin1k" path="res://src/ui/player_ui.tscn" id="2_52rgg"]
 
 [node name="DefinitionScreen" type="VBoxContainer"]
-offset_right = 289.0
-offset_bottom = 188.0
+custom_minimum_size = Vector2(700, 500)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -350.0
+offset_top = -250.0
+offset_right = 350.0
+offset_bottom = 250.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_2h06g")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
+[node name="MenuBar" type="HBoxContainer" parent="."]
 layout_mode = 2
 
-[node name="NewButton" type="Button" parent="HBoxContainer"]
+[node name="NewButton" type="Button" parent="MenuBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 text = "New"
 
-[node name="OpenButton" type="Button" parent="HBoxContainer"]
+[node name="OpenButton" type="Button" parent="MenuBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 text = "Open"
 
-[node name="SaveButton" type="Button" parent="HBoxContainer"]
+[node name="SaveButton" type="Button" parent="MenuBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 text = "Save"
 
-[node name="TestButton" type="Button" parent="HBoxContainer"]
+[node name="TestButton" type="Button" parent="MenuBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 text = "Test"
 
-[node name="FilenameLabel" type="Label" parent="."]
+[node name="DefinitionContainer" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="FilenameLabel" type="Label" parent="DefinitionContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "<untitled>"
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="."]
+[node name="HBoxContainer2" type="HBoxContainer" parent="DefinitionContainer"]
 layout_mode = 2
 
-[node name="ExampleContainer" type="VBoxContainer" parent="HBoxContainer2"]
+[node name="ExampleContainer" type="VBoxContainer" parent="DefinitionContainer/HBoxContainer2"]
 layout_mode = 2
 
-[node name="AddExampleButton" type="Button" parent="HBoxContainer2/ExampleContainer"]
+[node name="AddExampleButton" type="Button" parent="DefinitionContainer/HBoxContainer2/ExampleContainer"]
 layout_mode = 2
 text = "Add Example"
 
-[node name="CounterExampleContainer" type="VBoxContainer" parent="HBoxContainer2"]
+[node name="CounterExampleContainer" type="VBoxContainer" parent="DefinitionContainer/HBoxContainer2"]
 layout_mode = 2
 
-[node name="AddCounterExampleButton" type="Button" parent="HBoxContainer2/CounterExampleContainer"]
+[node name="AddCounterExampleButton" type="Button" parent="DefinitionContainer/HBoxContainer2/CounterExampleContainer"]
 layout_mode = 2
 text = "Add Counter Example"
 
-[node name="PlayerUI" parent="." instance=ExtResource("2_52rgg")]
+[node name="PlayerUI" parent="DefinitionContainer" instance=ExtResource("2_52rgg")]
 unique_name_in_owner = true
 layout_mode = 2
 
@@ -62,9 +85,9 @@ filters = PackedStringArray("*.tres;Godot Resource;application/x-godot-resource"
 [node name="AcceptDialog" type="AcceptDialog" parent="."]
 unique_name_in_owner = true
 
-[connection signal="pressed" from="HBoxContainer/NewButton" to="." method="_on_new_button_pressed"]
-[connection signal="pressed" from="HBoxContainer/OpenButton" to="." method="_on_open_button_pressed"]
-[connection signal="pressed" from="HBoxContainer/SaveButton" to="." method="_on_save_button_pressed"]
-[connection signal="pressed" from="HBoxContainer/TestButton" to="." method="_on_test_button_pressed"]
-[connection signal="pressed" from="HBoxContainer2/ExampleContainer/AddExampleButton" to="." method="_on_add_example_button_pressed"]
+[connection signal="pressed" from="MenuBar/NewButton" to="." method="_on_new_button_pressed"]
+[connection signal="pressed" from="MenuBar/OpenButton" to="." method="_on_open_button_pressed"]
+[connection signal="pressed" from="MenuBar/SaveButton" to="." method="_on_save_button_pressed"]
+[connection signal="pressed" from="MenuBar/TestButton" to="." method="_on_test_button_pressed"]
+[connection signal="pressed" from="DefinitionContainer/HBoxContainer2/ExampleContainer/AddExampleButton" to="." method="_on_add_example_button_pressed"]
 [connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]

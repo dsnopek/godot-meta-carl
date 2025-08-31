@@ -1,0 +1,177 @@
+[gd_scene load_steps=5 format=3 uid="uid://dr4dse6aky5wy"]
+
+[ext_resource type="Script" uid="uid://b48a7d2i7i0ro" path="res://src/ui/new_screen.gd" id="1_1uw8d"]
+[ext_resource type="LabelSettings" uid="uid://dt2vc3mnta5p5" path="res://src/ui/title_label_settings.tres" id="1_v5be7"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_paowe"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_v5be7"]
+
+[node name="NewScreen" type="VBoxContainer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -372.0
+offset_top = -279.5
+offset_right = 372.0
+offset_bottom = 279.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 20
+script = ExtResource("1_1uw8d")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+text = "Create New Definition"
+label_settings = ExtResource("1_v5be7")
+horizontal_alignment = 1
+
+[node name="ActionTypeContainer" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ActionTypeContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ActionTypeContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="LeftHandShapeField" type="CheckBox" parent="ActionTypeContainer/HBoxContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+button_group = SubResource("ButtonGroup_paowe")
+text = "Left Hand Shape"
+
+[node name="LeftHandPoseField" type="CheckBox" parent="ActionTypeContainer/HBoxContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+button_group = SubResource("ButtonGroup_paowe")
+text = "Left Hand Pose"
+
+[node name="LeftHandTrajectoryField" type="CheckBox" parent="ActionTypeContainer/HBoxContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+button_group = SubResource("ButtonGroup_paowe")
+text = "Left Hand Trajectory"
+
+[node name="LeftHandGesture" type="CheckBox" parent="ActionTypeContainer/HBoxContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+button_group = SubResource("ButtonGroup_paowe")
+text = "Left Hand Gesture"
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="ActionTypeContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="RightHandShapeField" type="CheckBox" parent="ActionTypeContainer/HBoxContainer/VBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+button_group = SubResource("ButtonGroup_v5be7")
+text = "Right Hand Shape"
+
+[node name="RightHandPoseField" type="CheckBox" parent="ActionTypeContainer/HBoxContainer/VBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+button_group = SubResource("ButtonGroup_v5be7")
+text = "Right Hand Pose"
+
+[node name="RightHandTrajectoryField" type="CheckBox" parent="ActionTypeContainer/HBoxContainer/VBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+button_group = SubResource("ButtonGroup_v5be7")
+text = "Right Hand Trajectory"
+
+[node name="RightHandGestureField" type="CheckBox" parent="ActionTypeContainer/HBoxContainer/VBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+button_group = SubResource("ButtonGroup_v5be7")
+text = "Right Hand Gesture"
+
+[node name="TwoHandedGesture" type="CheckBox" parent="ActionTypeContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+button_group = SubResource("ButtonGroup_v5be7")
+text = "Two-Handed Gesture"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="CancelButton" type="Button" parent="HBoxContainer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Cancel"
+
+[node name="NewButton" type="Button" parent="HBoxContainer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "New"
+
+[node name="GridContainer" type="GridContainer" parent="."]
+layout_mode = 2
+theme_override_constants/h_separation = 20
+theme_override_constants/v_separation = 20
+columns = 2
+
+[node name="HandShapeTitle" type="Label" parent="GridContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+text = "Hand Shape"
+
+[node name="HandShapeDescription" type="Label" parent="GridContainer"]
+custom_minimum_size = Vector2(600, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+text = "A static hand shape, that considers the joint poses and the hand orientation. Each input sample (frame) acts as an independent example of the hand shape."
+autowrap_mode = 3
+
+[node name="HandPoseTitle" type="Label" parent="GridContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+text = "Hand Pose"
+
+[node name="HandPoseDescription" type="Label" parent="GridContainer"]
+custom_minimum_size = Vector2(600, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+text = "A static hand pose, that considers the hand shape and the wrist orientation relative to the headset. Each input sample (frame) acts as an independent example of the hand pose."
+autowrap_mode = 3
+
+[node name="HandTrajectoryTitle" type="Label" parent="GridContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+text = "Hand Trajectory"
+
+[node name="HandTrajectoryDescription" type="Label" parent="GridContainer"]
+custom_minimum_size = Vector2(600, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+text = "Hand position over time, relative to the headset."
+autowrap_mode = 3
+
+[node name="HandGestureTitle" type="Label" parent="GridContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+text = "Hand Gesture"
+
+[node name="HandGestureDescription" type="Label" parent="GridContainer"]
+custom_minimum_size = Vector2(600, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+text = "A hand gesture over time, that considers the joint poses as well as hand orientation and position relative to the headset."
+autowrap_mode = 3
+
+[connection signal="pressed" from="HBoxContainer/CancelButton" to="." method="_on_cancel_button_pressed"]
+[connection signal="pressed" from="HBoxContainer/NewButton" to="." method="_on_new_button_pressed"]

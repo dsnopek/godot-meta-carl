@@ -74,6 +74,7 @@ Ref<CARLRecognizer> CARLSession::create_recognizer(const Ref<CARLDefinition> &p_
 
 CARLSession::~CARLSession() {
 	if (carl_session) {
+		carl_session->tickCallbacks(arcana::cancellation::none());
 		delete carl_session;
 	}
 }
