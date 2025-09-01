@@ -50,11 +50,34 @@ text = "Test"
 [node name="DefinitionContainer" type="VBoxContainer" parent="."]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_constants/separation = 20
 
-[node name="FilenameLabel" type="Label" parent="DefinitionContainer"]
+[node name="GridContainer" type="GridContainer" parent="DefinitionContainer"]
+layout_mode = 2
+theme_override_constants/h_separation = 10
+columns = 2
+
+[node name="FilenameLabel" type="Label" parent="DefinitionContainer/GridContainer"]
+layout_mode = 2
+text = "Path:"
+
+[node name="FilenameField" type="Label" parent="DefinitionContainer/GridContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(650, 1.45519e-11)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "<unsaved>"
+autowrap_mode = 1
+
+[node name="TypeLabel" type="Label" parent="DefinitionContainer/GridContainer"]
+layout_mode = 2
+text = "Type:"
+
+[node name="TypeField" type="Label" parent="DefinitionContainer/GridContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "<untitled>"
+size_flags_horizontal = 3
+text = "<none>"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="DefinitionContainer"]
 layout_mode = 2

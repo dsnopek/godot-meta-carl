@@ -36,6 +36,23 @@ func reset_example_list() -> void:
 	add_button.disabled = true
 
 
+func set_selected(p_index: int) -> void:
+	if p_index < 0:
+		deselect_all()
+		return
+
+	var child: TreeItem = tree.get_root().get_first_child()
+	while child:
+		if child.get_metadata(0) == p_index:
+			tree.set_selected(child, 0)
+			return
+		child = child.get_next()
+
+
+func deselect_all() -> void:
+	tree.deselect_all()
+
+
 func _on_add_button_pressed() -> void:
 	item_add.emit()
 
