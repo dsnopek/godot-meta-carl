@@ -14,6 +14,7 @@ Phase I: Get something working
   - Fix ScreenContainer in the editor
     - Changing visibility on screens doesn't trigger hiding of others any more
     - Changing "Current Screen" field doesn't work any more
+- Compress recording data?
 - Fix CI
 - At this point, let's merge `carl-slush` into `main`
 
