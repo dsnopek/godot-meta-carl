@@ -22,7 +22,7 @@ var current_example: CARLExample:
 signal current_definition_changed (definiton: CARLDefinition)
 signal current_example_changed (example: CARLExample)
 signal input_sample_played (input_sample: CARLInputSample)
-signal example_addded (example: CARLExample, type: ExampleType)
+signal example_added (example: CARLExample, type: ExampleType)
 
 var _play_cb: Callable
 
@@ -52,7 +52,8 @@ func set_play_input_sample_callback(p_callable: Callable) -> void:
 
 func play_input_sample(p_input_sample: CARLInputSample) -> void:
 	if not _play_cb.is_valid():
-		push_warning("GameState.play_input_sample() called but we have no valid callback")
+		#push_warning("GameState.play_input_sample() called but we have no valid callback")
+		return
 
 	_play_cb.call(p_input_sample)
 	input_sample_played.emit(p_input_sample)
@@ -66,4 +67,4 @@ func add_example(p_example: CARLExample, p_type: ExampleType) -> void:
 	else:
 		current_definition.add_counter_example(p_example)
 
-	example_addded.emit(p_example, p_type)
+	example_added.emit(p_example, p_type)

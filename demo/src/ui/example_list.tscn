@@ -1,0 +1,38 @@
+[gd_scene load_steps=2 format=3 uid="uid://bnu5dq2tlssre"]
+
+[ext_resource type="Script" uid="uid://d2faljebf32nx" path="res://src/ui/example_list.gd" id="1_xh7gj"]
+
+[node name="ExampleList" type="VBoxContainer"]
+custom_minimum_size = Vector2(250, 300)
+offset_right = 250.0
+offset_bottom = 300.0
+script = ExtResource("1_xh7gj")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Examples:"
+
+[node name="AddButton" type="Button" parent="HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(75, 0)
+layout_mode = 2
+text = "Add"
+
+[node name="Tree" type="Tree" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+allow_search = false
+hide_folding = true
+hide_root = true
+scroll_horizontal_enabled = false
+auto_tooltip = false
+
+[connection signal="pressed" from="HBoxContainer/AddButton" to="." method="_on_add_button_pressed"]
+[connection signal="button_clicked" from="Tree" to="." method="_on_tree_button_clicked"]
+[connection signal="item_selected" from="Tree" to="." method="_on_tree_item_selected"]

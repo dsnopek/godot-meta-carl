@@ -50,6 +50,8 @@ public:
 	double get_start_timestamp() const;
 	double get_end_timestamp() const;
 
+	int get_input_sample_count() const;
+
 	Ref<CARLInputSample> inspect(double p_timestamp) const;
 
 	const carl::action::Recording *get_carl_recording() const { return carl_recording; }

@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://c4mf0ifovvbi1"]
+[gd_scene load_steps=4 format=3 uid="uid://c4mf0ifovvbi1"]
 
 [ext_resource type="Script" uid="uid://qthgxdol2fno" path="res://src/ui/definition_screen.gd" id="1_2h06g"]
 [ext_resource type="PackedScene" uid="uid://dcs3ocqukin1k" path="res://src/ui/player_ui.tscn" id="2_52rgg"]
+[ext_resource type="PackedScene" uid="uid://bnu5dq2tlssre" path="res://src/ui/example_list.tscn" id="2_j86pn"]
 
 [node name="DefinitionScreen" type="VBoxContainer"]
 custom_minimum_size = Vector2(700, 500)
@@ -16,6 +17,7 @@ offset_right = 350.0
 offset_bottom = 250.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/separation = 20
 script = ExtResource("1_2h06g")
 
 [node name="MenuBar" type="HBoxContainer" parent="."]
@@ -54,22 +56,19 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "<untitled>"
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="DefinitionContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="DefinitionContainer"]
 layout_mode = 2
+theme_override_constants/separation = 20
 
-[node name="ExampleContainer" type="VBoxContainer" parent="DefinitionContainer/HBoxContainer2"]
+[node name="ExampleList" parent="DefinitionContainer/HBoxContainer" instance=ExtResource("2_j86pn")]
+unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 
-[node name="AddExampleButton" type="Button" parent="DefinitionContainer/HBoxContainer2/ExampleContainer"]
+[node name="CounterExampleList" parent="DefinitionContainer/HBoxContainer" instance=ExtResource("2_j86pn")]
+unique_name_in_owner = true
 layout_mode = 2
-text = "Add Example"
-
-[node name="CounterExampleContainer" type="VBoxContainer" parent="DefinitionContainer/HBoxContainer2"]
-layout_mode = 2
-
-[node name="AddCounterExampleButton" type="Button" parent="DefinitionContainer/HBoxContainer2/CounterExampleContainer"]
-layout_mode = 2
-text = "Add Counter Example"
+size_flags_horizontal = 3
 
 [node name="PlayerUI" parent="DefinitionContainer" instance=ExtResource("2_52rgg")]
 unique_name_in_owner = true
@@ -89,5 +88,4 @@ unique_name_in_owner = true
 [connection signal="pressed" from="MenuBar/OpenButton" to="." method="_on_open_button_pressed"]
 [connection signal="pressed" from="MenuBar/SaveButton" to="." method="_on_save_button_pressed"]
 [connection signal="pressed" from="MenuBar/TestButton" to="." method="_on_test_button_pressed"]
-[connection signal="pressed" from="DefinitionContainer/HBoxContainer2/ExampleContainer/AddExampleButton" to="." method="_on_add_example_button_pressed"]
 [connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]

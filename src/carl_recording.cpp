@@ -29,6 +29,9 @@ void CARLRecording::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("get_start_timestamp"), &CARLRecording::get_start_timestamp);
 	ClassDB::bind_method(D_METHOD("get_end_timestamp"), &CARLRecording::get_end_timestamp);
+
+	ClassDB::bind_method(D_METHOD("get_input_sample_count"), &CARLRecording::get_input_sample_count);
+
 	ClassDB::bind_method(D_METHOD("inspect", "timestamp"), &CARLRecording::inspect);
 
 	ClassDB::bind_method(D_METHOD("serialize"), &CARLRecording::serialize);
@@ -93,6 +96,13 @@ double CARLRecording::get_start_timestamp() const {
 double CARLRecording::get_end_timestamp() const {
 	if (carl_recording) {
 		return carl_recording->getInspector().endTimestamp();
+	}
+	return 0;
+}
+
+int CARLRecording::get_input_sample_count() const {
+	if (carl_recording) {
+		return carl_recording->getSamples().size();
 	}
 	return 0;
 }

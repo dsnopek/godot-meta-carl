@@ -1,0 +1,48 @@
+extends VBoxContainer
+
+const DELETE_TEXTURE = preload("res://assets/kenney_game-icons/trashcan-small.png")
+
+@onready var label: Label = %Label
+@onready var tree: Tree = %Tree
+@onready var add_button: Button = %AddButton
+
+signal item_add ()
+signal item_select (index: int)
+signal item_delete (index: int)
+
+
+func _ready() -> void:
+	reset_example_list()
+
+
+func setup_example_list(p_title: String, p_items: PackedStringArray) -> void:
+	label.text = p_title
+	add_button.disabled = false
+
+	tree.clear()
+	var root := tree.create_item()
+
+	var index := 0
+	for item_text in p_items:
+		var item := tree.create_item(root)
+		item.set_text(0, item_text)
+		item.add_button(0, DELETE_TEXTURE, 0, false, "Delete")
+		item.set_metadata(0, index)
+		index += 1
+
+
+func reset_example_list() -> void:
+	tree.clear()
+	add_button.disabled = true
+
+
+func _on_add_button_pressed() -> void:
+	item_add.emit()
+
+
+func _on_tree_item_selected() -> void:
+	item_select.emit(tree.get_selected().get_metadata(0))
+
+
+func _on_tree_button_clicked(p_item: TreeItem, _column: int, _id: int, _mouse_button_index: int) -> void:
+	item_delete.emit(p_item.get_metadata(0))
