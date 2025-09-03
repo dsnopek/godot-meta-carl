@@ -6,6 +6,7 @@ extends VBoxContainer
 
 var _record_info: Dictionary
 var _delay: int
+var _timestamp: float = 0.0
 
 var _recorder := CARLRecorder.new()
 var _recording_start: int
@@ -19,12 +20,12 @@ func _show_screen(p_info: Dictionary) -> void:
 	_delay = int(_record_info['delay'])
 	_record_info.erase('delay')
 
-	update_label_text()
-
 	if _delay > 0:
 		timer.start()
 	else:
 		start_recording()
+
+	update_label_text()
 
 
 func update_label_text() -> void:
@@ -32,40 +33,43 @@ func update_label_text() -> void:
 		label.text = "Recording starting in %s..." % _delay
 		stop_button.text = "Cancel"
 	else:
-		label.text = "Recording..."
+		label.text = "Recording (%.2f / %.2f seconds)..." % [_timestamp, _record_info['max_seconds']]
 		stop_button.text = "Stop"
 
 
 func _on_timer_timeout() -> void:
 	_delay -= 1
-	update_label_text()
 	if _delay == 0:
 		timer.stop()
 		start_recording()
+	update_label_text()
 
 
 func start_recording() -> void:
 	_recorder.start_recording(_record_info['max_seconds'])
 	_recording_start = Time.get_ticks_usec()
-	record_input_sample(0.0)
+	_timestamp = 0.0
+	record_input_sample()
 	set_process(true)
 
 
 func _process(_delta: float) -> void:
 	if _recorder.is_recording():
-		var timestamp: float = float(Time.get_ticks_usec() - _recording_start) / 1000000.0
+		_timestamp = float(Time.get_ticks_usec() - _recording_start) / 1000000.0
 
-		if timestamp >= _record_info['max_seconds']:
+		if _timestamp >= _record_info['max_seconds']:
+			_timestamp = _record_info['max_seconds']
 			stop_recording()
-			return
+		else:
+			record_input_sample()
 
-		record_input_sample(timestamp)
+		update_label_text()
 
 
-func record_input_sample(p_timestamp: float) -> void:
+func record_input_sample() -> void:
 	var input_sample := GameState.capture_input_sample()
 	input_sample.enabled_poses = _record_info['enabled_poses']
-	input_sample.timestamp = p_timestamp
+	input_sample.timestamp = _timestamp
 	_recorder.record_input_sample(input_sample)
 
 

@@ -5,13 +5,11 @@ Phase I: Get something working
 ---
 
 - Demo: Fill in the rest of the UI
-  - Cropping examples
-    - Add auto-trimming?
-  - RecordScreen should give a countdown (or count up?)
   - Fix ScreenContainer in the editor
     - Changing visibility on screens doesn't trigger hiding of others any more
     - Changing "Current Screen" field doesn't work any more
 - Compress recording data?
+- Fix issue with "margin" on the "Examples" tree control
 - Show input sample count as a read-only variable?
 - Fix CI
 - At this point, let's merge `carl-slush` into `main`
@@ -27,3 +25,4 @@ Backlog:
 ---
 
   - Player should allow incrementing or decrementing by a single sample
+  - Add auto-trimming of examples
