@@ -7,9 +7,6 @@ Phase I: Get something working
 - Demo: Fill in the rest of the UI
   - Cropping examples
     - Add auto-trimming?
-    - Player should allow playing whole thing or limiting to the crop
-    - Player should allow enabling or disabling looping
-    - Player should allow incrementing or decrementing by a single sample
   - RecordScreen should give a countdown (or count up?)
   - Fix ScreenContainer in the editor
     - Changing visibility on screens doesn't trigger hiding of others any more
@@ -25,3 +22,8 @@ Phase II: Proper tooling for development
 - Demo: Implement "nice" UI for constructing and testing examples
   - This should be the real deal!
   - We want a simple "studio" for creating, testing and editing definitions
+
+Backlog:
+---
+
+  - Player should allow incrementing or decrementing by a single sample

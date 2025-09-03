@@ -28,6 +28,25 @@ script = ExtResource("1_354od")
 layout_mode = 2
 theme_override_constants/separation = 20
 
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="SetStartButton" type="Button" parent="VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(75, 1.45519e-11)
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Set Start"
+
+[node name="Control" type="Control" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SetEndButton" type="Button" parent="VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(75, 1.45519e-11)
+layout_mode = 2
+size_flags_horizontal = 8
+text = "Set End"
+
 [node name="TimelineSlider" type="HSlider" parent="VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
@@ -36,33 +55,48 @@ step = 0.01389
 editable = false
 
 [node name="StartTick" type="ColorRect" parent="VBoxContainer/TimelineSlider"]
+unique_name_in_owner = true
 layout_mode = 0
-offset_top = 15.0
+offset_top = -15.0
 offset_right = 5.0
-offset_bottom = 30.0
 color = Color(0, 1, 0, 1)
 
 [node name="EndTick" type="ColorRect" parent="VBoxContainer/TimelineSlider"]
+unique_name_in_owner = true
 layout_mode = 0
 offset_left = 295.0
-offset_top = 15.0
+offset_top = -15.0
 offset_right = 300.0
-offset_bottom = 30.0
 color = Color(1, 0, 0, 1)
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
 
-[node name="PlayButton" type="Button" parent="VBoxContainer/HBoxContainer"]
+[node name="PlayButton" type="Button" parent="VBoxContainer/HBoxContainer2"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(75, 0)
 layout_mode = 2
 text = "Play"
 
-[node name="StopButton" type="Button" parent="VBoxContainer/HBoxContainer"]
+[node name="StopButton" type="Button" parent="VBoxContainer/HBoxContainer2"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(75, 0)
 layout_mode = 2
 text = "Stop"
 
+[node name="LoopField" type="CheckBox" parent="VBoxContainer/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+text = "Loop"
+
+[node name="LimitField" type="CheckBox" parent="VBoxContainer/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Limit"
+
+[connection signal="pressed" from="VBoxContainer/HBoxContainer/SetStartButton" to="." method="_on_set_start_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer/SetEndButton" to="." method="_on_set_end_button_pressed"]
 [connection signal="value_changed" from="VBoxContainer/TimelineSlider" to="." method="_on_timeline_slider_value_changed"]
-[connection signal="pressed" from="VBoxContainer/HBoxContainer/PlayButton" to="." method="play"]
-[connection signal="pressed" from="VBoxContainer/HBoxContainer/StopButton" to="." method="stop"]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer2/PlayButton" to="." method="play"]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer2/StopButton" to="." method="stop"]
