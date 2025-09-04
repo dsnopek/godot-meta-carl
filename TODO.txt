@@ -4,7 +4,6 @@ TODO
 Phase I: Get something working
 ---
 
-- Compress recording data?
 - Fix issue with "margin" on the "Examples" tree control
 - Show input sample count as a read-only variable?
 - Fix CI
@@ -22,3 +21,6 @@ Backlog:
 
   - Player should allow incrementing or decrementing by a single sample
   - Add auto-trimming of examples
+  - Make `ResourceFormatLoader` and `ResourceFormatSaver` for binary formats
+    - Have `.carld`, `carlr` and maybe `.carle` files
+    - Store the data compressed with ZSTD? (This seemed to be the best size vs time trade-off)
