@@ -21,10 +21,11 @@ signal screen_shown (screen_control: Control)
 func _ready() -> void:
 	_update_children(true)
 
-	for child in get_children():
-		if child.has_method('_setup_screen'):
-			child._setup_screen(self)
-			child.visible = false
+	if not Engine.is_editor_hint():
+		for child in get_children():
+			if child.has_method('_setup_screen'):
+				child._setup_screen(self)
+				child.visible = false
 
 	if get_child_count() > 0:
 		if _current_screen != '':
@@ -96,9 +97,10 @@ func show_screen(p_name: String, p_info: Dictionary = {}) -> bool:
 		return true
 
 	if _current_screen_control:
-		if _current_screen_control.has_method('_hide_screen'):
-			_current_screen_control._hide_screen()
-		screen_hidden.emit(_current_screen_control)
+		if not Engine.is_editor_hint():
+			if _current_screen_control.has_method('_hide_screen'):
+				_current_screen_control._hide_screen()
+			screen_hidden.emit(_current_screen_control)
 
 	_current_screen = p_name
 	_current_screen_control = screen
@@ -107,9 +109,10 @@ func show_screen(p_name: String, p_info: Dictionary = {}) -> bool:
 		child.visible = (screen == child)
 
 	if screen:
-		if screen.has_method("_show_screen"):
-			screen._show_screen(p_info)
-		screen_shown.emit(_current_screen_control)
+		if not Engine.is_editor_hint():
+			if screen.has_method("_show_screen"):
+				screen._show_screen(p_info)
+			screen_shown.emit(_current_screen_control)
 
 	update_minimum_size()
 
