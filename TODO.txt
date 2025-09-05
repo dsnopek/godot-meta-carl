@@ -4,7 +4,6 @@ TODO
 Phase I: Get something working
 ---
 
-- Show input sample count as a read-only variable?
 - Fix CI
 - At this point, let's merge `carl-slush` into `main`
 
