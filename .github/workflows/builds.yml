@@ -152,11 +152,6 @@ jobs:
           path: studio
       - name: Setup
         run: |
-          #echo "artifacts"
-          #ls artifacts
-          #echo "inside"
-          #ls artifacts/godot-meta-carl-addon
-          #cp -r artifacts/godot-meta-carl-addon/addons studio/
           ls -l studio/addons/godot-meta-carl/android
           mkdir -v -p ~/.local/share/godot/export_templates/
           mkdir -v -p ~/.config/
@@ -165,9 +160,16 @@ jobs:
       - name: Meta Quest Build
         run: |
           cd studio
+
           mkdir -v -p build/meta-quest
           EXPORT_DIR="$(readlink -f build)"
-          godot --headless --verbose --export-release "Meta Quest" "$EXPORT_DIR/meta-quest/$EXPORT_NAME.apk"
+
+          echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 --decode > release.keystore
+          export GODOT_ANDROID_KEYSTORE_RELEASE_PATH="$PWD/release.keystore"
+          export GODOT_ANDROID_KEYSTORE_RELEASE_USER="${{ secrets.ANDROID_KEYSTORE_USER }}"
+          export GODOT_ANDROID_KEYSTORE_RELEASE_PASSWORD="${{ secrets.ANDROID_KEYSTORE_PASSWORD }}"
+
+          godot --headless --verbose --install-android-build-template --export-release "Meta Quest" "$EXPORT_DIR/meta-quest/$EXPORT_NAME.apk"
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
