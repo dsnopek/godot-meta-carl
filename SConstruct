@@ -45,7 +45,7 @@ env.Append(CPPPATH=[
 env['OBJSUFFIX'] = env['suffix'] + env['OBJSUFFIX']
 env['SHOBJSUFFIX'] = env['suffix'] + env['SHOBJSUFFIX']
 
-sources = Glob("src/*.cpp")
+sources = Glob("CARL/CARL/source/*.cpp") + Glob("src/*.cpp")
 
 if env["target"] in ["editor", "template_debug"]:
     try:
@@ -53,13 +53,6 @@ if env["target"] in ["editor", "template_debug"]:
         sources.append(doc_data)
     except AttributeError:
         print("Not including class reference as we're targeting a pre-4.3 baseline.")
-
-if env['platform'] == 'android':
-    env.Append(LIBPATH=['CARL_build_android/CARL'])
-else:
-    env.Append(LIBPATH=['CARL_build/CARL'])
-
-env.Append(LIBS=['carl_core'])
 
 env.Append(
     LINKFLAGS=[
