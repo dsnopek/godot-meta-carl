@@ -141,7 +141,7 @@ jobs:
     if: github.event_name == 'push'
     env:
       GODOT_VERSION: 4.4.1
-      EXPORT_NAME: godot-meta-carl
+      EXPORT_NAME: godot-carl-studio
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -175,4 +175,14 @@ jobs:
         with:
           name: windows
           path: studio/build/meta-quest
-
+      - name: Add to release
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          artifacts: "studio/build/meta-quest/godot-carl-studio.apk"
+          draft: true
+          omitNameDuringUpdate: true
+          omitBodyDuringUpdate: true
+          omitDraftDuringUpdate: true
+          omitPrereleaseDuringUpdate: true
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
