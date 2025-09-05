@@ -12,11 +12,11 @@ jobs:
       matrix:
         target:
           - platform: linux
-            arch: x86_84
+            arch: x86_64
             os: ubuntu-22.04
             artifact_path: studio/addons/godot-meta-carl/linux
           - platform: windows
-            arch: x86_84
+            arch: x86_64
             os: windows-latest
             artifact_path: studio/addons/godot-meta-carl/windows
           - platform: macos
@@ -83,7 +83,7 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: godot-meta-carl-${{ matrix.target.platform }}-${{ matrix.target.arch }}-${{ matrix.target-type }}
+          name: godot-meta-carl-build-${{ matrix.target.platform }}-${{ matrix.target.arch }}-${{ matrix.target-type }}
           path: |
             ${{ matrix.target.artifact_path }}
 
@@ -96,7 +96,7 @@ jobs:
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
-          pattern: godot-meta-carl-*
+          pattern: godot-meta-carl-build-*
           merge-multiple: true
       - name: Copy addon
         run: |
