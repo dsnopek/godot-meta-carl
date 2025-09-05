@@ -147,14 +147,14 @@ jobs:
         uses: actions/download-artifact@v5
         with:
           name: godot-meta-carl-addon
-          path: artifacts
+          path: studio
       - name: Setup
         run: |
-          echo "artifacts"
-          ls artifacts
-          echo "inside"
-          ls artifacts/godot-meta-carl-addon
-          cp -r artifacts/godot-meta-carl-addon/addons studio/
+          #echo "artifacts"
+          #ls artifacts
+          #echo "inside"
+          #ls artifacts/godot-meta-carl-addon
+          #cp -r artifacts/godot-meta-carl-addon/addons studio/
           ls -l studio/addons/godot-meta-carl/android
           mkdir -v -p ~/.local/share/godot/export_templates/
           mkdir -v -p ~/.config/
