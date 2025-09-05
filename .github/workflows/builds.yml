@@ -173,7 +173,7 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: windows
+          name: godot-carl-studio
           path: studio/build/meta-quest
       - name: Add to release
         uses: ncipollo/release-action@v1
