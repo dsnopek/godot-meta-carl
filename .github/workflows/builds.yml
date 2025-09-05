@@ -61,19 +61,13 @@ jobs:
             SCONS_EXTRA="use_mingw=yes"
           fi
           scons target=${{ matrix.target-type }} platform=${{ matrix.target.platform }} arch=${{ matrix.target.arch }} build_profile=build_profile.json ndk_version=28.1.13356709 $SCONS_EXTRA
+          rm -f bin/*.a
 
       - name: Save .scons_cache
         uses: ./godot-cpp/.github/actions/godot-cache-save
         with:
           scons-cache: ${{ github.workspace }}/.scons-cache/
           cache-name: ${{ matrix.target.platform }}_${{ matrix.target.arch }}_${{ matrix.target-type }}
-
-      # Clean up compilation files
-      - name: Windows - Delete compilation files
-        if: ${{ matrix.target.platform == 'windows' }}
-        shell: pwsh
-        run: |
-          Remove-Item bin/* -Include *.exp,*.lib,*.pdb -Force
 
       # Upload the build
       - name: Upload Artifact

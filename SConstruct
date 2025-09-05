@@ -6,7 +6,7 @@ from methods import print_error
 
 
 libname = "godot_meta_carl"
-projectdir = "demo"
+projectdir = "studio"
 
 localEnv = Environment(tools=["default"], PLATFORM="")
 
@@ -20,8 +20,6 @@ Help(opts.GenerateHelpText(localEnv))
 
 env = localEnv.Clone()
 env['disable_exceptions'] = 'no'
-# @todo Why doesn't this work?
-env['ndk_version'] = '28.1.13356709'
 
 if not (os.path.isdir("godot-cpp") and os.listdir("godot-cpp")):
     print_error("""godot-cpp is not available within this folder, as Git submodules haven't been initialized.

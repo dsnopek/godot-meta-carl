@@ -3,23 +3,23 @@
 # Godot auto generated files
 *.gen.*
 .godot/
-demo/android/
+studio/android/
 
 # Ignore library files but not the gdextension file
-demo/bin/*
-!demo/bin/android
-demo/bin/android/*
-!demo/bin/android/.gitkeep
-!demo/bin/linux
-demo/bin/linux/*
-!demo/bin/linux/.gitkeep
-!demo/bin/macos
-demo/bin/macos/*
-!demo/bin/macos/.gitkeep
-!demo/bin/windows
-demo/bin/windows/*
-!demo/bin/windows/.gitkeep
-!demo/bin/*.gdextension
+studio/bin/*
+!studio/bin/android
+studio/bin/android/*
+!studio/bin/android/.gitkeep
+!studio/bin/linux
+studio/bin/linux/*
+!studio/bin/linux/.gitkeep
+!studio/bin/macos
+studio/bin/macos/*
+!studio/bin/macos/.gitkeep
+!studio/bin/windows
+studio/bin/windows/*
+!studio/bin/windows/.gitkeep
+!studio/bin/*.gdextension
 .sconsign*.dblite
 
 # Ignore custom.py
