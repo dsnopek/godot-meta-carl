@@ -26,8 +26,8 @@
 #include <arcana/threading/task.h>
 #include <godot_cpp/core/mutex_lock.hpp>
 
-#include "carl_session.h"
 #include "carl_definition.h"
+#include "carl_session.h"
 
 void CARLRecognizer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_sensitivity", "sensitivity"), &CARLRecognizer::set_sensitivity);

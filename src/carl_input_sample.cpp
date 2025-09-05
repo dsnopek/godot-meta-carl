@@ -109,8 +109,8 @@ void CARLInputSample::populate_from_hand_tracker(const Ref<XRHandTracker> &p_tra
 	for (int godot_joint = XRHandTracker::HAND_JOINT_THUMB_METACARPAL; godot_joint < XRHandTracker::HAND_JOINT_MAX; godot_joint++) {
 		// Skip the missing metacarpal joints.
 		if (godot_joint == XRHandTracker::HAND_JOINT_INDEX_FINGER_METACARPAL ||
-			godot_joint == XRHandTracker::HAND_JOINT_MIDDLE_FINGER_METACARPAL ||
-			godot_joint == XRHandTracker::HAND_JOINT_RING_FINGER_METACARPAL) {
+				godot_joint == XRHandTracker::HAND_JOINT_MIDDLE_FINGER_METACARPAL ||
+				godot_joint == XRHandTracker::HAND_JOINT_RING_FINGER_METACARPAL) {
 			continue;
 		}
 
@@ -246,48 +246,35 @@ void CARLInputSample::to_carl_transform(const Transform3D &p_godot_transform, ca
 	const Vector3 c1 = p_godot_transform.basis.get_column(1);
 	const Vector3 c2 = p_godot_transform.basis.get_column(2);
 
-	r_carl_transform.linear().col(0) <<
-		static_cast<carl::NumberT>(c0.x),
-		static_cast<carl::NumberT>(c0.y),
-		static_cast<carl::NumberT>(c0.z);
+	r_carl_transform.linear().col(0) << static_cast<carl::NumberT>(c0.x),
+			static_cast<carl::NumberT>(c0.y),
+			static_cast<carl::NumberT>(c0.z);
 
-	r_carl_transform.linear().col(1) <<
-		static_cast<carl::NumberT>(c1.x),
-		static_cast<carl::NumberT>(c1.y),
-		static_cast<carl::NumberT>(c1.z);
+	r_carl_transform.linear().col(1) << static_cast<carl::NumberT>(c1.x),
+			static_cast<carl::NumberT>(c1.y),
+			static_cast<carl::NumberT>(c1.z);
 
-	r_carl_transform.linear().col(2) <<
-		static_cast<carl::NumberT>(c2.x),
-		static_cast<carl::NumberT>(c2.y),
-		static_cast<carl::NumberT>(c2.z);
+	r_carl_transform.linear().col(2) << static_cast<carl::NumberT>(c2.x),
+			static_cast<carl::NumberT>(c2.y),
+			static_cast<carl::NumberT>(c2.z);
 
-	r_carl_transform.translation() <<
-		static_cast<carl::NumberT>(p_godot_transform.origin.x),
-		static_cast<carl::NumberT>(p_godot_transform.origin.y),
-		static_cast<carl::NumberT>(p_godot_transform.origin.z);
+	r_carl_transform.translation() << static_cast<carl::NumberT>(p_godot_transform.origin.x),
+			static_cast<carl::NumberT>(p_godot_transform.origin.y),
+			static_cast<carl::NumberT>(p_godot_transform.origin.z);
 }
 
 void CARLInputSample::from_carl_transform(const carl::TransformT &p_carl_transform, Transform3D &r_godot_transform) {
-	const auto& m = p_carl_transform.linear();
-	const auto& o = p_carl_transform.translation();
+	const auto &m = p_carl_transform.linear();
+	const auto &o = p_carl_transform.translation();
 
-	r_godot_transform.basis.set_column(0, Vector3(
-		static_cast<real_t>(m(0,0)),
-		static_cast<real_t>(m(1,0)),
-		static_cast<real_t>(m(2,0))));
-	r_godot_transform.basis.set_column(1, Vector3(
-		static_cast<real_t>(m(0,1)),
-		static_cast<real_t>(m(1,1)),
-		static_cast<real_t>(m(2,1))));
-	r_godot_transform.basis.set_column(2, Vector3(
-		static_cast<real_t>(m(0,2)),
-		static_cast<real_t>(m(1,2)),
-		static_cast<real_t>(m(2,2))));
+	r_godot_transform.basis.set_column(0, Vector3(static_cast<real_t>(m(0, 0)), static_cast<real_t>(m(1, 0)), static_cast<real_t>(m(2, 0))));
+	r_godot_transform.basis.set_column(1, Vector3(static_cast<real_t>(m(0, 1)), static_cast<real_t>(m(1, 1)), static_cast<real_t>(m(2, 1))));
+	r_godot_transform.basis.set_column(2, Vector3(static_cast<real_t>(m(0, 2)), static_cast<real_t>(m(1, 2)), static_cast<real_t>(m(2, 2))));
 
 	r_godot_transform.origin = Vector3(
-		static_cast<real_t>(o(0)),
-		static_cast<real_t>(o(1)),
-		static_cast<real_t>(o(2)));
+			static_cast<real_t>(o(0)),
+			static_cast<real_t>(o(1)),
+			static_cast<real_t>(o(2)));
 }
 
 void CARLInputSample::to_carl_hand_joint_poses(const TypedArray<Transform3D> &p_godot_transforms, std::array<carl::TransformT, static_cast<size_t>(carl::InputSample::Joint::COUNT)> &r_carl_transforms) {
@@ -314,7 +301,8 @@ CARLInputSample::CARLInputSample() {
 	right_hand_joint_poses.resize(static_cast<int64_t>(carl::InputSample::Joint::COUNT));
 }
 
-CARLInputSample::CARLInputSample(const carl::InputSample &p_cis) : CARLInputSample() {
+CARLInputSample::CARLInputSample(const carl::InputSample &p_cis) :
+		CARLInputSample() {
 	timestamp = p_cis.Timestamp;
 
 	if (p_cis.HmdPose.has_value()) {

@@ -48,5 +48,4 @@ public:
 
 	void set_end_timestamp(double p_timestamp);
 	double get_end_timestamp() const;
-
 };

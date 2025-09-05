@@ -23,8 +23,8 @@
 
 #include "carl_session.h"
 
-#include "carl_input_sample.h"
 #include "carl_definition.h"
+#include "carl_input_sample.h"
 #include "carl_recognizer.h"
 
 void CARLSession::_bind_methods() {
