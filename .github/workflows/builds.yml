@@ -2,8 +2,11 @@ name: Build GDExtension
 on:
   workflow_call:
   push:
+    branches:
+      - main
+    tags:
+      - 'v*'
   pull_request:
-  merge_group:
 
 jobs:
   build:
@@ -98,7 +101,6 @@ jobs:
         with:
           path: artifacts
           pattern: godot-meta-carl-build-*
-          #merge-multiple: true
       - name: Copy addon
         run: |
           ls artifacts
@@ -114,3 +116,44 @@ jobs:
           name: godot-meta-carl-addon
           path: |
             asset
+
+  studio:
+    runs-on: ubuntu-22.04
+    container:
+      image: barichello/godot-ci:4.4.1
+    needs: asset
+    if: github.event_name == 'push'
+    env:
+      GODOT_VERSION: 4.4.1
+      EXPORT_NAME: godot-meta-carl
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Download build artifacts
+        uses: actions/download-artifact@v5
+        with:
+          path: studio
+          name: godot-meta-carl-addon
+          merge-multiple: true
+      - name: Setup
+        run: |
+          ls
+          ls studio
+          ls studio/addons/godot-meta-carl/android
+          ls studio/addons/godot-meta-carl/linux
+          mkdir -v -p ~/.local/share/godot/export_templates/
+          mkdir -v -p ~/.config/
+          mv /root/.config/godot ~/.config/godot
+          mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
+      - name: Meta Quest Build
+        run: |
+          cd studio
+          mkdir -v -p build/meta-quest
+          EXPORT_DIR="$(readlink -f build)"
+          godot --headless --verbose --export-release "Meta Quest" "$EXPORT_DIR/meta-quest/$EXPORT_NAME.apk"
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: studio/build/meta-quest
+
