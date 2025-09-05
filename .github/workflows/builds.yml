@@ -101,13 +101,16 @@ jobs:
           #merge-multiple: true
       - name: Copy addon
         run: |
-          ls
-          ls godot-meta-carl-build-linux-x86_64-template_debug
-          mkdir addons
-          cp -r studio/addons/godot-meta-carl addons/
+          ls artifacts
+          mkdir -p asset/addons
+          cp -r studio/addons/godot-meta-carl asset/addons/
+          cp artifacts/godot-meta-carl-build-linux-*/* addons/godot-meta-carl/linux/
+          cp artifacts/godot-meta-carl-build-windows-*/* addons/godot-meta-carl/windows/
+          cp artifacts/godot-meta-carl-build-macos-*/* addons/godot-meta-carl/macos/
+          cp artifacts/godot-meta-carl-build-android-*/* addons/godot-meta-carl/android/
       - name: Upload addon as artifact
         uses: actions/upload-artifact@v4
         with:
           name: godot-meta-carl-addon
           path: |
-            addons
+            asset
