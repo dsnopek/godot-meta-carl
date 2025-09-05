@@ -9,10 +9,13 @@ var has_xr_focus := false
 
 func _ready() -> void:
 	GameState.set_play_input_sample_callback(playback.play_input_sample)
-	update_hand_tracking_message()
+	update_hand_tracking_message(false)
 
 
-func update_hand_tracking_message() -> void:
+func update_hand_tracking_message(p_wait: bool = true) -> void:
+	if p_wait:
+		# Wait a moment so that all the events happen and flags get updated.
+		await get_tree().create_timer(0.1).timeout
 	%HandTrackingMessage.visible = has_xr_focus and not %LeftHand.get_has_tracking_data() and not %RightHand.get_has_tracking_data()
 
 

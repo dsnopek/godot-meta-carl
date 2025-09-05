@@ -13,6 +13,6 @@ Backlog:
 - Player should allow incrementing or decrementing by a single sample
 - Add auto-trimming of examples
 - Make `ResourceFormatLoader` and `ResourceFormatSaver` for binary formats
-    - Have `.carld`, `carlr` and maybe `.carle` files
+    - Have `.carl_definition`, `carl_recording` and maybe `.carl_example` files
     - Store the data compressed with ZSTD? (This seemed to be the best size vs time trade-off)
 - Fix issue with "margin" on the "Examples" tree control
