@@ -1,15 +1,6 @@
 TODO
 ====
 
-Phase I: Get something working
----
-
-- Fix CI
-- At this point, let's merge `carl-slush` into `main`
-
-Backlog:
----
-
 - Player should allow incrementing or decrementing by a single sample
 - Add auto-trimming of examples
 - Make `ResourceFormatLoader` and `ResourceFormatSaver` for binary formats
