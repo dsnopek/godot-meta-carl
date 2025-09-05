@@ -6,20 +6,20 @@
 studio/android/
 
 # Ignore library files but not the gdextension file
-studio/bin/*
-!studio/bin/android
-studio/bin/android/*
-!studio/bin/android/.gitkeep
-!studio/bin/linux
-studio/bin/linux/*
-!studio/bin/linux/.gitkeep
-!studio/bin/macos
-studio/bin/macos/*
-!studio/bin/macos/.gitkeep
-!studio/bin/windows
-studio/bin/windows/*
-!studio/bin/windows/.gitkeep
-!studio/bin/*.gdextension
+studio/addons/godot-meta-carl/*
+!studio/addons/godot-meta-carl/android
+studio/addons/godot-meta-carl/android/*
+!studio/addons/godot-meta-carl/android/.gitkeep
+!studio/addons/godot-meta-carl/linux
+studio/addons/godot-meta-carl/linux/*
+!studio/addons/godot-meta-carl/linux/.gitkeep
+!studio/addons/godot-meta-carl/macos
+studio/addons/godot-meta-carl/macos/*
+!studio/addons/godot-meta-carl/macos/.gitkeep
+!studio/addons/godot-meta-carl/windows
+studio/addons/godot-meta-carl/windows/*
+!studio/addons/godot-meta-carl/windows/.gitkeep
+!studio/addons/godot-meta-carl/*.gdextension
 .sconsign*.dblite
 
 # Ignore custom.py
