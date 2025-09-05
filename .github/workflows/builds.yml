@@ -65,7 +65,7 @@ jobs:
           cmake --build .
           popd >/dev/null
       - name: Build CARL (Android)
-        if: ${{ matrix.target.platform != 'android' }}
+        if: ${{ matrix.target.platform == 'android' }}
         shell: bash
         run: |
           mkdir CARL_build_android
