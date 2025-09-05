@@ -52,12 +52,15 @@ jobs:
           cache-name: ${{ matrix.target.platform }}_${{ matrix.target.arch }}_${{ matrix.target-type }}
 
       # Build the extension
-      - name: Build GDExtension Debug Build
+      - name: Build GDExtension
         shell: bash
         env:
           SCONS_CACHE: ${{ github.workspace }}/.scons-cache/
         run: |
-          scons target=${{ matrix.target-type }} platform=${{ matrix.target.platform }} arch=${{ matrix.target.arch }} build_profile=build_profile.json ndk_version=28.1.13356709
+          if "${{ matrix.target.platform == 'windows' }}"; then
+            SCONS_EXTRA="use_mingw=yes"
+          fi
+          scons target=${{ matrix.target-type }} platform=${{ matrix.target.platform }} arch=${{ matrix.target.arch }} build_profile=build_profile.json ndk_version=28.1.13356709 $SCONS_EXTRA
 
       - name: Save .scons_cache
         uses: ./godot-cpp/.github/actions/godot-cache-save
