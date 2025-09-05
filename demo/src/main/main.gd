@@ -31,11 +31,13 @@ func _on_ui_screen_hidden(p_screen_control: Control) -> void:
 func _on_start_xr_focus_gained() -> void:
 	get_tree().set_group("hand", "visible", true)
 	has_xr_focus = true
+	update_hand_tracking_message()
 
 
 func _on_start_xr_focus_lost() -> void:
 	get_tree().set_group("hand", "visible", false)
 	has_xr_focus = false
+	update_hand_tracking_message()
 
 
 func _on_hand_tracking_changed(_tracking: bool) -> void:

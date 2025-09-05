@@ -14,6 +14,16 @@ signal item_delete (index: int)
 func _ready() -> void:
 	reset_example_list()
 
+	# This is a terrible temporary hack. For scrolling to work, we really need to have
+	# `clip_contents` set to `true`, but for some reason it's clipping the top of the
+	# the control for no good reason -- but only on the headset! I can't get the same
+	# issue to happen on the desktop. It's super weird...
+	# NOTES:
+	# - If I put the whole UI into a CanvasLayer, and adjust the canvas transform down
+	#   40px, then the content isn't clipped anymore. It's like the origin of the clip
+	#   rect is wrong?
+	tree.clip_contents = false
+
 
 func setup_example_list(p_title: String, p_items: PackedStringArray) -> void:
 	label.text = p_title

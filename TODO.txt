@@ -4,23 +4,16 @@ TODO
 Phase I: Get something working
 ---
 
-- Fix issue with "margin" on the "Examples" tree control
 - Show input sample count as a read-only variable?
 - Fix CI
 - At this point, let's merge `carl-slush` into `main`
 
-Phase II: Proper tooling for development
----
-
-- Demo: Implement "nice" UI for constructing and testing examples
-  - This should be the real deal!
-  - We want a simple "studio" for creating, testing and editing definitions
-
 Backlog:
 ---
 
-  - Player should allow incrementing or decrementing by a single sample
-  - Add auto-trimming of examples
-  - Make `ResourceFormatLoader` and `ResourceFormatSaver` for binary formats
+- Player should allow incrementing or decrementing by a single sample
+- Add auto-trimming of examples
+- Make `ResourceFormatLoader` and `ResourceFormatSaver` for binary formats
     - Have `.carld`, `carlr` and maybe `.carle` files
     - Store the data compressed with ZSTD? (This seemed to be the best size vs time trade-off)
+- Fix issue with "margin" on the "Examples" tree control
