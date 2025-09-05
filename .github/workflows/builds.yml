@@ -52,12 +52,12 @@ jobs:
 
       # Build CARL
       - name: Patch CARL library
-        shell: sh
+        shell: bash
         run: |
           (cd CARL && patch -p1 < ../patches/carl.patch)
       - name: Build CARL (desktop)
         if: ${{ matrix.target.platform != 'android' }}
-        shell: sh
+        shell: bash
         run: |
           mkdir CARL_build
           pushd CARL_build >/dev/null
@@ -66,7 +66,7 @@ jobs:
           popd >/dev/null
       - name: Build CARL (Android)
         if: ${{ matrix.target.platform != 'android' }}
-        shell: sh
+        shell: bash
         run: |
           mkdir CARL_build_android
           pushd CARL_build_android >/dev/null
@@ -76,7 +76,7 @@ jobs:
 
       # Build the extension
       - name: Build GDExtension Debug Build
-        shell: sh
+        shell: bash
         env:
           SCONS_CACHE: ${{ github.workspace }}/.scons-cache/
         run: |
