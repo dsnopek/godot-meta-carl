@@ -94,14 +94,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Download build artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
+          path: artifacts
           pattern: godot-meta-carl-build-*
-          merge-multiple: true
+          #merge-multiple: true
       - name: Copy addon
         run: |
           ls
-          ls studio/addons/godot-meta-carl/linux
+          ls godot-meta-carl-build-linux-x86_64-template_debug
           mkdir addons
           cp -r studio/addons/godot-meta-carl addons/
       - name: Upload addon as artifact
