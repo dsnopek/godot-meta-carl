@@ -55,7 +55,7 @@ if env["target"] in ["editor", "template_debug"]:
 env.Append(
     LINKFLAGS=[
         "-Wl,--no-undefined",
-        "-static-libgcc",
+        #"-static-libgcc",
         "-static-libstdc++",
     ]
 )
