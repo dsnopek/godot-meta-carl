@@ -104,10 +104,10 @@ jobs:
           ls artifacts
           mkdir -p asset/addons
           cp -r studio/addons/godot-meta-carl asset/addons/
-          cp artifacts/godot-meta-carl-build-linux-*/* addons/godot-meta-carl/linux/
-          cp artifacts/godot-meta-carl-build-windows-*/* addons/godot-meta-carl/windows/
-          cp artifacts/godot-meta-carl-build-macos-*/* addons/godot-meta-carl/macos/
-          cp artifacts/godot-meta-carl-build-android-*/* addons/godot-meta-carl/android/
+          cp artifacts/godot-meta-carl-build-linux-*/* asset/addons/godot-meta-carl/linux/
+          cp artifacts/godot-meta-carl-build-windows-*/* asset/addons/godot-meta-carl/windows/
+          cp artifacts/godot-meta-carl-build-macos-*/* asset/addons/godot-meta-carl/macos/
+          cp artifacts/godot-meta-carl-build-android-*/* asset/addons/godot-meta-carl/android/
       - name: Upload addon as artifact
         uses: actions/upload-artifact@v4
         with:
