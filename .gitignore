@@ -1,5 +1,3 @@
-/CARL_build*
-
 # Godot auto generated files
 *.gen.*
 .godot/
@@ -21,6 +19,7 @@ studio/addons/godot-meta-carl/windows/*
 !studio/addons/godot-meta-carl/windows/.gitkeep
 !studio/addons/godot-meta-carl/*.gdextension
 .sconsign*.dblite
+/bin/
 
 # Ignore custom.py
 custom.py
@@ -34,7 +33,6 @@ compile_commands.json
 # Binaries
 *.o
 *.os
-*.so
 *.obj
 *.bc
 *.pyc
