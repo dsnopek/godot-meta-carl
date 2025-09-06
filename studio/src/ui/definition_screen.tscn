@@ -1,0 +1,114 @@
+[gd_scene load_steps=4 format=3 uid="uid://c4mf0ifovvbi1"]
+
+[ext_resource type="Script" uid="uid://qthgxdol2fno" path="res://src/ui/definition_screen.gd" id="1_2h06g"]
+[ext_resource type="PackedScene" uid="uid://dcs3ocqukin1k" path="res://src/ui/player_ui.tscn" id="2_52rgg"]
+[ext_resource type="PackedScene" uid="uid://bnu5dq2tlssre" path="res://src/ui/example_list.tscn" id="2_j86pn"]
+
+[node name="DefinitionScreen" type="VBoxContainer"]
+custom_minimum_size = Vector2(700, 500)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -350.0
+offset_top = -250.0
+offset_right = 350.0
+offset_bottom = 250.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+script = ExtResource("1_2h06g")
+
+[node name="MenuBar" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="NewButton" type="Button" parent="MenuBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "New"
+
+[node name="OpenButton" type="Button" parent="MenuBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "Open"
+
+[node name="SaveButton" type="Button" parent="MenuBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "Save"
+
+[node name="TestButton" type="Button" parent="MenuBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "Test"
+
+[node name="DefinitionContainer" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="GridContainer" type="GridContainer" parent="DefinitionContainer"]
+layout_mode = 2
+theme_override_constants/h_separation = 10
+columns = 2
+
+[node name="FilenameLabel" type="Label" parent="DefinitionContainer/GridContainer"]
+layout_mode = 2
+text = "Path:"
+
+[node name="FilenameField" type="Label" parent="DefinitionContainer/GridContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(650, 1.45519e-11)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "<unsaved>"
+autowrap_mode = 1
+
+[node name="TypeLabel" type="Label" parent="DefinitionContainer/GridContainer"]
+layout_mode = 2
+text = "Type:"
+
+[node name="TypeField" type="Label" parent="DefinitionContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "<none>"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="DefinitionContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="ExampleList" parent="DefinitionContainer/HBoxContainer" instance=ExtResource("2_j86pn")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CounterExampleList" parent="DefinitionContainer/HBoxContainer" instance=ExtResource("2_j86pn")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PlayerUI" parent="DefinitionContainer" instance=ExtResource("2_52rgg")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="FileDialog" type="FileDialog" parent="."]
+unique_name_in_owner = true
+exclusive = false
+unresizable = true
+access = 2
+filters = PackedStringArray("*.tres;Godot Resource;application/x-godot-resource")
+
+[node name="AcceptDialog" type="AcceptDialog" parent="."]
+unique_name_in_owner = true
+
+[connection signal="pressed" from="MenuBar/NewButton" to="." method="_on_new_button_pressed"]
+[connection signal="pressed" from="MenuBar/OpenButton" to="." method="_on_open_button_pressed"]
+[connection signal="pressed" from="MenuBar/SaveButton" to="." method="_on_save_button_pressed"]
+[connection signal="pressed" from="MenuBar/TestButton" to="." method="_on_test_button_pressed"]
+[connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]

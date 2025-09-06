@@ -1,38 +1,47 @@
-#include "register_types.h"
 
 #include <gdextension_interface.h>
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/core/defs.hpp>
 #include <godot_cpp/godot.hpp>
 
-#include "example_class.h"
+#include "carl_definition.h"
+#include "carl_example.h"
+#include "carl_input_sample.h"
+#include "carl_recognizer.h"
+#include "carl_recorder.h"
+#include "carl_recording.h"
+#include "carl_session.h"
 
 using namespace godot;
 
-void initialize_gdextension_types(ModuleInitializationLevel p_level)
-{
+void initialize_godot_meta_carl_types(ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
-	GDREGISTER_CLASS(ExampleClass);
+
+	GDREGISTER_CLASS(CARLInputSample);
+	GDREGISTER_CLASS(CARLRecording);
+	GDREGISTER_CLASS(CARLRecorder);
+	GDREGISTER_CLASS(CARLExample);
+	GDREGISTER_CLASS(CARLDefinition);
+	GDREGISTER_CLASS(CARLSession);
+	GDREGISTER_CLASS(CARLRecognizer);
 }
 
-void uninitialize_gdextension_types(ModuleInitializationLevel p_level) {
+void uninitialize_godot_meta_carl_types(ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
 }
 
-extern "C"
-{
-	// Initialization
-	GDExtensionBool GDE_EXPORT example_library_init(GDExtensionInterfaceGetProcAddress p_get_proc_address, GDExtensionClassLibraryPtr p_library, GDExtensionInitialization *r_initialization)
-	{
-		GDExtensionBinding::InitObject init_obj(p_get_proc_address, p_library, r_initialization);
-		init_obj.register_initializer(initialize_gdextension_types);
-		init_obj.register_terminator(uninitialize_gdextension_types);
-		init_obj.set_minimum_library_initialization_level(MODULE_INITIALIZATION_LEVEL_SCENE);
+extern "C" {
+// Initialization
+GDExtensionBool GDE_EXPORT godot_meta_carl_library_init(GDExtensionInterfaceGetProcAddress p_get_proc_address, GDExtensionClassLibraryPtr p_library, GDExtensionInitialization *r_initialization) {
+	GDExtensionBinding::InitObject init_obj(p_get_proc_address, p_library, r_initialization);
+	init_obj.register_initializer(initialize_godot_meta_carl_types);
+	init_obj.register_terminator(uninitialize_godot_meta_carl_types);
+	init_obj.set_minimum_library_initialization_level(MODULE_INITIALIZATION_LEVEL_SCENE);
 
-		return init_obj.init();
-	}
+	return init_obj.init();
+}
 }

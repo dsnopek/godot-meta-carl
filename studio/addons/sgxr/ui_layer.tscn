@@ -1,0 +1,24 @@
+[gd_scene load_steps=5 format=3 uid="uid://btrugoluitgin"]
+
+[ext_resource type="Script" uid="uid://cle66q30x1ow3" path="res://addons/sgxr/ui_layer.gd" id="1_pxq32"]
+[ext_resource type="Texture2D" uid="uid://ygh2w2bgty4x" path="res://addons/sgxr/cursor.svg" id="2_pmv6g"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_mow34"]
+size = Vector2(0.03, 0.03)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pxq32"]
+transparency = 1
+shading_mode = 0
+disable_ambient_light = true
+disable_fog = true
+albedo_color = Color(0.74, 0.74, 0.74, 1)
+albedo_texture = ExtResource("2_pmv6g")
+
+[node name="UILayer" type="OpenXRCompositionLayerQuad" groups=["ui_layer"]]
+script = ExtResource("1_pxq32")
+
+[node name="Cursor" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.45519e-11, 1.45519e-11, 0.005)
+visible = false
+mesh = SubResource("QuadMesh_mow34")
+surface_material_override/0 = SubResource("StandardMaterial3D_pxq32")

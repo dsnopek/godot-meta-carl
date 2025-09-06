@@ -1,23 +1,25 @@
 # Godot auto generated files
 *.gen.*
 .godot/
+studio/android/
 
 # Ignore library files but not the gdextension file
-demo/bin/*
-!demo/bin/android
-demo/bin/android/*
-!demo/bin/android/.gitkeep
-!demo/bin/linux
-demo/bin/linux/*
-!demo/bin/linux/.gitkeep
-!demo/bin/macos
-demo/bin/macos/*
-!demo/bin/macos/.gitkeep
-!demo/bin/windows
-demo/bin/windows/*
-!demo/bin/windows/.gitkeep
-!demo/bin/*.gdextension
+studio/addons/godot-meta-carl/*
+!studio/addons/godot-meta-carl/android
+studio/addons/godot-meta-carl/android/*
+!studio/addons/godot-meta-carl/android/.gitkeep
+!studio/addons/godot-meta-carl/linux
+studio/addons/godot-meta-carl/linux/*
+!studio/addons/godot-meta-carl/linux/.gitkeep
+!studio/addons/godot-meta-carl/macos
+studio/addons/godot-meta-carl/macos/*
+!studio/addons/godot-meta-carl/macos/.gitkeep
+!studio/addons/godot-meta-carl/windows
+studio/addons/godot-meta-carl/windows/*
+!studio/addons/godot-meta-carl/windows/.gitkeep
+!studio/addons/godot-meta-carl/*.gdextension
 .sconsign*.dblite
+/bin/
 
 # Ignore custom.py
 custom.py
@@ -31,7 +33,6 @@ compile_commands.json
 # Binaries
 *.o
 *.os
-*.so
 *.obj
 *.bc
 *.pyc

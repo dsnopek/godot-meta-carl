@@ -1,0 +1,79 @@
+[gd_scene load_steps=6 format=3 uid="uid://gyggpun5wh6o"]
+
+[ext_resource type="Script" uid="uid://bauedty1xatjn" path="res://src/main/playback.gd" id="1_cp4rk"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_cp4rk"]
+radius = 0.2
+height = 0.4
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_b30vt"]
+albedo_color = Color(1, 0, 0, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_hcalp"]
+top_radius = 0.0
+bottom_radius = 0.05
+height = 0.1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_axhu7"]
+albedo_color = Color(0, 0, 1, 1)
+
+[node name="Playback" type="Node3D"]
+script = ExtResource("1_cp4rk")
+
+[node name="LeftHand" type="XRNode3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -0.2, 1.1, 1.45519e-11)
+tracker = &"/playback/left_hand"
+
+[node name="OpenXRFbHandTrackingMesh" type="OpenXRFbHandTrackingMesh" parent="LeftHand"]
+
+[node name="XRHandModifier3D" type="XRHandModifier3D" parent="LeftHand/OpenXRFbHandTrackingMesh"]
+hand_tracker = &"/playback/left_hand"
+
+[node name="RightHand" type="XRNode3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0.2, 1.1, 1.45519e-11)
+tracker = &"/playback/right_hand"
+
+[node name="OpenXRFbHandTrackingMesh" type="OpenXRFbHandTrackingMesh" parent="RightHand"]
+hand = 1
+bones/0/name = "RightPalm"
+bones/1/name = "RightHand"
+bones/2/name = "RightThumbMetacarpal"
+bones/3/name = "RightThumbProximal"
+bones/4/name = "RightThumbDistal"
+bones/5/name = "RightThumbTip"
+bones/6/name = "RightIndexMetacarpal"
+bones/7/name = "RightIndexProximal"
+bones/8/name = "RightIndexIntermediate"
+bones/9/name = "RightIndexDistal"
+bones/10/name = "RightIndexTip"
+bones/11/name = "RightMiddleMetacarpal"
+bones/12/name = "RightMiddleProximal"
+bones/13/name = "RightMiddleIntermediate"
+bones/14/name = "RightMiddleDistal"
+bones/15/name = "RightMiddleTip"
+bones/16/name = "RightRingMetacarpal"
+bones/17/name = "RightRingProximal"
+bones/18/name = "RightRingIntermediate"
+bones/19/name = "RightRingDistal"
+bones/20/name = "RightRingTip"
+bones/21/name = "RightLittleMetacarpal"
+bones/22/name = "RightLittleProximal"
+bones/23/name = "RightLittleIntermediate"
+bones/24/name = "RightLittleDistal"
+bones/25/name = "RightLittleTip"
+
+[node name="XRHandModifier3D" type="XRHandModifier3D" parent="RightHand/OpenXRFbHandTrackingMesh"]
+hand_tracker = &"/playback/right_hand"
+
+[node name="HMD" type="MeshInstance3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.45519e-11, 1.5, 1.45519e-11)
+mesh = SubResource("SphereMesh_cp4rk")
+surface_material_override/0 = SubResource("StandardMaterial3D_b30vt")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="HMD"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, -0.241968)
+mesh = SubResource("CylinderMesh_hcalp")
+surface_material_override/0 = SubResource("StandardMaterial3D_axhu7")

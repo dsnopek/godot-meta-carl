@@ -1,0 +1,122 @@
+[gd_scene load_steps=8 format=3 uid="uid://dh0oj81pufivs"]
+
+[ext_resource type="Script" uid="uid://4osxenmr6ido" path="res://src/main/main.gd" id="1_ig7tw"]
+[ext_resource type="PackedScene" uid="uid://cqs8c3rq6cxvk" path="res://addons/sgxr/function_pointer.tscn" id="3_1bvp3"]
+[ext_resource type="PackedScene" uid="uid://btrugoluitgin" path="res://addons/sgxr/ui_layer.tscn" id="3_h2yge"]
+[ext_resource type="PackedScene" uid="uid://ciab6rk7831n" path="res://src/ui/ui.tscn" id="3_lquwl"]
+[ext_resource type="PackedScene" uid="uid://gyggpun5wh6o" path="res://src/main/playback.tscn" id="5_jqarl"]
+[ext_resource type="PackedScene" uid="uid://br72i82f12kke" path="res://addons/sgxr/start_xr.tscn" id="5_lquwl"]
+
+[sub_resource type="Environment" id="Environment_0xm2m"]
+tonemap_mode = 2
+
+[node name="Main" type="Node3D"]
+script = ExtResource("1_ig7tw")
+
+[node name="XROrigin3D" type="XROrigin3D" parent="."]
+
+[node name="XRCamera3D" type="XRCamera3D" parent="XROrigin3D"]
+
+[node name="UILayer" parent="XROrigin3D" node_paths=PackedStringArray("layer_viewport") instance=ExtResource("3_h2yge")]
+process_mode = 3
+transform = Transform3D(0.84894, 0, 0.528488, 0, 1, 0, -0.528488, 0, 0.84894, -1.79071, 1.25, -1.5)
+layer_viewport = NodePath("SubViewport")
+sort_order = -1
+enable_hole_punch = true
+quad_size = Vector2(1.7777, 1)
+
+[node name="SubViewport" type="SubViewport" parent="XROrigin3D/UILayer"]
+disable_3d = true
+gui_embed_subwindows = true
+size = Vector2i(1152, 648)
+render_target_update_mode = 4
+
+[node name="UI" parent="XROrigin3D/UILayer/SubViewport" instance=ExtResource("3_lquwl")]
+
+[node name="LeftController" type="XRController3D" parent="XROrigin3D" groups=["hand"]]
+tracker = &"left_hand"
+pose = &"aim"
+
+[node name="FunctionPointer" parent="XROrigin3D/LeftController" instance=ExtResource("3_1bvp3")]
+select_action = "select"
+
+[node name="RightController" type="XRController3D" parent="XROrigin3D" groups=["hand"]]
+tracker = &"right_hand"
+pose = &"aim"
+
+[node name="FunctionPointer" parent="XROrigin3D/RightController" instance=ExtResource("3_1bvp3")]
+select_action = "select"
+
+[node name="LeftHand" type="XRNode3D" parent="XROrigin3D" groups=["hand"]]
+unique_name_in_owner = true
+tracker = &"/user/hand_tracker/left"
+show_when_tracked = true
+
+[node name="OpenXRFbHandTrackingMesh" type="OpenXRFbHandTrackingMesh" parent="XROrigin3D/LeftHand"]
+
+[node name="XRHandModifier3D" type="XRHandModifier3D" parent="XROrigin3D/LeftHand/OpenXRFbHandTrackingMesh"]
+
+[node name="RightHand" type="XRNode3D" parent="XROrigin3D" groups=["hand"]]
+unique_name_in_owner = true
+tracker = &"/user/hand_tracker/right"
+show_when_tracked = true
+
+[node name="OpenXRFbHandTrackingMesh" type="OpenXRFbHandTrackingMesh" parent="XROrigin3D/RightHand"]
+hand = 1
+bones/0/name = "RightPalm"
+bones/1/name = "RightHand"
+bones/2/name = "RightThumbMetacarpal"
+bones/3/name = "RightThumbProximal"
+bones/4/name = "RightThumbDistal"
+bones/5/name = "RightThumbTip"
+bones/6/name = "RightIndexMetacarpal"
+bones/7/name = "RightIndexProximal"
+bones/8/name = "RightIndexIntermediate"
+bones/9/name = "RightIndexDistal"
+bones/10/name = "RightIndexTip"
+bones/11/name = "RightMiddleMetacarpal"
+bones/12/name = "RightMiddleProximal"
+bones/13/name = "RightMiddleIntermediate"
+bones/14/name = "RightMiddleDistal"
+bones/15/name = "RightMiddleTip"
+bones/16/name = "RightRingMetacarpal"
+bones/17/name = "RightRingProximal"
+bones/18/name = "RightRingIntermediate"
+bones/19/name = "RightRingDistal"
+bones/20/name = "RightRingTip"
+bones/21/name = "RightLittleMetacarpal"
+bones/22/name = "RightLittleProximal"
+bones/23/name = "RightLittleIntermediate"
+bones/24/name = "RightLittleDistal"
+bones/25/name = "RightLittleTip"
+
+[node name="XRHandModifier3D" type="XRHandModifier3D" parent="XROrigin3D/RightHand/OpenXRFbHandTrackingMesh"]
+hand_tracker = &"/user/hand_tracker/right"
+
+[node name="HandTrackingMessage" type="Label3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.86999, -1.52301)
+visible = false
+text = "Please switch to 
+hand tracking"
+outline_size = 3
+
+[node name="Playback" parent="." instance=ExtResource("5_jqarl")]
+unique_name_in_owner = true
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, -1.89646)
+
+[node name="StartXR" parent="." instance=ExtResource("5_lquwl")]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_0xm2m")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
+shadow_enabled = true
+
+[connection signal="screen_hidden" from="XROrigin3D/UILayer/SubViewport/UI" to="." method="_on_ui_screen_hidden"]
+[connection signal="screen_shown" from="XROrigin3D/UILayer/SubViewport/UI" to="." method="_on_ui_screen_shown"]
+[connection signal="tracking_changed" from="XROrigin3D/LeftHand" to="." method="_on_hand_tracking_changed"]
+[connection signal="tracking_changed" from="XROrigin3D/RightHand" to="." method="_on_hand_tracking_changed"]
+[connection signal="focus_gained" from="StartXR" to="." method="_on_start_xr_focus_gained"]
+[connection signal="focus_lost" from="StartXR" to="." method="_on_start_xr_focus_lost"]

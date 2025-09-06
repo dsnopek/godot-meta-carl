@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://br72i82f12kke"]
+
+[ext_resource type="Script" uid="uid://bqwupbkvcw5t" path="res://addons/sgxr/start_xr.gd" id="1_6skp0"]
+
+[node name="StartXR" type="Node3D"]
+script = ExtResource("1_6skp0")

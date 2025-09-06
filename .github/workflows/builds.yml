@@ -2,36 +2,35 @@ name: Build GDExtension
 on:
   workflow_call:
   push:
+    branches:
+      - '*'
+    tags:
+      - 'v*'
   pull_request:
-  merge_group:
 
 jobs:
   build:
     strategy:
       fail-fast: false
       matrix:
-        # A build is made for every possible combination of parameters
-        # You can add or remove entries from the arrays of each parameter to customize which builds you want to run
-        # See https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/running-variations-of-jobs-in-a-workflow
         target:
-          [
-            { platform: linux, arch: x86_64, os: ubuntu-22.04 },
-            { platform: linux, arch: x86_32, os: ubuntu-22.04 },
-            { platform: linux, arch: arm64, os: ubuntu-22.04-arm },
-            { platform: linux, arch: arm32, os: ubuntu-22.04-arm },
-            { platform: windows, arch: x86_64, os: windows-latest },
-            { platform: windows, arch: x86_32, os: windows-latest },
-            { platform: windows, arch: arm64, os: windows-latest },
-            { platform: macos, arch: universal, os: macos-latest },
-            { platform: android, arch: x86_64, os: ubuntu-22.04 },
-            { platform: android, arch: x86_32, os: ubuntu-22.04 },
-            { platform: android, arch: arm64, os: ubuntu-22.04 },
-            { platform: android, arch: arm32, os: ubuntu-22.04 },
-            { platform: ios, arch: arm64, os: macos-latest },
-            { platform: web, arch: wasm32, os: ubuntu-22.04 },
-          ]
+          - platform: linux
+            arch: x86_64
+            os: ubuntu-22.04
+            artifact_path: studio/addons/godot-meta-carl/linux
+          - platform: windows
+            arch: x86_64
+            os: windows-latest
+            artifact_path: studio/addons/godot-meta-carl/windows
+          - platform: macos
+            arch: universal
+            os: macos-latest
+            artifact_path: studio/addons/godot-meta-carl/macos
+          - platform: android
+            arch: arm64
+            os: ubuntu-22.04
+            artifact_path: studio/addons/godot-meta-carl/android
         target-type: [template_debug, template_release]
-        float-precision: [single, double]
 
     runs-on: ${{ matrix.target.os }}
     steps:
@@ -39,23 +38,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          submodules: true
+          submodules: recursive
 
       # Lint
-      #- name: Setup clang-format
-      #  shell: bash
-      #  run: |
-      #    python -m pip install clang-format
-      #- name: Run clang-format
-      #  shell: bash
-      #  run: |
-      #    clang-format src/** --dry-run --Werror
-
-      # Add linux x86_32 toolchain
-      - name: Install multilib support
-        if: ${{ matrix.target.platform == 'linux' && matrix.target.arch == 'x86_32' }}
+      - name: Setup clang-format
+        shell: bash
         run: |
-          sudo apt-get update && sudo apt-get install -y gcc-multilib g++-multilib
+          python -m pip install clang-format
+      - name: Run clang-format
+        shell: bash
+        run: |
+          clang-format src/** --dry-run --Werror
 
       # Setup dependencies
       - name: Setup godot-cpp
@@ -63,52 +56,134 @@ jobs:
         with:
           platform: ${{ matrix.target.platform }}
           em-version: 3.1.62
-
-      # Build GDExtension (with caches)
+          ndk-version: r28b
 
       - name: Restore .scons_cache
         uses: ./godot-cpp/.github/actions/godot-cache-restore
         with:
           scons-cache: ${{ github.workspace }}/.scons-cache/
-          cache-name: ${{ matrix.target.platform }}_${{ matrix.target.arch }}_${{ matrix.float-precision }}_${{ matrix.target-type }}
+          cache-name: ${{ matrix.target.platform }}_${{ matrix.target.arch }}_${{ matrix.target-type }}
 
-      - name: Build GDExtension Debug Build
-        shell: sh
+      # Build the extension
+      - name: Build GDExtension
+        shell: bash
         env:
           SCONS_CACHE: ${{ github.workspace }}/.scons-cache/
         run: |
-          scons target=${{ matrix.target-type }} platform=${{ matrix.target.platform }} arch=${{ matrix.target.arch }} precision=${{ matrix.float-precision }}
+          if "${{ matrix.target.platform == 'windows' }}"; then
+            SCONS_EXTRA="use_mingw=yes"
+          fi
+          scons target=${{ matrix.target-type }} platform=${{ matrix.target.platform }} arch=${{ matrix.target.arch }} build_profile=build_profile.json ndk_version=28.1.13356709 $SCONS_EXTRA
+          rm -f bin/*.a
 
       - name: Save .scons_cache
         uses: ./godot-cpp/.github/actions/godot-cache-save
         with:
           scons-cache: ${{ github.workspace }}/.scons-cache/
-          cache-name: ${{ matrix.target.platform }}_${{ matrix.target.arch }}_${{ matrix.float-precision }}_${{ matrix.target-type }}
-
-      # Clean up compilation files
-      - name: Windows - Delete compilation files
-        if: ${{ matrix.target.platform == 'windows' }}
-        shell: pwsh
-        run: |
-          Remove-Item bin/* -Include *.exp,*.lib,*.pdb -Force
+          cache-name: ${{ matrix.target.platform }}_${{ matrix.target.arch }}_${{ matrix.target-type }}
 
       # Upload the build
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: godot-cpp-template-${{ matrix.target.platform }}-${{ matrix.target.arch }}-${{ matrix.float-precision }}-${{ matrix.target-type }}
+          name: godot-meta-carl-build-${{ matrix.target.platform }}-${{ matrix.target.arch }}-${{ matrix.target-type }}
           path: |
-            ${{ github.workspace }}/bin/**
+            ${{ matrix.target.artifact_path }}
 
-  # Merges all the build artifacts together into a single godot-cpp-template artifact.
-  # If you comment out this step, all the builds will be uploaded individually.
-  merge:
+  asset:
     runs-on: ubuntu-22.04
     needs: build
+    permissions:
+      contents: write
     steps:
-      - name: Merge Artifacts
-        uses: actions/upload-artifact/merge@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Download build artifacts
+        uses: actions/download-artifact@v5
         with:
-          name: godot-cpp-template
-          pattern: godot-cpp-template-*
-          delete-merged: true
+          path: artifacts
+          pattern: godot-meta-carl-build-*
+      - name: Copy addon
+        run: |
+          mkdir -p asset/addons
+          cp -r studio/addons/godot-meta-carl asset/addons/
+          cp artifacts/godot-meta-carl-build-linux-*/* asset/addons/godot-meta-carl/linux/
+          cp artifacts/godot-meta-carl-build-windows-*/* asset/addons/godot-meta-carl/windows/
+          cp artifacts/godot-meta-carl-build-macos-*/* asset/addons/godot-meta-carl/macos/
+          cp artifacts/godot-meta-carl-build-android-*/* asset/addons/godot-meta-carl/android/
+      - name: Upload addon as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: godot-meta-carl-addon
+          path: |
+            asset
+      - name: Zip addon
+        run: |
+          (cd asset && zip -qq -r ../godot-meta-carl.zip addons)
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+      - name: Create release
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          artifacts: "godot-meta-carl.zip"
+          draft: true
+          omitNameDuringUpdate: true
+          omitBodyDuringUpdate: true
+          omitDraftDuringUpdate: true
+          omitPrereleaseDuringUpdate: true
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+
+  studio:
+    runs-on: ubuntu-22.04
+    container:
+      image: barichello/godot-ci:4.4.1
+    needs: asset
+    if: github.event_name == 'push'
+    env:
+      GODOT_VERSION: 4.4.1
+      EXPORT_NAME: godot-carl-studio
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Download build artifacts
+        uses: actions/download-artifact@v5
+        with:
+          name: godot-meta-carl-addon
+          path: studio
+      - name: Setup
+        run: |
+          mkdir -v -p ~/.local/share/godot/export_templates/
+          mkdir -v -p ~/.config/
+          mv /root/.config/godot ~/.config/godot
+          mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
+      - name: Meta Quest Build
+        run: |
+          cd studio
+
+          mkdir -v -p build/meta-quest
+          EXPORT_DIR="$(readlink -f build)"
+
+          echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 --decode > release.keystore
+          export GODOT_ANDROID_KEYSTORE_RELEASE_PATH="$PWD/release.keystore"
+          export GODOT_ANDROID_KEYSTORE_RELEASE_USER="${{ secrets.ANDROID_KEYSTORE_USER }}"
+          export GODOT_ANDROID_KEYSTORE_RELEASE_PASSWORD="${{ secrets.ANDROID_KEYSTORE_PASSWORD }}"
+
+          godot --headless --verbose --install-android-build-template --export-release "Meta Quest" "$EXPORT_DIR/meta-quest/$EXPORT_NAME.apk"
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: godot-carl-studio
+          path: studio/build/meta-quest
+      - name: Add to release
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          artifacts: "studio/build/meta-quest/godot-carl-studio.apk"
+          draft: true
+          omitNameDuringUpdate: true
+          omitBodyDuringUpdate: true
+          omitDraftDuringUpdate: true
+          omitPrereleaseDuringUpdate: true
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
