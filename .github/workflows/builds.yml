@@ -119,13 +119,13 @@ jobs:
             asset
       - name: Zip addon
         run: |
-          (cd asset && zip -qq -r ../godot-meta-toolkit.zip addons)
+          (cd asset && zip -qq -r ../godot-meta-carl.zip addons)
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
       - name: Create release
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
-          artifacts: "godot-meta-toolkit.zip"
+          artifacts: "godot-meta-carl.zip"
           draft: true
           omitNameDuringUpdate: true
           omitBodyDuringUpdate: true
