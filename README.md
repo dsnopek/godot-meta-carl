@@ -4,9 +4,9 @@
 
 This is a GDExtension that allows you to use it in Godot!
 
-It comes with a Godot app for recording and saving gestures (which you can then load into your own Godot game) called "Godot Meta Studio".
+It comes with a Godot app for recording and saving gestures (which you can then load into your own Godot game) called "Godot CARL Studio".
 
-You can download binaries for Windows, Linux, MacOS or Android, and APKs of "Godot Meta Studio" for the Meta Quest from the [releases page](https://github.com/dsnopek/godot-meta-carl/releases).
+You can download binaries for Windows, Linux, MacOS or Android, and APKs of "Godot CARL Studio" for the Meta Quest from the [releases page](https://github.com/dsnopek/godot-meta-carl/releases).
 
 ## License
 
