@@ -59,6 +59,7 @@ columns = 2
 
 [node name="FilenameLabel" type="Label" parent="DefinitionContainer/GridContainer"]
 layout_mode = 2
+size_flags_vertical = 1
 text = "Path:"
 
 [node name="FilenameField" type="Label" parent="DefinitionContainer/GridContainer"]
@@ -71,6 +72,7 @@ autowrap_mode = 1
 
 [node name="TypeLabel" type="Label" parent="DefinitionContainer/GridContainer"]
 layout_mode = 2
+size_flags_vertical = 1
 text = "Type:"
 
 [node name="TypeField" type="Label" parent="DefinitionContainer/GridContainer"]

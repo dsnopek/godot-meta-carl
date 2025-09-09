@@ -2,6 +2,12 @@ extends Node3D
 
 const Playback = preload("res://src/main/playback.gd")
 
+const STORAGE_PERMISSIONS = [
+	"android.permission.READ_EXTERNAL_STORAGE",
+	"android.permission.WRITE_EXTERNAL_STORAGE",
+	"android.permission.MANAGE_EXTERNAL_STORAGE",
+]
+
 @onready var playback: Playback = %Playback
 
 var has_xr_focus := false
@@ -10,6 +16,10 @@ var has_xr_focus := false
 func _ready() -> void:
 	GameState.set_play_input_sample_callback(playback.play_input_sample)
 	update_hand_tracking_message(false)
+
+	# Needed to access files in other projects.
+	for perm in STORAGE_PERMISSIONS:
+		OS.request_permission(perm)
 
 
 func update_hand_tracking_message(p_wait: bool = true) -> void:
