@@ -74,8 +74,10 @@ jobs:
         env:
           SCONS_CACHE: ${{ github.workspace }}/.scons-cache/
         run: |
-          if "${{ matrix.target.platform == 'windows' }}"; then
+          if [ "${{ matrix.target.platform }}" = "windows" ]; then
             SCONS_EXTRA="use_mingw=yes"
+          elif [ "${{ matrix.target.platform }}" = "web" ]; then
+            SCONS_EXTRA="threads=no"
           fi
           scons target=${{ matrix.target-type }} platform=${{ matrix.target.platform }} arch=${{ matrix.target.arch }} build_profile=build_profile.json ndk_version=28.1.13356709 $SCONS_EXTRA
           rm -f bin/*.a
