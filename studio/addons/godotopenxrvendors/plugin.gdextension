@@ -16,3 +16,5 @@ windows.debug.x86_64 = "res://addons/godotopenxrvendors/.bin/windows/template_de
 windows.release.x86_64 = "res://addons/godotopenxrvendors/.bin/windows/template_release/x86_64/libgodotopenxrvendors.dll"
 linux.debug.x86_64 = "res://addons/godotopenxrvendors/.bin/linux/template_debug/x86_64/libgodotopenxrvendors.so"
 linux.release.x86_64 = "res://addons/godotopenxrvendors/.bin/linux/template_release/x86_64/libgodotopenxrvendors.so"
+web.wasm32.single.debug = "res://addons/godotopenxrvendors/.bin/web/template_release/wasm32/libgodotopenxrvendors.web.template_debug.wasm32.nothreads.wasm"
+web.wasm32.single.release = "res://addons/godotopenxrvendors/.bin/web/template_release/wasm32/libgodotopenxrvendors.web.template_release.wasm32.nothreads.wasm"
