@@ -163,7 +163,7 @@ Transform3D CARLInputSample::get_right_wrist_pose() const {
 }
 
 void CARLInputSample::set_left_hand_joint_poses(const TypedArray<Transform3D> &p_poses) {
-	ERR_FAIL_COND(p_poses.size() != XRHandTracker::HAND_JOINT_MAX);
+	ERR_FAIL_COND(p_poses.size() != static_cast<int64_t>(carl::InputSample::Joint::COUNT));
 	left_hand_joint_poses = p_poses;
 }
 
@@ -172,7 +172,7 @@ TypedArray<Transform3D> CARLInputSample::get_left_hand_joint_poses() const {
 }
 
 void CARLInputSample::set_right_hand_joint_poses(const TypedArray<Transform3D> &p_poses) {
-	ERR_FAIL_COND(p_poses.size() != XRHandTracker::HAND_JOINT_MAX);
+	ERR_FAIL_COND(p_poses.size() != static_cast<int64_t>(carl::InputSample::Joint::COUNT));
 	right_hand_joint_poses = p_poses;
 }
 
