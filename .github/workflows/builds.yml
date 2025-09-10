@@ -30,6 +30,10 @@ jobs:
             arch: arm64
             os: ubuntu-22.04
             artifact_path: studio/addons/godot-meta-carl/android
+          - platform: web
+            arch: wasm32
+            os: ubuntu-22.04
+            artifact_path: studio/addons/godot-meta-carl/web
         target-type: [template_debug, template_release]
 
     runs-on: ${{ matrix.target.os }}
@@ -111,6 +115,7 @@ jobs:
           cp artifacts/godot-meta-carl-build-windows-*/* asset/addons/godot-meta-carl/windows/
           cp artifacts/godot-meta-carl-build-macos-*/* asset/addons/godot-meta-carl/macos/
           cp artifacts/godot-meta-carl-build-android-*/* asset/addons/godot-meta-carl/android/
+          cp artifacts/godot-meta-carl-build-web-*/* asset/addons/godot-meta-carl/web/
       - name: Upload addon as artifact
         uses: actions/upload-artifact@v4
         with:
