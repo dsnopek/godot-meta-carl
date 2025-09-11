@@ -80,7 +80,6 @@ jobs:
             SCONS_EXTRA="threads=no"
           fi
           scons target=${{ matrix.target-type }} platform=${{ matrix.target.platform }} arch=${{ matrix.target.arch }} build_profile=build_profile.json ndk_version=28.1.13356709 $SCONS_EXTRA
-          rm -f bin/*/*.a
 
       - name: Save .scons_cache
         uses: ./godot-cpp/.github/actions/godot-cache-save
