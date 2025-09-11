@@ -30,6 +30,10 @@ jobs:
             arch: arm64
             os: ubuntu-22.04
             artifact_path: studio/addons/godot-meta-carl/android
+          - platform: web
+            arch: wasm32
+            os: ubuntu-22.04
+            artifact_path: studio/addons/godot-meta-carl/web
         target-type: [template_debug, template_release]
 
     runs-on: ${{ matrix.target.os }}
@@ -70,8 +74,10 @@ jobs:
         env:
           SCONS_CACHE: ${{ github.workspace }}/.scons-cache/
         run: |
-          if "${{ matrix.target.platform == 'windows' }}"; then
+          if [ "${{ matrix.target.platform }}" = "windows" ]; then
             SCONS_EXTRA="use_mingw=yes"
+          elif [ "${{ matrix.target.platform }}" = "web" ]; then
+            SCONS_EXTRA="threads=no"
           fi
           scons target=${{ matrix.target-type }} platform=${{ matrix.target.platform }} arch=${{ matrix.target.arch }} build_profile=build_profile.json ndk_version=28.1.13356709 $SCONS_EXTRA
           rm -f bin/*.a
@@ -111,6 +117,7 @@ jobs:
           cp artifacts/godot-meta-carl-build-windows-*/* asset/addons/godot-meta-carl/windows/
           cp artifacts/godot-meta-carl-build-macos-*/* asset/addons/godot-meta-carl/macos/
           cp artifacts/godot-meta-carl-build-android-*/* asset/addons/godot-meta-carl/android/
+          cp artifacts/godot-meta-carl-build-web-*/* asset/addons/godot-meta-carl/web/
       - name: Upload addon as artifact
         uses: actions/upload-artifact@v4
         with:

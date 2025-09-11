@@ -52,7 +52,7 @@ if env["target"] in ["editor", "template_debug"]:
     except AttributeError:
         print("Not including class reference as we're targeting a pre-4.3 baseline.")
 
-if sys.platform != "darwin":
+if sys.platform != "darwin" and env['platform'] != 'web':
     env.Append(
         LINKFLAGS=[
             "-Wl,--no-undefined",
