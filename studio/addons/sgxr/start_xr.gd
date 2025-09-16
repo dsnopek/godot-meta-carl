@@ -1,13 +1,20 @@
 extends Node3D
 
+@onready var webxr_layer: CanvasLayer = %WebXRLayer
+
 @export var maximum_refresh_rate := 72
 @export var physics_rate_multiplier := 1.0
+
+@export_group("WebXR", "webxr_")
+@export var webxr_requested_reference_space_types := "local-floor"
+@export var webxr_required_features := "local-floor"
+@export var webxr_optional_features := ""
 
 signal focus_lost ()
 signal focus_gained ()
 signal pose_recentered ()
 
-var xr_interface: OpenXRInterface
+var xr_interface: XRInterface
 var xr_is_focused := false
 
 
@@ -30,6 +37,22 @@ func _ready() -> void:
 		xr_interface.session_focussed.connect(self._on_openxr_session_focussed)
 		xr_interface.session_stopping.connect(self._on_openxr_session_stopping)
 		xr_interface.pose_recentered.connect(self._on_openxr_pose_recentered)
+		return
+
+	xr_interface = XRServer.find_interface("WebXR")
+	if xr_interface:
+		xr_interface.session_mode = "immersive-vr"
+		xr_interface.requested_reference_space_types = webxr_requested_reference_space_types
+		xr_interface.required_features = webxr_required_features
+		xr_interface.optional_features = webxr_optional_features
+
+		xr_interface.session_supported.connect(self._on_webxr_session_supported)
+		xr_interface.session_started.connect(self._on_webxr_session_started)
+		xr_interface.session_ended.connect(self._on_webxr_session_ended)
+		xr_interface.session_failed.connect(self._on_webxr_session_failed)
+
+		xr_interface.is_session_supported("immersive-vr")
+		return
 
 
 func _on_openxr_session_begun() -> void:
@@ -76,3 +99,33 @@ func _on_openxr_session_stopping() -> void:
 
 func _on_openxr_pose_recentered() -> void:
 	pose_recentered.emit()
+
+
+func _on_webxr_session_supported(p_session_mode: String, p_supported: bool) -> void:
+	if p_session_mode == 'immersive-vr':
+		if p_supported:
+			webxr_layer.visible = true
+		else:
+			OS.alert("Your browser doesn't support VR")
+
+
+func _on_webxr_session_started() -> void:
+	webxr_layer.visible = false
+	get_viewport().use_xr = true
+	xr_interface.set_display_refresh_rate(maximum_refresh_rate)
+	print("Reference space type: " + xr_interface.reference_space_type)
+
+
+func _on_webxr_session_ended() -> void:
+	webxr_layer.visible = true
+	get_viewport().use_xr = false
+
+
+func _on_webxr_session_failed(message: String) -> void:
+	OS.alert("Failed to initialize WebXR: " + message)
+
+
+func _on_enter_vr_button_pressed() -> void:
+	if xr_interface is WebXRInterface:
+		if not xr_interface.initialize():
+			_on_webxr_session_failed("Unknown")

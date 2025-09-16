@@ -4,3 +4,23 @@
 
 [node name="StartXR" type="Node3D"]
 script = ExtResource("1_6skp0")
+
+[node name="WebXRLayer" type="CanvasLayer" parent="."]
+unique_name_in_owner = true
+visible = false
+
+[node name="EnterVRButton" type="Button" parent="WebXRLayer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -37.0
+offset_top = -15.5
+offset_right = 37.0
+offset_bottom = 15.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "Enter VR"
+
+[connection signal="pressed" from="WebXRLayer/EnterVRButton" to="." method="_on_enter_vr_button_pressed"]

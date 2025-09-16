@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3 uid="uid://domuosuhftjxr"]
+
+[ext_resource type="Script" uid="uid://cjhsh32ugycxf" path="res://addons/sgxr/hand_tracking_message.gd" id="1_pccse"]
+
+[node name="HandTrackingMessage" type="Label3D"]
+text = "Please switch to 
+hand tracking"
+script = ExtResource("1_pccse")
+
+[node name="Timer" type="Timer" parent="."]
+one_shot = true
+ignore_time_scale = true
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
