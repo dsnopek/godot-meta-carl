@@ -83,6 +83,7 @@ protected:
 
 public:
 	void populate_from_hand_tracker(const Ref<XRHandTracker> &p_tracker);
+	void apply_to_hand_tracker(const Ref<XRHandTracker> &p_tracker);
 
 	void set_timestamp(double p_timestamp);
 	double get_timestamp() const;
@@ -107,6 +108,8 @@ public:
 
 	PackedByteArray serialize() const;
 	static Ref<CARLInputSample> deserialize(const PackedByteArray &p_data);
+
+	static void normalize_hmd_y_axis_rotation(const Ref<CARLInputSample> &p_input_sample);
 
 	carl::InputSample get_carl_object() const;
 

@@ -45,10 +45,13 @@ protected:
 	static void _bind_methods();
 
 public:
-	void initialize(bool p_single_threaded = false);
+	void initialize(bool p_single_threaded = false, const Callable &p_normalize_callback);
 
 	bool is_single_threaded() const { return single_threaded; }
+	Callable get_normalize_callback() const;
 
+	Ref<CARLInputSample> capture_input();
+	Ref<CARLInputSample> capture_input_from(const Ref<XRPositionalTracker> &p_hmd_tracker, const Ref<XRHandTracker> &p_left_hand_tracker, const Ref<XRHandTracker> &p_right_hand_tracker);
 	void add_input(const Ref<CARLInputSample> &p_input_sample);
 	void process();
 
