@@ -1,6 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://gyggpun5wh6o"]
+[gd_scene load_steps=8 format=3 uid="uid://gyggpun5wh6o"]
 
 [ext_resource type="Script" uid="uid://bauedty1xatjn" path="res://src/main/playback.gd" id="1_cp4rk"]
+[ext_resource type="PackedScene" uid="uid://cux7l0b6tenn6" path="res://src/main/joint_debugger.tscn" id="2_b30vt"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_b30vt"]
+size = Vector3(0.01, 0.01, 0.01)
 
 [sub_resource type="SphereMesh" id="SphereMesh_cp4rk"]
 radius = 0.2
@@ -25,18 +29,27 @@ unique_name_in_owner = true
 transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -0.2, 1.1, 1.45519e-11)
 tracker = &"/playback/left_hand"
 
-[node name="OpenXRFbHandTrackingMesh" type="OpenXRFbHandTrackingMesh" parent="LeftHand"]
+[node name="LeftHandMesh" type="OpenXRFbHandTrackingMesh" parent="LeftHand"]
+unique_name_in_owner = true
 
-[node name="XRHandModifier3D" type="XRHandModifier3D" parent="LeftHand/OpenXRFbHandTrackingMesh"]
+[node name="XRHandModifier3D" type="XRHandModifier3D" parent="LeftHand/LeftHandMesh"]
 hand_tracker = &"/playback/left_hand"
+
+[node name="LeftHandJointDebugger" parent="LeftHand" instance=ExtResource("2_b30vt")]
+unique_name_in_owner = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="LeftHand"]
+mesh = SubResource("BoxMesh_b30vt")
+skeleton = NodePath("../..")
 
 [node name="RightHand" type="XRNode3D" parent="."]
 unique_name_in_owner = true
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0.2, 1.1, 1.45519e-11)
 tracker = &"/playback/right_hand"
 
-[node name="OpenXRFbHandTrackingMesh" type="OpenXRFbHandTrackingMesh" parent="RightHand"]
+[node name="RightHandMesh" type="OpenXRFbHandTrackingMesh" parent="RightHand"]
 hand = 1
+unique_name_in_owner = true
 bones/0/name = "RightPalm"
 bones/1/name = "RightHand"
 bones/2/name = "RightThumbMetacarpal"
@@ -64,8 +77,15 @@ bones/23/name = "RightLittleIntermediate"
 bones/24/name = "RightLittleDistal"
 bones/25/name = "RightLittleTip"
 
-[node name="XRHandModifier3D" type="XRHandModifier3D" parent="RightHand/OpenXRFbHandTrackingMesh"]
+[node name="XRHandModifier3D" type="XRHandModifier3D" parent="RightHand/RightHandMesh"]
 hand_tracker = &"/playback/right_hand"
+
+[node name="RightHandJointDebugger" parent="RightHand" instance=ExtResource("2_b30vt")]
+unique_name_in_owner = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="RightHand"]
+mesh = SubResource("BoxMesh_b30vt")
+skeleton = NodePath("../..")
 
 [node name="HMD" type="MeshInstance3D" parent="."]
 unique_name_in_owner = true

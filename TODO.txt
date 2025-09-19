@@ -15,6 +15,7 @@ Post-jam helper methods
 Backlog
 -------
 
+- Use asynchronous resource loading for loading definitions to prevent big hitch
 - Player should allow incrementing or decrementing by a single sample
 - Add auto-trimming of examples
 - Make `ResourceFormatLoader` and `ResourceFormatSaver` for binary formats

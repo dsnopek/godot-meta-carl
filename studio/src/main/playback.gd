@@ -1,11 +1,21 @@
 extends Node3D
 
+const JointDebugger = preload("res://src/main/joint_debugger.gd")
+
+const DEBUG_JOINTS := false
+
 @onready var hmd_node: MeshInstance3D = %HMD
 @onready var left_hand: XRNode3D = %LeftHand
 @onready var right_hand: XRNode3D = %RightHand
 
 @onready var left_hand_default_transform: Transform3D = left_hand.transform
 @onready var right_hand_default_transform: Transform3D = right_hand.transform
+
+@onready var left_hand_mesh: Node3D = %LeftHandMesh
+@onready var right_hand_mesh: Node3D = %RightHandMesh
+
+@onready var left_hand_joint_debugger: JointDebugger = %LeftHandJointDebugger
+@onready var right_hand_joint_debugger: JointDebugger = %RightHandJointDebugger
 
 var left_hand_tracker: XRHandTracker
 var right_hand_tracker: XRHandTracker
@@ -20,6 +30,15 @@ func _ready() -> void:
 	right_hand_tracker.name = '/playback/right_hand'
 	right_hand_tracker.hand = XRPositionalTracker.TRACKER_HAND_RIGHT
 	XRServer.add_tracker(right_hand_tracker)
+
+	if DEBUG_JOINTS:
+		left_hand.tracker = ''
+		right_hand.tracker = ''
+		left_hand_mesh.visible = false
+		right_hand_mesh.visible = false
+	else:
+		left_hand_joint_debugger.visible = false
+		right_hand_joint_debugger.visible = false
 
 
 func play_input_sample(p_input_sample: CARLInputSample) -> void:
@@ -37,11 +56,17 @@ func play_input_sample(p_input_sample: CARLInputSample) -> void:
 	var left_wrist_pose: Transform3D = p_input_sample.left_wrist_pose if (enabled_poses & CARLInputSample.POSE_LEFT_WRIST) else left_hand_default_transform
 	var right_wrist_pose: Transform3D = p_input_sample.right_wrist_pose if (enabled_poses & CARLInputSample.POSE_RIGHT_WRIST) else right_hand_default_transform
 
-	_play_hand_joints(left_hand_tracker, p_input_sample.left_hand_joint_poses, left_wrist_pose)
-	_play_hand_joints(right_hand_tracker, p_input_sample.right_hand_joint_poses, right_wrist_pose)
+	if DEBUG_JOINTS:
+		left_hand.transform = left_wrist_pose
+		right_hand.transform = right_wrist_pose
+		left_hand_joint_debugger.update_joints(p_input_sample.left_hand_joint_poses)
+		right_hand_joint_debugger.update_joints(p_input_sample.right_hand_joint_poses)
+	else:
+		_play_hand_tracker_joints(left_hand_tracker, p_input_sample.left_hand_joint_poses, left_wrist_pose)
+		_play_hand_tracker_joints(right_hand_tracker, p_input_sample.right_hand_joint_poses, right_wrist_pose)
 
 
-func _play_hand_joints(p_tracker: XRHandTracker, p_joint_transforms: Array[Transform3D], p_wrist_pose: Transform3D) -> void:
+func _play_hand_tracker_joints(p_tracker: XRHandTracker, p_joint_transforms: Array[Transform3D], p_wrist_pose: Transform3D) -> void:
 	var valid_flags: int = XRHandTracker.HAND_JOINT_FLAG_POSITION_TRACKED | XRHandTracker.HAND_JOINT_FLAG_POSITION_VALID | XRHandTracker.HAND_JOINT_FLAG_ORIENTATION_TRACKED | XRHandTracker.HAND_JOINT_FLAG_ORIENTATION_VALID
 
 	var carl_joint := 1
