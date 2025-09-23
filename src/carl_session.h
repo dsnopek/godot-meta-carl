@@ -24,6 +24,7 @@
 #pragma once
 
 #include <godot_cpp/classes/ref_counted.hpp>
+#include <godot_cpp/classes/xr_hand_tracker.hpp>
 
 #include <carl/Carl.h>
 

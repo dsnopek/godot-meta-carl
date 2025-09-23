@@ -4,7 +4,6 @@ TODO
 Post-jam helper methods
 -----------------------
 
-- Add "debug mode" that will show cones for each of the joints, so we can verify that the data is correct
 - Port `apply_to_hand_tracker()` that estimates all the joints
   - Get the orientation correct on the ring finger metacarpal
 - Add `CARLSession::capture/_from()` etc to capture, and include the "hack" to reuse old data if we lose tracking

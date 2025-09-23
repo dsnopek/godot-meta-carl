@@ -4,6 +4,7 @@
 		"OS",
 		"Resource",
 		"XRHandTracker",
+		"XRPose",
 		"XRServer"
 	]
 }

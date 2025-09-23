@@ -130,6 +130,69 @@ void CARLInputSample::populate_from_hand_tracker(const Ref<XRHandTracker> &p_tra
 	}
 }
 
+void CARLInputSample::apply_to_hand_tracker(const Ref<XRHandTracker> &p_tracker) {
+	ERR_FAIL_COND(p_tracker.is_null());
+
+	XRPositionalTracker::TrackerHand hand = p_tracker->get_tracker_hand();
+	ERR_FAIL_COND(hand != XRPositionalTracker::TRACKER_HAND_LEFT && hand != XRPositionalTracker::TRACKER_HAND_RIGHT);
+
+	constexpr uint64_t valid_flags = XRHandTracker::HAND_JOINT_FLAG_POSITION_TRACKED | XRHandTracker::HAND_JOINT_FLAG_POSITION_VALID | XRHandTracker::HAND_JOINT_FLAG_ORIENTATION_TRACKED | XRHandTracker::HAND_JOINT_FLAG_ORIENTATION_VALID;
+
+	TypedArray<Transform3D> &jts = (hand == XRPositionalTracker::TRACKER_HAND_LEFT) ? left_hand_joint_poses : right_hand_joint_poses;
+	Transform3D ht = (hand == XRPositionalTracker::TRACKER_HAND_LEFT) ? left_wrist_pose : right_wrist_pose;
+
+	int carl_joint = 1;
+	for (int godot_joint = XRHandTracker::HAND_JOINT_THUMB_METACARPAL; godot_joint < XRHandTracker::HAND_JOINT_MAX; godot_joint++) {
+		// Skip the missing metacarpal joints.
+		if (godot_joint == XRHandTracker::HAND_JOINT_INDEX_FINGER_METACARPAL ||
+				godot_joint == XRHandTracker::HAND_JOINT_MIDDLE_FINGER_METACARPAL ||
+				godot_joint == XRHandTracker::HAND_JOINT_RING_FINGER_METACARPAL) {
+			continue;
+		}
+
+		// We make the joints relative to the wrist.
+		p_tracker->set_hand_joint_transform((XRHandTracker::HandJoint)godot_joint, ht * (Transform3D)jts[carl_joint]);
+		p_tracker->set_hand_joint_flags((XRHandTracker::HandJoint)godot_joint, valid_flags);
+
+		carl_joint++;
+	}
+
+	p_tracker->set_hand_joint_transform(XRHandTracker::HAND_JOINT_WRIST, ht);
+	p_tracker->set_hand_joint_flags(XRHandTracker::HAND_JOINT_WRIST, valid_flags);
+
+	// Estimate the missing joints!
+
+	// Middle finger metacarpal = take the wrist pose and move forward 2cm.
+	Transform3D middle_finger_metacarpal_t = ht;
+	middle_finger_metacarpal_t.origin = middle_finger_metacarpal_t.basis.get_column(2) * -0.02;
+	p_tracker->set_hand_joint_transform(XRHandTracker::HAND_JOINT_MIDDLE_FINGER_METACARPAL, middle_finger_metacarpal_t);
+	p_tracker->set_hand_joint_flags(XRHandTracker::HAND_JOINT_MIDDLE_FINGER_METACARPAL, valid_flags);
+
+	// Ring finger metacarpal = take the middle finger metacarpal and move 1cm to the left.
+	Transform3D ring_finger_metacarpal_t = middle_finger_metacarpal_t;
+	ring_finger_metacarpal_t.origin = ring_finger_metacarpal_t.basis.get_column(0) * -0.01;
+	p_tracker->set_hand_joint_transform(XRHandTracker::HAND_JOINT_RING_FINGER_METACARPAL, ring_finger_metacarpal_t);
+	p_tracker->set_hand_joint_flags(XRHandTracker::HAND_JOINT_RING_FINGER_METACARPAL, valid_flags);
+
+
+	// Index finger metacarpal = take the middle finger metacarpal and move 1cm to the right.
+	Transform3D index_finger_metacarpal_t = middle_finger_metacarpal_t;
+	index_finger_metacarpal_t.origin = middle_finger_metacarpal_t.basis.get_column(0) * 0.01;
+	Vector3 index_finger_metacarpal_v = (p_tracker->get_hand_joint_transform(XRHandTracker::HAND_JOINT_INDEX_FINGER_PHALANX_PROXIMAL).origin - index_finger_metacarpal_t.origin).normalized();
+	index_finger_metacarpal_t.basis = Basis::looking_at(index_finger_metacarpal_v, middle_finger_metacarpal_t.basis.get_column(1));
+	p_tracker->set_hand_joint_transform(XRHandTracker::HAND_JOINT_INDEX_FINGER_METACARPAL, index_finger_metacarpal_t);
+	p_tracker->set_hand_joint_flags(XRHandTracker::HAND_JOINT_INDEX_FINGER_METACARPAL, valid_flags);
+
+	// Palm = the midpoint between the middle finger metacarpal and proximal joint.
+	Transform3D palm_t = middle_finger_metacarpal_t;
+	palm_t.origin = (palm_t.origin + p_tracker->get_hand_joint_transform(XRHandTracker::HAND_JOINT_MIDDLE_FINGER_PHALANX_PROXIMAL).origin) / 2.0;
+	p_tracker->set_hand_joint_transform(XRHandTracker::HAND_JOINT_PALM, palm_t);
+	p_tracker->set_hand_joint_flags(XRHandTracker::HAND_JOINT_PALM, valid_flags);
+
+	p_tracker->set_pose("default", palm_t, Vector3(), Vector3(), XRPose::XR_TRACKING_CONFIDENCE_HIGH);
+	p_tracker->set_has_tracking_data(true);
+}
+
 void CARLInputSample::set_timestamp(double p_timestamp) {
 	timestamp = p_timestamp;
 }
