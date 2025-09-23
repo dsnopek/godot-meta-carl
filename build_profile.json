@@ -3,6 +3,7 @@
 		"Mutex",
 		"OS",
 		"Resource",
+		"Time",
 		"XRHandTracker",
 		"XRPose",
 		"XRServer"

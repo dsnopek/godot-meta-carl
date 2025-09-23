@@ -174,8 +174,8 @@ void CARLInputSample::apply_to_hand_tracker(const Ref<XRHandTracker> &p_tracker)
 	p_tracker->set_hand_joint_transform(XRHandTracker::HAND_JOINT_RING_FINGER_METACARPAL, ring_finger_metacarpal_t);
 	p_tracker->set_hand_joint_flags(XRHandTracker::HAND_JOINT_RING_FINGER_METACARPAL, valid_flags);
 
-
-	// Index finger metacarpal = take the middle finger metacarpal and move 1cm to the right.
+	// Index finger metacarpal = take the middle finger metacarpal and move 1cm to the right,
+	// and reorient to look at the index finger proximal joint.
 	Transform3D index_finger_metacarpal_t = middle_finger_metacarpal_t;
 	index_finger_metacarpal_t.origin = middle_finger_metacarpal_t.basis.get_column(0) * 0.01;
 	Vector3 index_finger_metacarpal_v = (p_tracker->get_hand_joint_transform(XRHandTracker::HAND_JOINT_INDEX_FINGER_PHALANX_PROXIMAL).origin - index_finger_metacarpal_t.origin).normalized();

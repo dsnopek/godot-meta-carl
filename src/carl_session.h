@@ -39,6 +39,15 @@ class CARLSession : public RefCounted {
 
 	carl::Session *carl_session = nullptr;
 	bool single_threaded = false;
+	uint64_t session_start = 0;
+	Callable normalize_callback;
+
+	struct PreviousData {
+		bool valid = false;
+		Transform3D wrist_pose;
+		TypedArray<Transform3D> joint_poses;
+	};
+	PreviousData prev_data[2];
 
 	void _log_message(const String &p_message);
 
@@ -46,10 +55,12 @@ protected:
 	static void _bind_methods();
 
 public:
-	void initialize(bool p_single_threaded = false, const Callable &p_normalize_callback);
+	void initialize(bool p_single_threaded = false);
 
 	bool is_single_threaded() const { return single_threaded; }
-	Callable get_normalize_callback() const;
+
+	void set_input_normalize_callback(const Callable &p_normalize_callback);
+	Callable get_input_normalize_callback() const;
 
 	Ref<CARLInputSample> capture_input();
 	Ref<CARLInputSample> capture_input_from(const Ref<XRPositionalTracker> &p_hmd_tracker, const Ref<XRHandTracker> &p_left_hand_tracker, const Ref<XRHandTracker> &p_right_hand_tracker);
