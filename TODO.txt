@@ -4,12 +4,10 @@ TODO
 Post-jam helper methods
 -----------------------
 
-- Port `apply_to_hand_tracker()` that estimates all the joints
-  - Get the orientation correct on the ring finger metacarpal
-- Add `CARLSession::capture/_from()` etc to capture, and include the "hack" to reuse old data if we lose tracking
-- Allow `CARLSession` to take a callback to process all samples in a recognizer as well as new input
+- Modify CARL studio to use all the new helper methods (and test them!)
 - Add a checkbox (checked by default) that will unwind hands around the HMD Y-axis rotation during detection
   - Or do we want to do this during recording? I get the feeling that we don't, and should keep the recordings "pure"
+- Modify the XR jam game to use all the helper methods (and test them!)
 
 Backlog
 -------

@@ -40,7 +40,7 @@ class CARLSession : public RefCounted {
 	carl::Session *carl_session = nullptr;
 	bool single_threaded = false;
 	uint64_t session_start = 0;
-	Callable normalize_callback;
+	Callable normalize_input_callback;
 
 	struct PreviousData {
 		bool valid = false;
@@ -59,8 +59,8 @@ public:
 
 	bool is_single_threaded() const { return single_threaded; }
 
-	void set_input_normalize_callback(const Callable &p_normalize_callback);
-	Callable get_input_normalize_callback() const;
+	void set_normalize_input_callback(const Callable &p_normalize_callback);
+	Callable get_normalize_input_callback() const;
 
 	Ref<CARLInputSample> capture_input();
 	Ref<CARLInputSample> capture_input_from(const Ref<XRPositionalTracker> &p_hmd_tracker, const Ref<XRHandTracker> &p_left_hand_tracker, const Ref<XRHandTracker> &p_right_hand_tracker);
@@ -69,7 +69,10 @@ public:
 
 	Ref<CARLRecognizer> create_recognizer(const Ref<CARLDefinition> &p_definition);
 
+	static void normalize_input_y_axis_rotation(const Ref<CARLInputSample> &p_input_sample);
+
 	carl::Session *get_carl_session() const { return carl_session; }
 
+	CARLSession();
 	~CARLSession();
 };

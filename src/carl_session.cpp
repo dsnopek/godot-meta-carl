@@ -32,9 +32,17 @@
 void CARLSession::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("initialize", "single_threaded"), &CARLSession::initialize, DEFVAL(false));
 	ClassDB::bind_method(D_METHOD("is_single_threaded"), &CARLSession::is_single_threaded);
+	ClassDB::bind_method(D_METHOD("set_normalize_input_callback", "normalize_input_callback"), &CARLSession::set_normalize_input_callback);
+	ClassDB::bind_method(D_METHOD("get_normalize_input_callback"), &CARLSession::get_normalize_input_callback);
+	ClassDB::bind_method(D_METHOD("capture_input"), &CARLSession::capture_input);
+	ClassDB::bind_method(D_METHOD("capture_input_from", "hmd_tracker", "left_hand_tracker", "right_hand_tracker"), &CARLSession::capture_input_from);
 	ClassDB::bind_method(D_METHOD("add_input", "input_sample"), &CARLSession::add_input);
 	ClassDB::bind_method(D_METHOD("process"), &CARLSession::process);
 	ClassDB::bind_method(D_METHOD("create_recognizer", "definition"), &CARLSession::create_recognizer);
+
+	ClassDB::bind_static_method("CARLSession", D_METHOD("normalize_input_y_axis_rotation", "input_sample"), &CARLSession::normalize_input_y_axis_rotation);
+
+	ADD_PROPERTY(PropertyInfo(Variant::CALLABLE, "normalize_input_callback"), "set_normalize_input_callback", "get_normalize_input_callback");
 }
 
 void CARLSession::_log_message(const String &p_message) {
@@ -55,12 +63,12 @@ void CARLSession::initialize(bool p_single_threaded) {
 	});
 }
 
-void CARLSession::set_input_normalize_callback(const Callable &p_normalize_callback) {
-	normalize_callback = p_normalize_callback;
+void CARLSession::set_normalize_input_callback(const Callable &p_normalize_callback) {
+	normalize_input_callback = p_normalize_callback;
 }
 
-Callable CARLSession::get_input_normalize_callback() const {
-	return normalize_callback;
+Callable CARLSession::get_normalize_input_callback() const {
+	return normalize_input_callback;
 }
 
 Ref<CARLInputSample> CARLSession::capture_input() {
@@ -121,8 +129,8 @@ void CARLSession::add_input(const Ref<CARLInputSample> &p_input_sample) {
 	ERR_FAIL_COND_MSG(carl_session == nullptr, "CARLSession must be initialized");
 	ERR_FAIL_COND(p_input_sample.is_null());
 
-	if (normalize_callback.is_valid()) {
-		normalize_callback.call(p_input_sample);
+	if (normalize_input_callback.is_valid()) {
+		normalize_input_callback.call(p_input_sample);
 	}
 
 	double timestamp = double(Time::get_singleton()->get_ticks_usec() - session_start) / 1000000.0;
@@ -142,6 +150,29 @@ Ref<CARLRecognizer> CARLSession::create_recognizer(const Ref<CARLDefinition> &p_
 	recognizer.instantiate();
 	recognizer->initialize(this, p_definition);
 	return recognizer;
+}
+
+void CARLSession::normalize_input_y_axis_rotation(const Ref<CARLInputSample> &p_input_sample) {
+	Transform3D hmd_pose = p_input_sample->get_hmd_pose();
+	Vector3 rotation = hmd_pose.basis.get_euler(EULER_ORDER_YXZ);
+
+	Transform3D hmd_unwind_transform;
+	hmd_unwind_transform.basis = Basis(Vector3(0.0, 1.0, 0.0), rotation.y);
+	hmd_unwind_transform.origin = Vector3(hmd_pose.origin.x, 0, hmd_pose.origin.y);
+	hmd_unwind_transform.affine_invert();
+
+	p_input_sample->set_hmd_pose(hmd_unwind_transform * hmd_pose);
+
+	Transform3D left_wrist_pose = p_input_sample->get_left_wrist_pose();
+	p_input_sample->set_left_wrist_pose(hmd_unwind_transform * left_wrist_pose);
+
+	Transform3D right_wrist_pose = p_input_sample->get_right_wrist_pose();
+	p_input_sample->set_right_wrist_pose(hmd_unwind_transform * right_wrist_pose);
+}
+
+CARLSession::CARLSession() {
+	// Default to normalize input around the y axis.
+	normalize_input_callback = callable_mp_static(&CARLSession::normalize_input_y_axis_rotation);
 }
 
 CARLSession::~CARLSession() {
