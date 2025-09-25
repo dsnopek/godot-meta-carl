@@ -40,8 +40,6 @@ void CARLSession::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("process"), &CARLSession::process);
 	ClassDB::bind_method(D_METHOD("create_recognizer", "definition"), &CARLSession::create_recognizer);
 
-	ClassDB::bind_static_method("CARLSession", D_METHOD("normalize_input_y_axis_rotation", "input_sample"), &CARLSession::normalize_input_y_axis_rotation);
-
 	ADD_PROPERTY(PropertyInfo(Variant::CALLABLE, "normalize_input_callback"), "set_normalize_input_callback", "get_normalize_input_callback");
 }
 
@@ -152,27 +150,9 @@ Ref<CARLRecognizer> CARLSession::create_recognizer(const Ref<CARLDefinition> &p_
 	return recognizer;
 }
 
-void CARLSession::normalize_input_y_axis_rotation(const Ref<CARLInputSample> &p_input_sample) {
-	Transform3D hmd_pose = p_input_sample->get_hmd_pose();
-	Vector3 rotation = hmd_pose.basis.get_euler(EULER_ORDER_YXZ);
-
-	Transform3D hmd_unwind_transform;
-	hmd_unwind_transform.basis = Basis(Vector3(0.0, 1.0, 0.0), rotation.y);
-	hmd_unwind_transform.origin = Vector3(hmd_pose.origin.x, 0, hmd_pose.origin.y);
-	hmd_unwind_transform.affine_invert();
-
-	p_input_sample->set_hmd_pose(hmd_unwind_transform * hmd_pose);
-
-	Transform3D left_wrist_pose = p_input_sample->get_left_wrist_pose();
-	p_input_sample->set_left_wrist_pose(hmd_unwind_transform * left_wrist_pose);
-
-	Transform3D right_wrist_pose = p_input_sample->get_right_wrist_pose();
-	p_input_sample->set_right_wrist_pose(hmd_unwind_transform * right_wrist_pose);
-}
-
 CARLSession::CARLSession() {
 	// Default to normalize input around the y axis.
-	normalize_input_callback = callable_mp_static(&CARLSession::normalize_input_y_axis_rotation);
+	normalize_input_callback = callable_mp_static(&CARLInputSample::normalize_hmd_y_axis_rotation);
 }
 
 CARLSession::~CARLSession() {

@@ -51,6 +51,8 @@ void CARLInputSample::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("populate_from_hand_tracker", "hand_tracker"), &CARLInputSample::populate_from_hand_tracker);
 	ClassDB::bind_method(D_METHOD("apply_to_hand_tracker", "hand_tracker"), &CARLInputSample::apply_to_hand_tracker);
 
+	ClassDB::bind_static_method("CARLInputSample", D_METHOD("normalize_hmd_y_axis_rotation", "input_sample"), &CARLInputSample::normalize_hmd_y_axis_rotation);
+
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "timestamp"), "set_timestamp", "get_timestamp");
 	ADD_PROPERTY(PropertyInfo(Variant::TRANSFORM3D, "hmd_pose"), "set_hmd_pose", "get_hmd_pose");
 	ADD_PROPERTY(PropertyInfo(Variant::TRANSFORM3D, "left_wrist_pose"), "set_left_wrist_pose", "get_left_wrist_pose");
@@ -270,6 +272,24 @@ Ref<CARLInputSample> CARLInputSample::deserialize(const PackedByteArray &p_data)
 	carl::InputSample cis(deserialization);
 
 	return Ref<CARLInputSample>(memnew(CARLInputSample(cis)));
+}
+
+void CARLInputSample::normalize_hmd_y_axis_rotation(const Ref<CARLInputSample> &p_input_sample) {
+	Transform3D hmd_pose = p_input_sample->get_hmd_pose();
+	Vector3 rotation = hmd_pose.basis.get_euler(EULER_ORDER_YXZ);
+
+	Transform3D hmd_unwind_transform;
+	hmd_unwind_transform.basis = Basis(Vector3(0.0, 1.0, 0.0), rotation.y);
+	hmd_unwind_transform.origin = Vector3(hmd_pose.origin.x, 0, hmd_pose.origin.y);
+	hmd_unwind_transform.affine_invert();
+
+	p_input_sample->set_hmd_pose(hmd_unwind_transform * hmd_pose);
+
+	Transform3D left_wrist_pose = p_input_sample->get_left_wrist_pose();
+	p_input_sample->set_left_wrist_pose(hmd_unwind_transform * left_wrist_pose);
+
+	Transform3D right_wrist_pose = p_input_sample->get_right_wrist_pose();
+	p_input_sample->set_right_wrist_pose(hmd_unwind_transform * right_wrist_pose);
 }
 
 carl::InputSample CARLInputSample::get_carl_object() const {

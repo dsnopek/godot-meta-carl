@@ -11,11 +11,12 @@ Post-jam helper methods
   - Add a checkbox that will unwind hands around the HMD Y-axis rotation during detection
     - Or do we want to do this during recording? I get the feeling that we don't, and should keep the recordings "pure"
 - Modify the XR jam game to use all the helper methods (and test them!)
+- Allow editing the `default_sensitivity` in CARL Studio
+- Fix playback of wrist trajectories
 
 Backlog
 -------
 
-- Allow editing the `default_sensitivity` in CARL Studio
 - Use asynchronous resource loading for loading definitions to prevent big hitch
 - Player should allow incrementing or decrementing by a single sample
 - Add auto-trimming of examples

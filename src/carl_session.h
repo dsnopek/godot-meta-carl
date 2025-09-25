@@ -69,8 +69,6 @@ public:
 
 	Ref<CARLRecognizer> create_recognizer(const Ref<CARLDefinition> &p_definition);
 
-	static void normalize_input_y_axis_rotation(const Ref<CARLInputSample> &p_input_sample);
-
 	carl::Session *get_carl_session() const { return carl_session; }
 
 	CARLSession();
