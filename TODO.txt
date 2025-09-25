@@ -1,11 +1,6 @@
 TODO
 ====
 
-Post-jam helper methods
------------------------
-
-- Modify the XR jam game to use all the helper methods (and test them!)
-
 Backlog
 -------
 
