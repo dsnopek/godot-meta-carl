@@ -28,6 +28,8 @@
 
 #include <carl/Carl.h>
 
+#include "carl_capture_helper.h"
+
 using namespace godot;
 
 class CARLInputSample;
@@ -39,15 +41,10 @@ class CARLSession : public RefCounted {
 
 	carl::Session *carl_session = nullptr;
 	bool single_threaded = false;
+
+	CARLCaptureHelper *capture_helper = nullptr;
 	uint64_t session_start = 0;
 	Callable normalize_input_callback;
-
-	struct PreviousData {
-		bool valid = false;
-		Transform3D wrist_pose;
-		TypedArray<Transform3D> joint_poses;
-	};
-	PreviousData prev_data[2];
 
 	void _log_message(const String &p_message);
 

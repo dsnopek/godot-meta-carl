@@ -90,6 +90,7 @@ void CARLInputSample::_bind_methods() {
 	BIND_BITFIELD_FLAG(POSE_RIGHT_WRIST);
 	BIND_BITFIELD_FLAG(POSE_LEFT_JOINTS);
 	BIND_BITFIELD_FLAG(POSE_RIGHT_JOINTS);
+	BIND_BITFIELD_FLAG(POSE_ALL);
 }
 
 void CARLInputSample::populate_from_hand_tracker(const Ref<XRHandTracker> &p_tracker) {

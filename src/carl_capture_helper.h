@@ -23,45 +23,27 @@
 
 #pragma once
 
-#include <godot_cpp/classes/ref_counted.hpp>
-
-#include <carl/Carl.h>
+#include <godot_cpp/classes/xr_hand_tracker.hpp>
 
 #include "carl_input_sample.h"
-#include "carl_recording.h"
-#include "carl_capture_helper.h"
 
 using namespace godot;
 
-namespace godot {
-class XRPositionalTracker;
-}
+class CARLCaptureHelper {
+	BitField<CARLInputSample::Pose> enabled_poses = 0;
 
-class CARLRecorder : public RefCounted {
-	GDCLASS(CARLRecorder, RefCounted);
-
-	carl::action::InProgressRecording *carl_ipr = nullptr;
-
-	CARLCaptureHelper *capture_helper = nullptr;
-	uint64_t recording_start = 0;
-	Callable normalize_input_callback;
-
-protected:
-	static void _bind_methods();
+	struct PreviousData {
+		bool valid = false;
+		Transform3D wrist_pose;
+		TypedArray<Transform3D> joint_poses;
+	};
+	PreviousData prev_data[2];
 
 public:
-	void start_recording(uint64_t p_max_seconds, BitField<CARLInputSample::Pose> p_enabled_poses);
-	bool is_recording() const;
-
-	void set_normalize_input_callback(const Callable &p_normalize_callback);
-	Callable get_normalize_input_callback() const;
-
 	Ref<CARLInputSample> capture_input();
 	Ref<CARLInputSample> capture_input_from(const Ref<XRPositionalTracker> &p_hmd_tracker, const Ref<XRHandTracker> &p_left_hand_tracker, const Ref<XRHandTracker> &p_right_hand_tracker);
-	void add_input(const Ref<CARLInputSample> &p_input_sample);
 
-	Ref<CARLRecording> finish_recording();
-
-	CARLRecorder();
-	~CARLRecorder();
+	CARLCaptureHelper(BitField<CARLInputSample::Pose> p_enabled_poses) {
+		enabled_poses = p_enabled_poses;
+	}
 };

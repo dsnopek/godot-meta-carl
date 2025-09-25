@@ -4,24 +4,18 @@ TODO
 Post-jam helper methods
 -----------------------
 
-- Should `capture` and `capture_from` be on `CARLInputSample`?
-  - Should these be `static`?
-- Should `normalize_hmd_y_axis_rotation()` be on `CARLInputSample`?
-- Modify CARL studio to use all the new helper methods (and test them!)
-  - Add a checkbox that will unwind hands around the HMD Y-axis rotation during detection
-    - Or do we want to do this during recording? I get the feeling that we don't, and should keep the recordings "pure"
 - Modify the XR jam game to use all the helper methods (and test them!)
-- Allow editing the `default_sensitivity` in CARL Studio
-- Fix playback of wrist trajectories
-- Switch to single threaded in the "Test" screen for increased accuracy?
 
 Backlog
 -------
 
-- Use asynchronous resource loading for loading definitions to prevent big hitch
-- Player should allow incrementing or decrementing by a single sample
-- Add auto-trimming of examples
+- Studio: Allow editing the `default_sensitivity` in CARL Studio
+- Studio: Use asynchronous resource loading for loading definitions to prevent big hitch
+- Studio: Switch to single threaded in the "Test" screen for increased accuracy?
+- Studio: Fix playback of wrist trajectories
+- Studio: Player should allow incrementing or decrementing by a single sample
+- Studio: Add auto-trimming of examples
 - Make `ResourceFormatLoader` and `ResourceFormatSaver` for binary formats
   - Have `.carl_definition`, `carl_recording` and maybe `.carl_example` files
   - Store the data compressed with ZSTD? (This seemed to be the best size vs time trade-off)
-- Fix issue with "margin" on the "Examples" tree control
+- Studio: Fix issue with "margin" on the "Examples" tree control

@@ -67,6 +67,7 @@ public:
 		POSE_RIGHT_WRIST = 4,
 		POSE_LEFT_JOINTS = 8,
 		POSE_RIGHT_JOINTS = 16,
+		POSE_ALL = 0xffffffff,
 	};
 
 private:

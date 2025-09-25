@@ -46,10 +46,10 @@ func _on_timer_timeout() -> void:
 
 
 func start_recording() -> void:
-	_recorder.start_recording(_record_info['max_seconds'])
 	_recording_start = Time.get_ticks_usec()
 	_timestamp = 0.0
-	record_input_sample()
+	_recorder.start_recording(_record_info['max_seconds'], _record_info['enabled_poses'])
+	_recorder.capture_input()
 	set_process(true)
 
 
@@ -61,16 +61,9 @@ func _process(_delta: float) -> void:
 			_timestamp = _record_info['max_seconds']
 			stop_recording()
 		else:
-			record_input_sample()
+			_recorder.capture_input()
 
 		update_label_text()
-
-
-func record_input_sample() -> void:
-	var input_sample := GameState.capture_input_sample()
-	input_sample.enabled_poses = _record_info['enabled_poses']
-	input_sample.timestamp = _timestamp
-	_recorder.record_input_sample(input_sample)
 
 
 func stop_recording() -> void:
