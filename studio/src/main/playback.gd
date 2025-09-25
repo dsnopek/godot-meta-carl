@@ -62,35 +62,5 @@ func play_input_sample(p_input_sample: CARLInputSample) -> void:
 		left_hand_joint_debugger.update_joints(p_input_sample.left_hand_joint_poses)
 		right_hand_joint_debugger.update_joints(p_input_sample.right_hand_joint_poses)
 	else:
-		_play_hand_tracker_joints(left_hand_tracker, p_input_sample.left_hand_joint_poses, left_wrist_pose)
-		_play_hand_tracker_joints(right_hand_tracker, p_input_sample.right_hand_joint_poses, right_wrist_pose)
-
-
-func _play_hand_tracker_joints(p_tracker: XRHandTracker, p_joint_transforms: Array[Transform3D], p_wrist_pose: Transform3D) -> void:
-	var valid_flags: int = XRHandTracker.HAND_JOINT_FLAG_POSITION_TRACKED | XRHandTracker.HAND_JOINT_FLAG_POSITION_VALID | XRHandTracker.HAND_JOINT_FLAG_ORIENTATION_TRACKED | XRHandTracker.HAND_JOINT_FLAG_ORIENTATION_VALID
-
-	var carl_joint := 1
-	for godot_joint in range(XRHandTracker.HAND_JOINT_THUMB_METACARPAL, XRHandTracker.HAND_JOINT_MAX):
-		if godot_joint == XRHandTracker.HAND_JOINT_INDEX_FINGER_METACARPAL or godot_joint == XRHandTracker.HAND_JOINT_MIDDLE_FINGER_METACARPAL or godot_joint == XRHandTracker.HAND_JOINT_RING_FINGER_METACARPAL:
-			continue
-
-		p_tracker.set_hand_joint_transform(godot_joint, p_wrist_pose * p_joint_transforms[carl_joint])
-		p_tracker.set_hand_joint_flags(godot_joint, valid_flags)
-
-		carl_joint += 1
-
-	p_tracker.set_hand_joint_transform(XRHandTracker.HAND_JOINT_WRIST, p_wrist_pose)
-	p_tracker.set_hand_joint_flags(XRHandTracker.HAND_JOINT_WRIST, valid_flags)
-
-	# Estimate the palm joint. This won't be very accurate without the middle finger metacarpal, but it's only used
-	# for playback, so hopefully, it doesn't really matter.
-	var palm_t: Transform3D = p_wrist_pose
-	# We start with the wrist pose, and move forward 2cm, to try and estimate the middle finger metacarpal.
-	palm_t.origin = -p_wrist_pose.basis.z * 0.02
-	# Then get the midpoint between the middle finger metacarpal and proximal.
-	palm_t.origin = (palm_t.origin + p_tracker.get_hand_joint_transform(XRHandTracker.HAND_JOINT_MIDDLE_FINGER_PHALANX_PROXIMAL).origin) / 2.0
-
-	p_tracker.set_hand_joint_transform(XRHandTracker.HAND_JOINT_PALM, palm_t)
-	p_tracker.set_hand_joint_flags(XRHandTracker.HAND_JOINT_PALM, valid_flags)
-	p_tracker.set_pose("default", palm_t, Vector3.ZERO, Vector3.ZERO, XRPose.XR_TRACKING_CONFIDENCE_HIGH)
-	p_tracker.has_tracking_data = true
+		p_input_sample.apply_to_hand_tracker(left_hand_tracker)
+		p_input_sample.apply_to_hand_tracker(right_hand_tracker)

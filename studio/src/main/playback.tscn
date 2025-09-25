@@ -1,10 +1,7 @@
-[gd_scene load_steps=8 format=3 uid="uid://gyggpun5wh6o"]
+[gd_scene load_steps=7 format=3 uid="uid://gyggpun5wh6o"]
 
 [ext_resource type="Script" uid="uid://bauedty1xatjn" path="res://src/main/playback.gd" id="1_cp4rk"]
 [ext_resource type="PackedScene" uid="uid://cux7l0b6tenn6" path="res://src/main/joint_debugger.tscn" id="2_b30vt"]
-
-[sub_resource type="BoxMesh" id="BoxMesh_b30vt"]
-size = Vector3(0.01, 0.01, 0.01)
 
 [sub_resource type="SphereMesh" id="SphereMesh_cp4rk"]
 radius = 0.2
@@ -37,10 +34,6 @@ hand_tracker = &"/playback/left_hand"
 
 [node name="LeftHandJointDebugger" parent="LeftHand" instance=ExtResource("2_b30vt")]
 unique_name_in_owner = true
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="LeftHand"]
-mesh = SubResource("BoxMesh_b30vt")
-skeleton = NodePath("../..")
 
 [node name="RightHand" type="XRNode3D" parent="."]
 unique_name_in_owner = true
@@ -82,10 +75,6 @@ hand_tracker = &"/playback/right_hand"
 
 [node name="RightHandJointDebugger" parent="RightHand" instance=ExtResource("2_b30vt")]
 unique_name_in_owner = true
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="RightHand"]
-mesh = SubResource("BoxMesh_b30vt")
-skeleton = NodePath("../..")
 
 [node name="HMD" type="MeshInstance3D" parent="."]
 unique_name_in_owner = true

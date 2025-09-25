@@ -49,6 +49,7 @@ void CARLInputSample::_bind_methods() {
 	ClassDB::bind_static_method("CARLInputSample", D_METHOD("deserialize", "data"), &CARLInputSample::deserialize);
 
 	ClassDB::bind_method(D_METHOD("populate_from_hand_tracker", "hand_tracker"), &CARLInputSample::populate_from_hand_tracker);
+	ClassDB::bind_method(D_METHOD("apply_to_hand_tracker", "hand_tracker"), &CARLInputSample::apply_to_hand_tracker);
 
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "timestamp"), "set_timestamp", "get_timestamp");
 	ADD_PROPERTY(PropertyInfo(Variant::TRANSFORM3D, "hmd_pose"), "set_hmd_pose", "get_hmd_pose");
