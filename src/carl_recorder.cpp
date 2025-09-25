@@ -61,6 +61,10 @@ Ref<CARLInputSample> CARLRecorder::capture_input() {
 	ERR_FAIL_NULL_V_MSG(carl_ipr, Ref<CARLInputSample>(), "CARLRecorder must be started");
 
 	Ref<CARLInputSample> input_sample = capture_helper->capture_input();
+	if (input_sample.is_null()) {
+		return input_sample;
+	}
+
 	add_input(input_sample);
 	return input_sample;
 }
@@ -69,6 +73,10 @@ Ref<CARLInputSample> CARLRecorder::capture_input_from(const Ref<XRPositionalTrac
 	ERR_FAIL_NULL_V_MSG(carl_ipr, Ref<CARLInputSample>(), "CARLRecorder must be started");
 
 	Ref<CARLInputSample> input_sample = capture_helper->capture_input_from(p_hmd_tracker, p_left_hand_tracker, p_right_hand_tracker);
+	if (input_sample.is_null()) {
+		return input_sample;
+	}
+
 	add_input(input_sample);
 	return input_sample;
 }
