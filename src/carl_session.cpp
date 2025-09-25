@@ -118,8 +118,10 @@ Ref<CARLInputSample> CARLSession::capture_input_from(const Ref<XRPositionalTrack
 		input_sample->set_right_hand_joint_poses(prev_data[1].joint_poses.duplicate());
 	}
 
-	add_input(input_sample);
+	constexpr uint64_t all_poses = CARLInputSample::POSE_HMD | CARLInputSample::POSE_LEFT_WRIST | CARLInputSample::POSE_LEFT_JOINTS | CARLInputSample::POSE_RIGHT_WRIST | CARLInputSample::POSE_RIGHT_WRIST;
+	input_sample->set_enabled_poses(all_poses);
 
+	add_input(input_sample);
 	return input_sample;
 }
 

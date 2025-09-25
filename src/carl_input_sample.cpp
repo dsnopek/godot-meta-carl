@@ -43,7 +43,7 @@ void CARLInputSample::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_right_hand_joint_poses"), &CARLInputSample::get_right_hand_joint_poses);
 
 	ClassDB::bind_method(D_METHOD("set_enabled_poses", "enabled_poses"), &CARLInputSample::set_enabled_poses);
-	ClassDB::bind_method(D_METHOD("get_enabled_poses"), &CARLInputSample::get_enabled_posed);
+	ClassDB::bind_method(D_METHOD("get_enabled_poses"), &CARLInputSample::get_enabled_poses);
 
 	ClassDB::bind_method(D_METHOD("serialize"), &CARLInputSample::serialize);
 	ClassDB::bind_static_method("CARLInputSample", D_METHOD("deserialize", "data"), &CARLInputSample::deserialize);
@@ -250,7 +250,7 @@ void CARLInputSample::set_enabled_poses(BitField<Pose> p_enabled_poses) {
 	enabled_poses = p_enabled_poses;
 }
 
-BitField<CARLInputSample::Pose> CARLInputSample::get_enabled_posed() const {
+BitField<CARLInputSample::Pose> CARLInputSample::get_enabled_poses() const {
 	return enabled_poses;
 }
 
@@ -275,21 +275,30 @@ Ref<CARLInputSample> CARLInputSample::deserialize(const PackedByteArray &p_data)
 }
 
 void CARLInputSample::normalize_hmd_y_axis_rotation(const Ref<CARLInputSample> &p_input_sample) {
+	uint64_t enabled_poses = p_input_sample->get_enabled_poses();
+	if (!(enabled_poses & CARLInputSample::POSE_HMD)) {
+		return;
+	}
+
 	Transform3D hmd_pose = p_input_sample->get_hmd_pose();
 	Vector3 rotation = hmd_pose.basis.get_euler(EULER_ORDER_YXZ);
 
 	Transform3D hmd_unwind_transform;
 	hmd_unwind_transform.basis = Basis(Vector3(0.0, 1.0, 0.0), rotation.y);
-	hmd_unwind_transform.origin = Vector3(hmd_pose.origin.x, 0, hmd_pose.origin.y);
+	hmd_unwind_transform.origin = Vector3(hmd_pose.origin.x, 0, hmd_pose.origin.z);
 	hmd_unwind_transform.affine_invert();
 
 	p_input_sample->set_hmd_pose(hmd_unwind_transform * hmd_pose);
 
-	Transform3D left_wrist_pose = p_input_sample->get_left_wrist_pose();
-	p_input_sample->set_left_wrist_pose(hmd_unwind_transform * left_wrist_pose);
+	if (enabled_poses & CARLInputSample::POSE_LEFT_WRIST) {
+		Transform3D left_wrist_pose = p_input_sample->get_left_wrist_pose();
+		p_input_sample->set_left_wrist_pose(hmd_unwind_transform * left_wrist_pose);
+	}
 
-	Transform3D right_wrist_pose = p_input_sample->get_right_wrist_pose();
-	p_input_sample->set_right_wrist_pose(hmd_unwind_transform * right_wrist_pose);
+	if (enabled_poses & CARLInputSample::POSE_RIGHT_WRIST) {
+		Transform3D right_wrist_pose = p_input_sample->get_right_wrist_pose();
+		p_input_sample->set_right_wrist_pose(hmd_unwind_transform * right_wrist_pose);
+	}
 }
 
 carl::InputSample CARLInputSample::get_carl_object() const {

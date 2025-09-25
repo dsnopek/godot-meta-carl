@@ -13,6 +13,7 @@ Post-jam helper methods
 - Modify the XR jam game to use all the helper methods (and test them!)
 - Allow editing the `default_sensitivity` in CARL Studio
 - Fix playback of wrist trajectories
+- Switch to single threaded in the "Test" screen for increased accuracy?
 
 Backlog
 -------

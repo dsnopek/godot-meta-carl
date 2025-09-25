@@ -104,7 +104,7 @@ public:
 	TypedArray<Transform3D> get_right_hand_joint_poses() const;
 
 	void set_enabled_poses(BitField<Pose> p_enabled_poses);
-	BitField<Pose> get_enabled_posed() const;
+	BitField<Pose> get_enabled_poses() const;
 
 	PackedByteArray serialize() const;
 	static Ref<CARLInputSample> deserialize(const PackedByteArray &p_data);
