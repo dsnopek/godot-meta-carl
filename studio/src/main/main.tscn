@@ -1,12 +1,21 @@
-[gd_scene load_steps=9 format=3 uid="uid://dh0oj81pufivs"]
+[gd_scene load_steps=11 format=3 uid="uid://dh0oj81pufivs"]
 
 [ext_resource type="Script" uid="uid://4osxenmr6ido" path="res://src/main/main.gd" id="1_ig7tw"]
 [ext_resource type="PackedScene" uid="uid://cqs8c3rq6cxvk" path="res://addons/sgxr/function_pointer.tscn" id="3_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://btrugoluitgin" path="res://addons/sgxr/ui_layer.tscn" id="3_h2yge"]
 [ext_resource type="PackedScene" uid="uid://ciab6rk7831n" path="res://src/ui/ui.tscn" id="3_lquwl"]
-[ext_resource type="PackedScene" path="res://addons/sgxr/hand_tracking_message.tscn" id="5_30cu5"]
+[ext_resource type="PackedScene" uid="uid://domuosuhftjxr" path="res://addons/sgxr/hand_tracking_message.tscn" id="5_30cu5"]
 [ext_resource type="PackedScene" uid="uid://gyggpun5wh6o" path="res://src/main/playback.tscn" id="5_jqarl"]
 [ext_resource type="PackedScene" uid="uid://br72i82f12kke" path="res://addons/sgxr/start_xr.tscn" id="5_lquwl"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_30cu5"]
+albedo_color = Color(1, 0, 0, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_frqgp"]
+material = SubResource("StandardMaterial3D_30cu5")
+top_radius = 0.1
+bottom_radius = 0.1
+height = 0.01
 
 [sub_resource type="Environment" id="Environment_0xm2m"]
 tonemap_mode = 2
@@ -17,6 +26,9 @@ script = ExtResource("1_ig7tw")
 [node name="XROrigin3D" type="XROrigin3D" parent="."]
 
 [node name="XRCamera3D" type="XRCamera3D" parent="XROrigin3D"]
+
+[node name="OriginCylinder" type="MeshInstance3D" parent="XROrigin3D"]
+mesh = SubResource("CylinderMesh_frqgp")
 
 [node name="UILayer" parent="XROrigin3D" node_paths=PackedStringArray("layer_viewport") instance=ExtResource("3_h2yge")]
 process_mode = 3
@@ -98,6 +110,11 @@ hand_tracker = &"/user/hand_tracker/right"
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.86999, -1.52301)
 visible = false
 outline_size = 3
+
+[node name="FrontLabel" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.45519e-11, 1, -5)
+text = "Front"
+uppercase = true
 
 [node name="Playback" parent="." instance=ExtResource("5_jqarl")]
 unique_name_in_owner = true

@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://8vallhs7vr6l"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_rxqce"]
+top_radius = 0.0
+bottom_radius = 0.005
+height = 0.01
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pscke"]
+albedo_color = Color(1, 0, 0, 1)
+
+[node name="Joint" type="Node3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.45519e-11, 0.005, 1.45519e-11)
+mesh = SubResource("CylinderMesh_rxqce")
+surface_material_override/0 = SubResource("StandardMaterial3D_pscke")

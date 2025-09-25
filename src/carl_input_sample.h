@@ -67,6 +67,7 @@ public:
 		POSE_RIGHT_WRIST = 4,
 		POSE_LEFT_JOINTS = 8,
 		POSE_RIGHT_JOINTS = 16,
+		POSE_ALL = 0xffffffff,
 	};
 
 private:
@@ -83,6 +84,7 @@ protected:
 
 public:
 	void populate_from_hand_tracker(const Ref<XRHandTracker> &p_tracker);
+	void apply_to_hand_tracker(const Ref<XRHandTracker> &p_tracker);
 
 	void set_timestamp(double p_timestamp);
 	double get_timestamp() const;
@@ -103,10 +105,12 @@ public:
 	TypedArray<Transform3D> get_right_hand_joint_poses() const;
 
 	void set_enabled_poses(BitField<Pose> p_enabled_poses);
-	BitField<Pose> get_enabled_posed() const;
+	BitField<Pose> get_enabled_poses() const;
 
 	PackedByteArray serialize() const;
 	static Ref<CARLInputSample> deserialize(const PackedByteArray &p_data);
+
+	static void normalize_hmd_y_axis_rotation(const Ref<CARLInputSample> &p_input_sample);
 
 	carl::InputSample get_carl_object() const;
 

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://cux7l0b6tenn6"]
+
+[ext_resource type="Script" uid="uid://c1oe0ja7ud64o" path="res://src/main/joint_debugger.gd" id="1_cjmwc"]
+
+[node name="JointDebugger" type="Node3D"]
+script = ExtResource("1_cjmwc")

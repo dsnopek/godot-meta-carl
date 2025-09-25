@@ -6,8 +6,6 @@ extends VBoxContainer
 var session: CARLSession
 var recognizer: CARLRecognizer
 
-var session_start: int
-
 func _show_screen(_info: Dictionary) -> void:
 	update_score_field()
 
@@ -16,8 +14,6 @@ func _show_screen(_info: Dictionary) -> void:
 		session.initialize()
 
 		recognizer = session.create_recognizer(GameState.current_definition)
-
-		session_start = Time.get_ticks_usec()
 
 
 func _hide_screen() -> void:
@@ -37,11 +33,7 @@ func _process(_delta: float) -> void:
 		session.process()
 
 	if recognizer:
-		var input_sample := GameState.capture_input_sample()
-		input_sample.timestamp = (Time.get_ticks_usec() - session_start) / 1000000.0
-		input_sample.enabled_poses = 0xffffffff
-		session.add_input(input_sample)
-
+		session.capture_input()
 		update_score_field()
 
 

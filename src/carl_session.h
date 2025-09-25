@@ -24,8 +24,11 @@
 #pragma once
 
 #include <godot_cpp/classes/ref_counted.hpp>
+#include <godot_cpp/classes/xr_hand_tracker.hpp>
 
 #include <carl/Carl.h>
+
+#include "carl_capture_helper.h"
 
 using namespace godot;
 
@@ -39,6 +42,10 @@ class CARLSession : public RefCounted {
 	carl::Session *carl_session = nullptr;
 	bool single_threaded = false;
 
+	CARLCaptureHelper *capture_helper = nullptr;
+	uint64_t session_start = 0;
+	Callable normalize_input_callback;
+
 	void _log_message(const String &p_message);
 
 protected:
@@ -49,6 +56,11 @@ public:
 
 	bool is_single_threaded() const { return single_threaded; }
 
+	void set_normalize_input_callback(const Callable &p_normalize_callback);
+	Callable get_normalize_input_callback() const;
+
+	Ref<CARLInputSample> capture_input();
+	Ref<CARLInputSample> capture_input_from(const Ref<XRPositionalTracker> &p_hmd_tracker, const Ref<XRHandTracker> &p_left_hand_tracker, const Ref<XRHandTracker> &p_right_hand_tracker);
 	void add_input(const Ref<CARLInputSample> &p_input_sample);
 	void process();
 
@@ -56,5 +68,6 @@ public:
 
 	carl::Session *get_carl_session() const { return carl_session; }
 
+	CARLSession();
 	~CARLSession();
 };

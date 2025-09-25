@@ -1,9 +1,13 @@
 TODO
 ====
 
-- Player should allow incrementing or decrementing by a single sample
-- Add auto-trimming of examples
+- Studio: Allow editing the `default_sensitivity` in CARL Studio
+- Studio: Use asynchronous resource loading for loading definitions to prevent big hitch
+- Studio: Switch to single threaded in the "Test" screen for increased accuracy?
+- Studio: Fix playback of wrist trajectories
+- Studio: Player should allow incrementing or decrementing by a single sample
+- Studio: Add auto-trimming of examples
 - Make `ResourceFormatLoader` and `ResourceFormatSaver` for binary formats
-    - Have `.carl_definition`, `carl_recording` and maybe `.carl_example` files
-    - Store the data compressed with ZSTD? (This seemed to be the best size vs time trade-off)
-- Fix issue with "margin" on the "Examples" tree control
+  - Have `.carl_definition`, `carl_recording` and maybe `.carl_example` files
+  - Store the data compressed with ZSTD? (This seemed to be the best size vs time trade-off)
+- Studio: Fix issue with "margin" on the "Examples" tree control
