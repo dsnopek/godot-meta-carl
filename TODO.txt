@@ -6,8 +6,6 @@ TODO
 - Studio: Switch to single threaded in the "Test" screen for increased accuracy?
 - Studio: Fix playback of wrist trajectories
 - Studio: Allow fractional recording times
-- Studio: Allow disabling auto-play of examples
-  - Instead should just show the first frame
 - Studio: Player should allow incrementing or decrementing by a single sample
 - Studio: Add auto-trimming of examples
 - Make `ResourceFormatLoader` and `ResourceFormatSaver` for binary formats

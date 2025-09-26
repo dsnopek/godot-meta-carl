@@ -85,6 +85,7 @@ func _on_game_state_current_definition_changed(p_definition: CARLDefinition) -> 
 
 		%TypeField.text = _get_action_type_string(p_definition.action_type)
 
+		example_list.set_selected(0)
 	else:
 		%DefinitionContainer.visible = false
 		%SaveButton.disabled = true

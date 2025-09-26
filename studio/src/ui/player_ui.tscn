@@ -96,6 +96,12 @@ layout_mode = 2
 button_pressed = true
 text = "Limit"
 
+[node name="AutoplayField" type="CheckBox" parent="VBoxContainer/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+text = "Auto Play"
+
 [connection signal="pressed" from="VBoxContainer/HBoxContainer/SetStartButton" to="." method="_on_set_start_button_pressed"]
 [connection signal="pressed" from="VBoxContainer/HBoxContainer/SetEndButton" to="." method="_on_set_end_button_pressed"]
 [connection signal="value_changed" from="VBoxContainer/TimelineSlider" to="." method="_on_timeline_slider_value_changed"]
