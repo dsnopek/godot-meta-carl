@@ -48,7 +48,7 @@ func _on_timer_timeout() -> void:
 func start_recording() -> void:
 	_recording_start = Time.get_ticks_usec()
 	_timestamp = 0.0
-	_recorder.start_recording(_record_info['max_seconds'], _record_info['enabled_poses'])
+	_recorder.start_recording(ceili(_record_info['max_seconds']), _record_info['enabled_poses'])
 	_recorder.capture_input()
 	set_process(true)
 

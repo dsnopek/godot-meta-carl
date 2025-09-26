@@ -55,8 +55,8 @@ func _on_record_button_pressed() -> void:
 
 	var info := {
 		example_type = _example_type,
-		max_seconds = int(%MaxLengthField.value),
-		delay = int(%DelayStartField.value),
+		max_seconds = float(%MaxLengthField.value),
+		delay = float(%DelayStartField.value),
 		enabled_poses = enabled_poses,
 	}
 
