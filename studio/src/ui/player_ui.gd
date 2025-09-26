@@ -35,12 +35,15 @@ func stop() -> void:
 
 func _process(p_delta: float) -> void:
 	var example: CARLExample = GameState.current_example
-	var end_value: float = example.end_timestamp if limit_field.button_pressed else timeline_slider.max_value
+	var example_start: float = example.start_timestamp if example else 0.0
+	var example_end: float = example.end_timestamp if example else 1.0
+
+	var start_value: float = example_start if limit_field.button_pressed else timeline_slider.min_value
+	var end_value: float = example_end if limit_field.button_pressed else timeline_slider.max_value
 
 	if _playing:
 		if timeline_slider.value >= end_value:
 			if loop_field.button_pressed:
-				var start_value: float = example.start_timestamp if limit_field.button_pressed else timeline_slider.min_value
 				timeline_slider.value = start_value
 			else:
 				stop()

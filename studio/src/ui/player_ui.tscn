@@ -93,6 +93,7 @@ text = "Loop"
 [node name="LimitField" type="CheckBox" parent="VBoxContainer/HBoxContainer2"]
 unique_name_in_owner = true
 layout_mode = 2
+button_pressed = true
 text = "Limit"
 
 [connection signal="pressed" from="VBoxContainer/HBoxContainer/SetStartButton" to="." method="_on_set_start_button_pressed"]
