@@ -27,9 +27,9 @@
 
 #include <carl/Carl.h>
 
+#include "carl_capture_helper.h"
 #include "carl_input_sample.h"
 #include "carl_recording.h"
-#include "carl_capture_helper.h"
 
 using namespace godot;
 
