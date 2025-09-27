@@ -6,11 +6,13 @@ const ExampleList = preload("res://src/ui/example_list.gd")
 @onready var player_ui: PlayerUI = %PlayerUI
 @onready var file_dialog: FileDialog = %FileDialog
 @onready var accept_dialog: AcceptDialog = %AcceptDialog
+@onready var loading_overlay: CanvasLayer = %LoadingOverlay
 
 @onready var example_list: ExampleList = %ExampleList
 @onready var counter_example_list: ExampleList = %CounterExampleList
 
 var _current_filename := ""
+var _is_loading := false
 
 
 func _ready() -> void:
@@ -73,9 +75,9 @@ func _get_action_type_string(p_action_type: CARLDefinition.ActionType) -> String
 
 
 func _on_game_state_current_definition_changed(p_definition: CARLDefinition) -> void:
-	_set_current_filename("")
-
 	if p_definition:
+		_set_current_filename(p_definition.resource_path)
+
 		%DefinitionContainer.visible = true
 		%SaveButton.disabled = false
 		%TestButton.disabled = false
@@ -87,6 +89,8 @@ func _on_game_state_current_definition_changed(p_definition: CARLDefinition) -> 
 
 		example_list.set_selected(0)
 	else:
+		_set_current_filename("")
+
 		%DefinitionContainer.visible = false
 		%SaveButton.disabled = true
 		%TestButton.disabled = true
@@ -180,13 +184,19 @@ func _on_test_button_pressed() -> void:
 
 func _on_file_dialog_file_selected(p_path: String) -> void:
 	if file_dialog.file_mode == FileDialog.FILE_MODE_OPEN_FILE:
-		var res: Resource = ResourceLoader.load(p_path, "CARLDefinition", ResourceLoader.CACHE_MODE_IGNORE)
-		if res and res is CARLDefinition:
-			GameState.current_definition = res
-			_set_current_filename(p_path)
-		else:
+		var err: Error = ResourceLoader.load_threaded_request(p_path, "CARLDefinition", true, ResourceLoader.CACHE_MODE_IGNORE)
+		if err != OK:
 			accept_dialog.dialog_text = "Unable to open '%s'" % p_path
 			accept_dialog.popup_centered()
+			return
+
+		GameState.current_definition = null
+
+		_set_current_filename(p_path)
+		loading_overlay.visible = true
+		loading_overlay.update_loading_progress(0.0)
+		_is_loading = true
+
 
 	else:
 		var err = ResourceSaver.save(GameState.current_definition, p_path)
@@ -195,6 +205,27 @@ func _on_file_dialog_file_selected(p_path: String) -> void:
 			accept_dialog.popup_centered()
 		else:
 			_set_current_filename(p_path)
+
+
+func _process(_delta: float) -> void:
+	if _is_loading:
+		var progress := []
+		var status := ResourceLoader.load_threaded_get_status(_current_filename, progress)
+
+		if status == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
+			loading_overlay.update_loading_progress(progress[0])
+		else:
+			loading_overlay.visible = false
+			_is_loading = false
+
+			if status == ResourceLoader.THREAD_LOAD_LOADED:
+				var definition: CARLDefinition = ResourceLoader.load_threaded_get(_current_filename)
+				GameState.current_definition = definition
+			else:
+				accept_dialog.dialog_text = "Error loading '%s'" % _current_filename
+				accept_dialog.popup_centered()
+				_set_current_filename("")
+
 
 func _on_example_list_item_add(p_example_type: GameState.ExampleType) -> void:
 	get_parent().show_screen('RecordSetupScreen', { example_type = p_example_type })

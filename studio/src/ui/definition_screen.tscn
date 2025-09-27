@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://c4mf0ifovvbi1"]
+[gd_scene load_steps=5 format=3 uid="uid://c4mf0ifovvbi1"]
 
 [ext_resource type="Script" uid="uid://qthgxdol2fno" path="res://src/ui/definition_screen.gd" id="1_2h06g"]
 [ext_resource type="PackedScene" uid="uid://dcs3ocqukin1k" path="res://src/ui/player_ui.tscn" id="2_52rgg"]
 [ext_resource type="PackedScene" uid="uid://bnu5dq2tlssre" path="res://src/ui/example_list.tscn" id="2_j86pn"]
+[ext_resource type="PackedScene" uid="uid://b1w2uxrsg0en8" path="res://src/ui/loading_overlay.tscn" id="4_aab7f"]
 
 [node name="DefinitionScreen" type="VBoxContainer"]
 custom_minimum_size = Vector2(700, 500)
@@ -98,6 +99,10 @@ size_flags_horizontal = 3
 [node name="PlayerUI" parent="DefinitionContainer" instance=ExtResource("2_52rgg")]
 unique_name_in_owner = true
 layout_mode = 2
+
+[node name="LoadingOverlay" parent="." instance=ExtResource("4_aab7f")]
+unique_name_in_owner = true
+visible = false
 
 [node name="FileDialog" type="FileDialog" parent="."]
 unique_name_in_owner = true
