@@ -4,7 +4,6 @@ TODO
 - Studio: Allow editing the `default_sensitivity`
 - Studio: Use asynchronous resource loading for loading definitions to prevent big hitch
 - Studio: Switch to single threaded in the "Test" screen for increased accuracy?
-- Studio: Fix playback of wrist trajectories
 - Studio: Player should allow incrementing or decrementing by a single sample
 - Studio: Add auto-trimming of examples
 - Make `ResourceFormatLoader` and `ResourceFormatSaver` for binary formats
