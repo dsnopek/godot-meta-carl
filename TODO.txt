@@ -1,6 +1,9 @@
 TODO
 ====
 
+- Studio: Make WebXR version!
+  - Update to latest `sgxr`
+  - Copy `HandTrackingModel.tscn` from Rock-Paper-Infinity
 - Studio: Allow editing the `default_sensitivity`
 - Studio: Switch to single threaded in the "Test" screen for increased accuracy?
 - Studio: Player should allow incrementing or decrementing by a single sample
