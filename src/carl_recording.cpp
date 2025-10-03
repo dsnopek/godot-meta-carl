@@ -21,7 +21,10 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
 
-#include "carl_recording.h"
+#include "carl_recording.h"o
+
+#define BINARY_VERSION_MARKER 0xffffffffffffffffUL
+#define BINARY_CURRENT_VERSION 1
 
 void CARLRecording::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_set_data", "data"), &CARLRecording::_set_data);
@@ -44,9 +47,50 @@ void CARLRecording::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "end_timestamp", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR | PROPERTY_USAGE_READ_ONLY), "", "get_end_timestamp");
 }
 
+static PackedByteArray convert_from_version_zero(const PackedByteArray &p_orig_data) {
+	carl::Deserialization deserialization{ p_orig_data.ptr() };
+
+	uint64_t count;
+	deserialization >> count;
+
+	std::vector<carl::InputSample> samples;
+	samples.reserve(count);
+
+	for (uint64_t idx = 0; idx < count; ++idx) {
+		Ref<CARLInputSample> sample = CARLInputSample::deserialize_from_version_zero(deserialization);
+		samples.emplace_back(sample->get_carl_object());
+	}
+
+	std::vector<uint8_t> bytes;
+	carl::Serialization serialization{ bytes };
+
+	serialization << samples.size();
+	for (uint64_t idx = 0; idx < count; ++idx) {
+		samples[idx].serialize(serialization);
+	}
+
+	PackedByteArray new_data;
+	new_data.resize(bytes.size() + 16);
+	new_data.encode_u64(0, BINARY_VERSION_MARKER);
+	new_data.encode_u64(8, BINARY_CURRENT_VERSION);
+	memcpy(new_data.ptrw() + 16, bytes.data(), bytes.size());
+
+	return new_data;
+}
+
 void CARLRecording::_set_data(const PackedByteArray &p_data) {
 	if (carl_recording) {
 		delete carl_recording;
+	}
+
+	uint64_t version = 0;
+	uint64_t version_marker = p_data.decode_u64(0);
+	if (version_marker == BINARY_VERSION_MARKER) {
+		version = p_data.decode_u64(8);
+	}
+
+	if (version == 0) {
+		data = convert_from_version_zero(p_data);
 	}
 
 	data = p_data;
@@ -69,8 +113,10 @@ PackedByteArray CARLRecording::_get_data() const {
 	carl_recording->serialize(serialization);
 
 	PackedByteArray new_data;
-	new_data.resize(bytes.size());
-	memcpy(new_data.ptrw(), bytes.data(), bytes.size());
+	new_data.resize(bytes.size() + 16);
+	new_data.encode_u64(0, BINARY_VERSION_MARKER);
+	new_data.encode_u64(8, BINARY_CURRENT_VERSION);
+	memcpy(new_data.ptrw() + 16, bytes.data(), bytes.size());
 	data = new_data;
 
 	return data;

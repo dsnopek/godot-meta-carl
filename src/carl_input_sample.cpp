@@ -390,6 +390,56 @@ void CARLInputSample::from_carl_hand_joint_poses(const std::array<carl::Transfor
 	}
 }
 
+Ref<CARLInputSample> CARLInputSample::deserialize_from_version_zero(carl::Deserialization &p_deserialization) {
+	constexpr uint64_t LEGACY_JOINT_COUNT = 22;
+
+	double timestamp;
+	std::optional<carl::TransformT> hmd_pose;
+	std::optional<carl::TransformT> left_wrist_pose;
+	std::optional<carl::TransformT> right_wrist_pose;
+	std::optional<std::array<carl::TransformT, static_cast<size_t>(LEGACY_JOINT_COUNT)>> left_hand_joint_poses;
+	std::optional<std::array<carl::TransformT, static_cast<size_t>(LEGACY_JOINT_COUNT)>> right_hand_joint_poses;
+
+	p_deserialization >> timestamp;
+	p_deserialization >> hmd_pose;
+	p_deserialization >> left_wrist_pose;
+	p_deserialization >> right_wrist_pose;
+	p_deserialization >> left_hand_joint_poses;
+	p_deserialization >> right_hand_joint_poses;
+
+	Ref<CARLInputSample> input_sample;
+	input_sample.instantiate();
+
+	input_sample->timestamp = timestamp;
+
+	if (hmd_pose.has_value()) {
+		input_sample->enabled_poses.set_flag(POSE_HMD);
+		from_carl_transform(*hmd_pose, input_sample->hmd_pose);
+	}
+
+	if (left_hand_joint_poses.has_value()) {
+		input_sample->enabled_poses.set_flag(POSE_LEFT_JOINTS);
+		from_carl_hand_joint_poses(*left_hand_joint_poses, input_sample->left_hand_joint_poses);
+	}
+
+	if (right_hand_joint_poses.has_value()) {
+		input_sample->enabled_poses.set_flag(POSE_RIGHT_JOINTS);
+		from_carl_hand_joint_poses(*right_hand_joint_poses, input_sample->right_hand_joint_poses);
+	}
+
+	if (left_wrist_pose.has_value()) {
+		input_sample->enabled_poses.set_flag(POSE_LEFT_WRIST);
+		from_carl_transform(*left_wrist_pose, input_sample->left_wrist_pose);
+	}
+
+	if (right_wrist_pose.has_value()) {
+		input_sample->enabled_poses.set_flag(POSE_RIGHT_WRIST);
+		from_carl_transform(*right_wrist_pose, input_sample->right_wrist_pose);
+	}
+
+	return input_sample;
+}
+
 CARLInputSample::CARLInputSample() {
 	left_hand_joint_poses.resize(static_cast<int64_t>(carl::InputSample::Joint::COUNT));
 	right_hand_joint_poses.resize(static_cast<int64_t>(carl::InputSample::Joint::COUNT));

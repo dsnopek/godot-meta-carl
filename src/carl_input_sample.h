@@ -120,6 +120,8 @@ public:
 	static void to_carl_hand_joint_poses(const TypedArray<Transform3D> &p_godot_transforms, std::array<carl::TransformT, static_cast<size_t>(carl::InputSample::Joint::COUNT)> &r_carl_transforms);
 	static void from_carl_hand_joint_poses(const std::array<carl::TransformT, static_cast<size_t>(carl::InputSample::Joint::COUNT)> &p_carl_transforms, TypedArray<Transform3D> &r_godot_transforms);
 
+	static Ref<CARLInputSample> deserialize_from_version_zero(carl::Deserialization &p_deserialization);
+
 	CARLInputSample();
 	CARLInputSample(const carl::InputSample &p_carl_input_sample);
 	~CARLInputSample();
