@@ -21,7 +21,7 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
 
-#include "carl_recording.h"o
+#include "carl_recording.h"
 
 #define BINARY_VERSION_MARKER 0xffffffffffffffffUL
 #define BINARY_CURRENT_VERSION 1
@@ -47,7 +47,7 @@ void CARLRecording::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "end_timestamp", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR | PROPERTY_USAGE_READ_ONLY), "", "get_end_timestamp");
 }
 
-static PackedByteArray convert_from_version_zero(const PackedByteArray &p_orig_data) {
+PackedByteArray CARLRecording::convert_from_version_zero(const PackedByteArray &p_orig_data) {
 	carl::Deserialization deserialization{ p_orig_data.ptr() };
 
 	uint64_t count;
