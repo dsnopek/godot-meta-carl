@@ -91,11 +91,20 @@ void CARLRecording::_set_data(const PackedByteArray &p_data) {
 
 	if (version == 0) {
 		data = convert_from_version_zero(p_data);
+	} else if (version != BINARY_CURRENT_VERSION) {
+		ERR_PRINT(vformat("Unable to deserialize CARLInputSample with unknown version %d", version));
+		return;
+	} else {
+		data = p_data;
 	}
 
-	data = p_data;
+	if (data.size() < 16) {
+		ERR_PRINT(vformat("Unable to deserialize CARLInputSample with only %d bytes of data", data.size()));
+		data.clear();
+		return;
+	}
 
-	carl::Deserialization deserialization{ p_data.ptr() };
+	carl::Deserialization deserialization{ data.ptr() + 16 };
 	carl_recording = new carl::action::Recording(deserialization);
 }
 
