@@ -11,7 +11,7 @@ func _show_screen(_info: Dictionary) -> void:
 
 	if GameState.current_definition:
 		session = CARLSession.new()
-		session.initialize()
+		session.initialize(not OS.has_feature("threads"))
 
 		recognizer = session.create_recognizer(GameState.current_definition)
 
