@@ -1,6 +1,7 @@
 extends Node3D
 
 const JointDebugger = preload("res://src/main/joint_debugger.gd")
+const HandTrackingModel = preload("res://src/hands/hand_tracking_model.gd")
 
 const LEFT_HAND_MESH_ROTATION := Quaternion(0.5, 0.5, 0.5, 0.5)
 const RIGHT_HAND_MESH_ROTATION := Quaternion(0.5, -0.5, 0.5, -0.5)
@@ -14,8 +15,8 @@ const DEBUG_JOINTS := false
 @onready var left_hand_default_transform: Transform3D = left_hand.transform
 @onready var right_hand_default_transform: Transform3D = right_hand.transform
 
-@onready var left_hand_mesh: Node3D = %LeftHandMesh
-@onready var right_hand_mesh: Node3D = %RightHandMesh
+@onready var left_hand_mesh: HandTrackingModel = %LeftHandMesh
+@onready var right_hand_mesh: HandTrackingModel = %RightHandMesh
 
 @onready var left_hand_joint_debugger: JointDebugger = %LeftHandJointDebugger
 @onready var right_hand_joint_debugger: JointDebugger = %RightHandJointDebugger
@@ -79,7 +80,7 @@ func play_input_sample(p_input_sample: CARLInputSample) -> void:
 		elif enabled_poses & CARLInputSample.POSE_RIGHT_WRIST:
 			_apply_wrist_trajectory(right_hand_mesh, right_hand_tracker, RIGHT_HAND_MESH_ROTATION, right_wrist_pose)
 
-func _apply_wrist_trajectory(p_hand_mesh: OpenXRFbHandTrackingMesh, p_tracker: XRHandTracker, p_mesh_rotation: Quaternion, p_wrist_pose: Transform3D) -> void:
+func _apply_wrist_trajectory(p_hand_mesh: HandTrackingModel, p_tracker: XRHandTracker, p_mesh_rotation: Quaternion, p_wrist_pose: Transform3D) -> void:
 	p_hand_mesh.reset_bone_poses()
 	p_hand_mesh.transform = Transform3D(Basis(p_mesh_rotation), Vector3.ZERO)
 	for joint in range(XRHandTracker.HAND_JOINT_MAX):

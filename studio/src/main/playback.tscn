@@ -1,7 +1,11 @@
-[gd_scene load_steps=7 format=3 uid="uid://gyggpun5wh6o"]
+[gd_scene load_steps=11 format=3 uid="uid://gyggpun5wh6o"]
 
 [ext_resource type="Script" uid="uid://bauedty1xatjn" path="res://src/main/playback.gd" id="1_cp4rk"]
 [ext_resource type="PackedScene" uid="uid://cux7l0b6tenn6" path="res://src/main/joint_debugger.tscn" id="2_b30vt"]
+[ext_resource type="PackedScene" uid="uid://bw0ng04vcgduu" path="res://src/hands/hand_tracking_model.tscn" id="2_yfj0g"]
+[ext_resource type="Material" uid="uid://dsm58bhf7rek3" path="res://src/hands/hand_material.tres" id="3_h7itd"]
+[ext_resource type="PackedScene" uid="uid://c7h60akhmrqj3" path="res://src/hands/left_hand_model.tscn" id="4_4chqt"]
+[ext_resource type="PackedScene" uid="uid://cmjvm03ka5b0w" path="res://src/hands/right_hand_model.tscn" id="6_wrliq"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_cp4rk"]
 radius = 0.2
@@ -26,11 +30,12 @@ unique_name_in_owner = true
 transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -0.2, 1.1, 1.45519e-11)
 tracker = &"/playback/left_hand"
 
-[node name="LeftHandMesh" type="OpenXRFbHandTrackingMesh" parent="LeftHand"]
+[node name="LeftHandMesh" parent="LeftHand" instance=ExtResource("2_yfj0g")]
 unique_name_in_owner = true
-
-[node name="XRHandModifier3D" type="XRHandModifier3D" parent="LeftHand/LeftHandMesh"]
-hand_tracker = &"/playback/left_hand"
+hand_tracker = "/playback/left_hand"
+hand_material = ExtResource("3_h7itd")
+fallback_hand_model = ExtResource("4_4chqt")
+fallback_bone_update = 0
 
 [node name="LeftHandJointDebugger" parent="LeftHand" instance=ExtResource("2_b30vt")]
 unique_name_in_owner = true
@@ -40,38 +45,13 @@ unique_name_in_owner = true
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0.2, 1.1, 1.45519e-11)
 tracker = &"/playback/right_hand"
 
-[node name="RightHandMesh" type="OpenXRFbHandTrackingMesh" parent="RightHand"]
-hand = 1
+[node name="RightHandMesh" parent="RightHand" instance=ExtResource("2_yfj0g")]
 unique_name_in_owner = true
-bones/0/name = "RightPalm"
-bones/1/name = "RightHand"
-bones/2/name = "RightThumbMetacarpal"
-bones/3/name = "RightThumbProximal"
-bones/4/name = "RightThumbDistal"
-bones/5/name = "RightThumbTip"
-bones/6/name = "RightIndexMetacarpal"
-bones/7/name = "RightIndexProximal"
-bones/8/name = "RightIndexIntermediate"
-bones/9/name = "RightIndexDistal"
-bones/10/name = "RightIndexTip"
-bones/11/name = "RightMiddleMetacarpal"
-bones/12/name = "RightMiddleProximal"
-bones/13/name = "RightMiddleIntermediate"
-bones/14/name = "RightMiddleDistal"
-bones/15/name = "RightMiddleTip"
-bones/16/name = "RightRingMetacarpal"
-bones/17/name = "RightRingProximal"
-bones/18/name = "RightRingIntermediate"
-bones/19/name = "RightRingDistal"
-bones/20/name = "RightRingTip"
-bones/21/name = "RightLittleMetacarpal"
-bones/22/name = "RightLittleProximal"
-bones/23/name = "RightLittleIntermediate"
-bones/24/name = "RightLittleDistal"
-bones/25/name = "RightLittleTip"
-
-[node name="XRHandModifier3D" type="XRHandModifier3D" parent="RightHand/RightHandMesh"]
-hand_tracker = &"/playback/right_hand"
+hand_type = 1
+hand_tracker = "/playback/right_hand"
+hand_material = ExtResource("3_h7itd")
+fallback_hand_model = ExtResource("6_wrliq")
+fallback_bone_update = 0
 
 [node name="RightHandJointDebugger" parent="RightHand" instance=ExtResource("2_b30vt")]
 unique_name_in_owner = true

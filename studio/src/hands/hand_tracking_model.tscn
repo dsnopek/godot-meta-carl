@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://bw0ng04vcgduu"]
+
+[ext_resource type="Script" uid="uid://b0tiojhyx8oyq" path="res://src/hands/hand_tracking_model.gd" id="1_ff5pk"]
+
+[node name="HandTrackingModel" type="Node3D"]
+script = ExtResource("1_ff5pk")

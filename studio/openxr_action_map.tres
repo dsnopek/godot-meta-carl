@@ -1,4 +1,4 @@
-[gd_resource type="OpenXRActionMap" load_steps=9 format=3 uid="uid://dmpvl8qfhs2uv"]
+[gd_resource type="OpenXRActionMap" load_steps=12 format=3 uid="uid://dmpvl8qfhs2uv"]
 
 [sub_resource type="OpenXRAction" id="OpenXRAction_6ivru"]
 resource_name = "aim_pose"
@@ -11,10 +11,15 @@ resource_name = "select"
 localized_name = "Select"
 toplevel_paths = PackedStringArray("/user/hand/left", "/user/hand/right")
 
+[sub_resource type="OpenXRAction" id="OpenXRAction_5w03k"]
+resource_name = "pinch"
+localized_name = "Pinch"
+toplevel_paths = PackedStringArray("/user/hand/left", "/user/hand/right")
+
 [sub_resource type="OpenXRActionSet" id="OpenXRActionSet_vfhwq"]
 resource_name = "app"
 localized_name = "App"
-actions = [SubResource("OpenXRAction_6ivru"), SubResource("OpenXRAction_vfhwq")]
+actions = [SubResource("OpenXRAction_6ivru"), SubResource("OpenXRAction_vfhwq"), SubResource("OpenXRAction_5w03k")]
 
 [sub_resource type="OpenXRIPBinding" id="OpenXRIPBinding_6ivru"]
 action = SubResource("OpenXRAction_6ivru")
@@ -32,9 +37,17 @@ binding_path = "/user/hand/left/input/aim_activate_ext/value"
 action = SubResource("OpenXRAction_vfhwq")
 binding_path = "/user/hand/right/input/aim_activate_ext/value"
 
+[sub_resource type="OpenXRIPBinding" id="OpenXRIPBinding_typ1r"]
+action = SubResource("OpenXRAction_5w03k")
+binding_path = "/user/hand/left/input/pinch_ext/value"
+
+[sub_resource type="OpenXRIPBinding" id="OpenXRIPBinding_5bppb"]
+action = SubResource("OpenXRAction_5w03k")
+binding_path = "/user/hand/right/input/pinch_ext/value"
+
 [sub_resource type="OpenXRInteractionProfile" id="OpenXRInteractionProfile_5w03k"]
 interaction_profile_path = "/interaction_profiles/ext/hand_interaction_ext"
-bindings = [SubResource("OpenXRIPBinding_6ivru"), SubResource("OpenXRIPBinding_5w03k"), SubResource("OpenXRIPBinding_clvbf"), SubResource("OpenXRIPBinding_vfhwq")]
+bindings = [SubResource("OpenXRIPBinding_6ivru"), SubResource("OpenXRIPBinding_5w03k"), SubResource("OpenXRIPBinding_clvbf"), SubResource("OpenXRIPBinding_vfhwq"), SubResource("OpenXRIPBinding_typ1r"), SubResource("OpenXRIPBinding_5bppb")]
 
 [resource]
 action_sets = [SubResource("OpenXRActionSet_vfhwq")]

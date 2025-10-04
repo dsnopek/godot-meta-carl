@@ -9,6 +9,8 @@ const UILayer = preload("res://addons/sgxr/ui_layer.gd")
 @export var select_pressed_threshold := 0.9
 @export var select_release_threshold := 0.6
 
+@export var use_webxr_select := true
+
 @export var show_when_intersecting := true:
 	set(v):
 		show_when_intersecting = v
@@ -30,6 +32,8 @@ var _controller: XRController3D
 var _cur_layer: UILayer = null
 var _pressed := false
 
+var _webxr_interface
+
 
 func set_enabled(p_enabled: bool) -> void:
 	enabled = p_enabled
@@ -42,6 +46,11 @@ func set_enabled(p_enabled: bool) -> void:
 
 func _ready() -> void:
 	_update_pointer_visibility()
+
+	_webxr_interface = XRServer.find_interface("WebXR")
+	if _webxr_interface:
+		_webxr_interface.selectstart.connect(_on_webxr_select_start)
+		_webxr_interface.selectend.connect(_on_webxr_select_end)
 
 
 func _enter_tree() -> void:
@@ -65,7 +74,7 @@ func _exit_tree() -> void:
 func _process(_delta: float) -> void:
 	if enabled:
 		for layer in _get_ui_layers():
-			if not layer is UILayer:
+			if not layer is UILayer or not layer.visible:
 				continue
 			if layer.pointer_intersects(self):
 				if layer != _cur_layer:
@@ -130,17 +139,49 @@ func _on_controller_input_float_changed(p_name: String, p_value: float) -> void:
 				_cur_layer.pointer_set_pressed(self, false)
 
 
+func _do_select_press() -> void:
+	_pressed = true
+	_update_pointer_material()
+	if _cur_layer:
+		_cur_layer.pointer_set_pressed(self, true)
+
+
+func _do_select_release() -> void:
+	_pressed = false
+	_update_pointer_material()
+	if _cur_layer:
+		_cur_layer.pointer_set_pressed(self, false)
+
+
 func _on_controller_button_pressed(p_name: String) -> void:
+	if _webxr_interface and use_webxr_select and _webxr_interface.is_initialized():
+		return
 	if p_name == select_action:
-		_pressed = true
-		_update_pointer_material()
-		if _cur_layer:
-			_cur_layer.pointer_set_pressed(self, true)
+		_do_select_press()
 
 
 func _on_controller_button_released(p_name: String) -> void:
+	if _webxr_interface and use_webxr_select and _webxr_interface.is_initialized():
+		return
 	if p_name == select_action:
-		_pressed = false
-		_update_pointer_material()
-		if _cur_layer:
-			_cur_layer.pointer_set_pressed(self, false)
+		_do_select_release()
+
+
+func _get_hand_index() -> int:
+	if _controller:
+		match _controller.tracker:
+			"left_hand":
+				return 0
+			"right_hand":
+				return 1
+	return -1
+
+
+func _on_webxr_select_start(p_input_source: int) -> void:
+	if use_webxr_select and _get_hand_index() == p_input_source:
+		_do_select_press()
+
+
+func _on_webxr_select_end(p_input_source: int) -> void:
+	if use_webxr_select and _get_hand_index() == p_input_source:
+		_do_select_release()

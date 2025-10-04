@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://cmjvm03ka5b0w"]
+
+[ext_resource type="PackedScene" uid="uid://dlswhmq6s52gu" path="res://assets/hands/RightHandHumanoid.gltf" id="1_fdngs"]
+[ext_resource type="Material" uid="uid://dsm58bhf7rek3" path="res://src/hands/hand_material.tres" id="2_mgol0"]
+
+[node name="RightHandHumanoid2" instance=ExtResource("1_fdngs")]
+
+[node name="RightHandHumanoidMesh" parent="RightHandHumanoid/Skeleton3D" index="0"]
+surface_material_override/0 = ExtResource("2_mgol0")

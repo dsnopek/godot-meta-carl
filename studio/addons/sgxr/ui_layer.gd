@@ -1,19 +1,96 @@
-extends OpenXRCompositionLayerQuad
+@tool
+extends Node3D
+
+const OPENXR_LAYER_CLASS = "OpenXRCompositionLayerQuad"
+const DEBUG_FALLBACK = false
 
 const NO_INTERSECTION = Vector2(-1.0, -1.0)
 const CURSOR_DISTANCE = 0.005
 const DOUBLE_CLICK_TIME = 400
 const DOUBLE_CLICK_DIST = 5.0
 
+@export var quad_size: Vector2 = Vector2(1.0, 1.0):
+	set = set_quad_size
+@export var layer_viewport: SubViewport:
+	set = set_layer_viewport
+@export var sort_order := -1:
+	set = set_sort_order
+
 @export var forward_keyboard_input := true
 
 @onready var _cursor: MeshInstance3D = $Cursor
+@onready var _quad: MeshInstance3D = $Quad
+
+var _openxr_layer
 
 var _pointer: Node3D
 var _pointer_pressed := false
 var _prev_intersection: Vector2 = NO_INTERSECTION
 var _prev_pressed_pos: Vector2
 var _prev_pressed_time: int = 0
+
+
+# @todo Add configuration warning that this needs to be a child of XROrigin3D
+
+
+func set_quad_size(p_quad_size: Vector2) -> void:
+	quad_size = p_quad_size
+	if _quad:
+		_quad.mesh.size = quad_size
+	elif _openxr_layer:
+		_openxr_layer.quad_size = quad_size
+
+
+func set_layer_viewport(p_layer_viewport: SubViewport) -> void:
+	layer_viewport = p_layer_viewport
+	if layer_viewport:
+		if _quad:
+			_quad.mesh.material.albedo_texture = layer_viewport.get_texture()
+		elif _openxr_layer:
+			_openxr_layer.layer_viewport = layer_viewport
+
+
+func set_sort_order(p_sort_order: int) -> void:
+	sort_order = p_sort_order
+	if _openxr_layer:
+		_openxr_layer.sort_order = sort_order
+
+
+func _ready() -> void:
+	var parent: Node3D = get_parent()
+
+	if not Engine.is_editor_hint() and ClassDB.class_exists(OPENXR_LAYER_CLASS) and parent is XROrigin3D and not DEBUG_FALLBACK:
+		# If this build has OpenXRCompositionLayerQuad, we can use it, and even if we don't
+		# use OpenXR or the OpenXR runtime doesn't support it, then it will provide a fallback.
+		_quad.queue_free()
+		_quad = null
+
+		_openxr_layer = ClassDB.instantiate(OPENXR_LAYER_CLASS)
+		_openxr_layer.layer_viewport = layer_viewport
+		_openxr_layer.quad_size = quad_size
+		_openxr_layer.sort_order = sort_order
+		_openxr_layer.enable_hole_punch = true
+		_openxr_layer.visible = visible
+
+		var f = func():
+			parent.add_child(_openxr_layer)
+		f.call_deferred()
+	else:
+		_quad.mesh.size = quad_size
+		if layer_viewport:
+			_quad.mesh.material.albedo_texture = layer_viewport.get_texture()
+
+
+func _process(_delta: float) -> void:
+	if _openxr_layer:
+		_openxr_layer.global_transform = global_transform
+
+
+func _notification(p_what: int) -> void:
+	match p_what:
+		NOTIFICATION_VISIBILITY_CHANGED:
+			if _openxr_layer:
+				_openxr_layer.visible = visible
 
 
 func _intersect_to_global_pos(p_intersection: Vector2, p_distance: float = 0.0) -> Vector3:
@@ -28,6 +105,42 @@ func _intersect_to_viewport_pos(p_intersection: Vector2) -> Vector2:
 	if layer_viewport and p_intersection != NO_INTERSECTION:
 		var pos : Vector2 = p_intersection * Vector2(layer_viewport.size)
 		return Vector2(pos)
+
+	return NO_INTERSECTION
+
+
+func intersects_ray(p_origin: Vector3, p_direction: Vector3) -> Vector2:
+	if not visible:
+		return NO_INTERSECTION
+	if _openxr_layer:
+		return _openxr_layer.intersects_ray(p_origin, p_direction)
+
+	var quad_transform: Transform3D = get_global_transform()
+	var quad_normal: Vector3 = quad_transform.basis.z
+
+	var denom: float = quad_normal.dot(p_direction)
+	if absf(denom) > 0.0001:
+		var vector: Vector3 = quad_transform.origin - p_origin
+		var t: float = vector.dot(quad_normal) / denom
+		if t < 0.0:
+			return NO_INTERSECTION
+
+		var intersection: Vector3 = p_origin + p_direction * t
+
+		var relative_point: Vector3 = intersection - quad_transform.origin
+		var projected_point := Vector2(
+			relative_point.dot(quad_transform.basis.x),
+			relative_point.dot(quad_transform.basis.y))
+
+		if absf(projected_point.x) > quad_size.x / 2.0:
+			return NO_INTERSECTION
+		if absf(projected_point.y) > quad_size.y / 2.0:
+			return NO_INTERSECTION
+
+		var u: float = 0.5 + (projected_point.x / quad_size.x)
+		var v: float = 1.0 - (0.5 + (projected_point.y / quad_size.y))
+
+		return Vector2(u, v)
 
 	return NO_INTERSECTION
 

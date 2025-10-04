@@ -2,6 +2,7 @@
 *.gen.*
 .godot/
 studio/android/
+studio/build/
 
 # Ignore library files but not the gdextension file
 studio/addons/godot-meta-carl/*

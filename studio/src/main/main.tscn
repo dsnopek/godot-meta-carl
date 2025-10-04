@@ -1,12 +1,16 @@
-[gd_scene load_steps=11 format=3 uid="uid://dh0oj81pufivs"]
+[gd_scene load_steps=15 format=3 uid="uid://dh0oj81pufivs"]
 
 [ext_resource type="Script" uid="uid://4osxenmr6ido" path="res://src/main/main.gd" id="1_ig7tw"]
 [ext_resource type="PackedScene" uid="uid://cqs8c3rq6cxvk" path="res://addons/sgxr/function_pointer.tscn" id="3_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://btrugoluitgin" path="res://addons/sgxr/ui_layer.tscn" id="3_h2yge"]
 [ext_resource type="PackedScene" uid="uid://ciab6rk7831n" path="res://src/ui/ui.tscn" id="3_lquwl"]
 [ext_resource type="PackedScene" uid="uid://domuosuhftjxr" path="res://addons/sgxr/hand_tracking_message.tscn" id="5_30cu5"]
+[ext_resource type="PackedScene" uid="uid://bw0ng04vcgduu" path="res://src/hands/hand_tracking_model.tscn" id="5_erw1m"]
 [ext_resource type="PackedScene" uid="uid://gyggpun5wh6o" path="res://src/main/playback.tscn" id="5_jqarl"]
 [ext_resource type="PackedScene" uid="uid://br72i82f12kke" path="res://addons/sgxr/start_xr.tscn" id="5_lquwl"]
+[ext_resource type="Material" uid="uid://dsm58bhf7rek3" path="res://src/hands/hand_material.tres" id="6_w0wra"]
+[ext_resource type="PackedScene" uid="uid://c7h60akhmrqj3" path="res://src/hands/left_hand_model.tscn" id="7_ibsor"]
+[ext_resource type="PackedScene" uid="uid://cmjvm03ka5b0w" path="res://src/hands/right_hand_model.tscn" id="8_hc2u7"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_30cu5"]
 albedo_color = Color(1, 0, 0, 1)
@@ -33,10 +37,8 @@ mesh = SubResource("CylinderMesh_frqgp")
 [node name="UILayer" parent="XROrigin3D" node_paths=PackedStringArray("layer_viewport") instance=ExtResource("3_h2yge")]
 process_mode = 3
 transform = Transform3D(0.84894, 0, 0.528488, 0, 1, 0, -0.528488, 0, 0.84894, -1.79071, 1.25, -1.5)
-layer_viewport = NodePath("SubViewport")
-sort_order = -1
-enable_hole_punch = true
 quad_size = Vector2(1.7777, 1)
+layer_viewport = NodePath("SubViewport")
 
 [node name="SubViewport" type="SubViewport" parent="XROrigin3D/UILayer"]
 disable_3d = true
@@ -65,46 +67,22 @@ unique_name_in_owner = true
 tracker = &"/user/hand_tracker/left"
 show_when_tracked = true
 
-[node name="OpenXRFbHandTrackingMesh" type="OpenXRFbHandTrackingMesh" parent="XROrigin3D/LeftHand"]
-
-[node name="XRHandModifier3D" type="XRHandModifier3D" parent="XROrigin3D/LeftHand/OpenXRFbHandTrackingMesh"]
+[node name="HandTrackingModel" parent="XROrigin3D/LeftHand" instance=ExtResource("5_erw1m")]
+hand_material = ExtResource("6_w0wra")
+fallback_hand_model = ExtResource("7_ibsor")
+fallback_bone_update = 0
 
 [node name="RightHand" type="XRNode3D" parent="XROrigin3D" groups=["hand"]]
 unique_name_in_owner = true
 tracker = &"/user/hand_tracker/right"
 show_when_tracked = true
 
-[node name="OpenXRFbHandTrackingMesh" type="OpenXRFbHandTrackingMesh" parent="XROrigin3D/RightHand"]
-hand = 1
-bones/0/name = "RightPalm"
-bones/1/name = "RightHand"
-bones/2/name = "RightThumbMetacarpal"
-bones/3/name = "RightThumbProximal"
-bones/4/name = "RightThumbDistal"
-bones/5/name = "RightThumbTip"
-bones/6/name = "RightIndexMetacarpal"
-bones/7/name = "RightIndexProximal"
-bones/8/name = "RightIndexIntermediate"
-bones/9/name = "RightIndexDistal"
-bones/10/name = "RightIndexTip"
-bones/11/name = "RightMiddleMetacarpal"
-bones/12/name = "RightMiddleProximal"
-bones/13/name = "RightMiddleIntermediate"
-bones/14/name = "RightMiddleDistal"
-bones/15/name = "RightMiddleTip"
-bones/16/name = "RightRingMetacarpal"
-bones/17/name = "RightRingProximal"
-bones/18/name = "RightRingIntermediate"
-bones/19/name = "RightRingDistal"
-bones/20/name = "RightRingTip"
-bones/21/name = "RightLittleMetacarpal"
-bones/22/name = "RightLittleProximal"
-bones/23/name = "RightLittleIntermediate"
-bones/24/name = "RightLittleDistal"
-bones/25/name = "RightLittleTip"
-
-[node name="XRHandModifier3D" type="XRHandModifier3D" parent="XROrigin3D/RightHand/OpenXRFbHandTrackingMesh"]
-hand_tracker = &"/user/hand_tracker/right"
+[node name="HandTrackingModel" parent="XROrigin3D/RightHand" instance=ExtResource("5_erw1m")]
+hand_type = 1
+hand_tracker = "/user/hand_tracker/right"
+hand_material = ExtResource("6_w0wra")
+fallback_hand_model = ExtResource("8_hc2u7")
+fallback_bone_update = 0
 
 [node name="HandTrackingMessage" parent="." instance=ExtResource("5_30cu5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.86999, -1.52301)
