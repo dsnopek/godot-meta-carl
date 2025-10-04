@@ -361,7 +361,6 @@ void CARLInputSample::from_carl_hand_joint_poses(const std::array<carl::Transfor
 }
 
 Ref<CARLInputSample> CARLInputSample::deserialize_from_version_zero(carl::Deserialization &p_deserialization) {
-
 	double timestamp;
 	std::optional<carl::TransformT> hmd_pose;
 	std::optional<carl::TransformT> left_wrist_pose;
