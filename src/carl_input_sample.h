@@ -58,7 +58,7 @@ private:
 
 	inline static constexpr uint64_t LEGACY_JOINT_COUNT = 22;
 
-	static void from_legacy_carl_hand_joint_poses(const std::optional<carl::TransformT> &p_wrist_pose, const std::array<carl::TransformT, static_cast<size_t>(LEGACY_JOINT_COUNT)> &p_carl_transforms, TypedArray<Transform3D> &r_godot_transforms);
+	static void from_legacy_carl_hand_joint_poses(const std::array<carl::TransformT, static_cast<size_t>(LEGACY_JOINT_COUNT)> &p_carl_transforms, TypedArray<Transform3D> &r_godot_transforms);
 
 protected:
 	static void _bind_methods();

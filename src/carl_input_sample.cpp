@@ -118,7 +118,7 @@ void CARLInputSample::apply_to_hand_tracker(const Ref<XRHandTracker> &p_tracker)
 	p_tracker->set_has_tracking_data(true);
 }
 
-void CARLInputSample::from_legacy_carl_hand_joint_poses(const std::optional<carl::TransformT> &p_wrist_pose, const std::array<carl::TransformT, static_cast<size_t>(CARLInputSample::LEGACY_JOINT_COUNT)> &p_legacy_carl_transforms, TypedArray<Transform3D> &r_godot_transforms) {
+void CARLInputSample::from_legacy_carl_hand_joint_poses(const std::array<carl::TransformT, static_cast<size_t>(CARLInputSample::LEGACY_JOINT_COUNT)> &p_legacy_carl_transforms, TypedArray<Transform3D> &r_godot_transforms) {
 	ERR_FAIL_COND(r_godot_transforms.size() != XRHandTracker::HAND_JOINT_MAX);
 
 	// The legacy CARL joint set appears to be at least partially based on the OVR joint set, rather than the OpenXR one.
@@ -142,29 +142,27 @@ void CARLInputSample::from_legacy_carl_hand_joint_poses(const std::optional<carl
 	}
 
 	// Estimate the missing joints!
-	if (p_wrist_pose.has_value()) {
-		Transform3D ht;
-		from_carl_transform(*p_wrist_pose, ht);
 
-		// Middle finger metacarpal = take the wrist pose and move forward 2cm.
-		Transform3D middle_finger_metacarpal_t = ht;
-		middle_finger_metacarpal_t.origin = middle_finger_metacarpal_t.basis.get_column(2) * -0.02;
+	// Middle finger metacarpal = take the wrist pose and move forward 2cm.
+	Transform3D middle_finger_metacarpal_t;
+	middle_finger_metacarpal_t.origin = Vector3(0.0, 0.0, -0.02);
+	r_godot_transforms[XRHandTracker::HAND_JOINT_MIDDLE_FINGER_METACARPAL] = middle_finger_metacarpal_t;
 
-		// Ring finger metacarpal = take the middle finger metacarpal and move 1cm to the left.
-		Transform3D ring_finger_metacarpal_t = middle_finger_metacarpal_t;
-		ring_finger_metacarpal_t.origin = ring_finger_metacarpal_t.basis.get_column(0) * -0.01;
+	// Ring finger metacarpal = take the middle finger metacarpal and move 1cm to the left.
+	Transform3D ring_finger_metacarpal_t = middle_finger_metacarpal_t;
+	ring_finger_metacarpal_t.origin = ring_finger_metacarpal_t.basis.get_column(0) * -0.01;
+	r_godot_transforms[XRHandTracker::HAND_JOINT_RING_FINGER_METACARPAL] = ring_finger_metacarpal_t;
 
-		// Index finger metacarpal = take the middle finger metacarpal and move 1cm to the right,
-		// and reorient to look at the index finger proximal joint.
-		Transform3D index_finger_metacarpal_t = middle_finger_metacarpal_t;
-		index_finger_metacarpal_t.origin = middle_finger_metacarpal_t.basis.get_column(0) * 0.01;
-		Vector3 index_finger_metacarpal_v = (r_godot_transforms[XRHandTracker::HAND_JOINT_INDEX_FINGER_PHALANX_PROXIMAL].operator Transform3D().origin - index_finger_metacarpal_t.origin).normalized();
-		index_finger_metacarpal_t.basis = Basis::looking_at(index_finger_metacarpal_v, middle_finger_metacarpal_t.basis.get_column(1));
+	// Index finger metacarpal = take the middle finger metacarpal and move 1cm to the right,
+	// and reorient to look at the index finger proximal joint.
+	Transform3D index_finger_metacarpal_t = middle_finger_metacarpal_t;
+	index_finger_metacarpal_t.origin = middle_finger_metacarpal_t.basis.get_column(0) * 0.01;
+	r_godot_transforms[XRHandTracker::HAND_JOINT_INDEX_FINGER_METACARPAL] = index_finger_metacarpal_t;
 
-		// Palm = the midpoint between the middle finger metacarpal and proximal joint.
-		Transform3D palm_t = middle_finger_metacarpal_t;
-		palm_t.origin = (palm_t.origin + r_godot_transforms[XRHandTracker::HAND_JOINT_MIDDLE_FINGER_PHALANX_PROXIMAL].operator Transform3D().origin) / 2.0;
-	}
+	// Palm = the midpoint between the middle finger metacarpal and proximal joint.
+	Transform3D palm_t = middle_finger_metacarpal_t;
+	palm_t.origin = (palm_t.origin + r_godot_transforms[XRHandTracker::HAND_JOINT_MIDDLE_FINGER_PHALANX_PROXIMAL].operator Transform3D().origin) / 2.0;
+	r_godot_transforms[XRHandTracker::HAND_JOINT_PALM] = palm_t;
 }
 
 void CARLInputSample::set_timestamp(double p_timestamp) {
@@ -387,12 +385,12 @@ Ref<CARLInputSample> CARLInputSample::deserialize_from_version_zero(carl::Deseri
 
 	if (left_hand_joint_poses.has_value()) {
 		input_sample->enabled_poses.set_flag(POSE_LEFT_JOINTS);
-		from_legacy_carl_hand_joint_poses(left_wrist_pose, *left_hand_joint_poses, input_sample->left_hand_joint_poses);
+		from_legacy_carl_hand_joint_poses(*left_hand_joint_poses, input_sample->left_hand_joint_poses);
 	}
 
 	if (right_hand_joint_poses.has_value()) {
 		input_sample->enabled_poses.set_flag(POSE_RIGHT_JOINTS);
-		from_legacy_carl_hand_joint_poses(right_wrist_pose, *right_hand_joint_poses, input_sample->right_hand_joint_poses);
+		from_legacy_carl_hand_joint_poses(*right_hand_joint_poses, input_sample->right_hand_joint_poses);
 	}
 
 	if (left_wrist_pose.has_value()) {
