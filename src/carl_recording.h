@@ -36,12 +36,15 @@ class CARLRecording : public Resource {
 
 	carl::action::Recording *carl_recording = nullptr;
 	mutable PackedByteArray data;
+	int version = 1;
 
 protected:
 	static void _bind_methods();
 
 	void _set_data(const PackedByteArray &p_data);
 	PackedByteArray _get_data() const;
+
+	static PackedByteArray convert_from_version_zero(const PackedByteArray &p_orig_data);
 
 public:
 	PackedByteArray serialize() const;

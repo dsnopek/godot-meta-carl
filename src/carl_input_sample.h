@@ -31,36 +31,13 @@
 
 using namespace godot;
 
+// The joint counts need to match - we make the assumption all over the place.
+static_assert(XRHandTracker::HAND_JOINT_MAX == static_cast<int64_t>(carl::InputSample::Joint::COUNT));
+
 class CARLInputSample : public RefCounted {
 	GDCLASS(CARLInputSample, RefCounted);
 
 public:
-	enum HandJoint {
-		HAND_JOINT_THUMB0,
-		HAND_JOINT_THUMB1,
-		HAND_JOINT_THUMB2,
-		HAND_JOINT_THUMB3,
-		HAND_JOINT_THUMB4,
-		HAND_JOINT_INDEX1,
-		HAND_JOINT_INDEX2,
-		HAND_JOINT_INDEX3,
-		HAND_JOINT_INDEX4,
-		HAND_JOINT_MIDDLE1,
-		HAND_JOINT_MIDDLE2,
-		HAND_JOINT_MIDDLE3,
-		HAND_JOINT_MIDDLE4,
-		HAND_JOINT_RING1,
-		HAND_JOINT_RING2,
-		HAND_JOINT_RING3,
-		HAND_JOINT_RING4,
-		HAND_JOINT_PINKY0,
-		HAND_JOINT_PINKY1,
-		HAND_JOINT_PINKY2,
-		HAND_JOINT_PINKY3,
-		HAND_JOINT_PINKY4,
-		HAND_JOINT_MAX,
-	};
-
 	enum Pose {
 		POSE_HMD = 1,
 		POSE_LEFT_WRIST = 2,
@@ -78,6 +55,10 @@ private:
 	TypedArray<Transform3D> left_hand_joint_poses;
 	TypedArray<Transform3D> right_hand_joint_poses;
 	BitField<Pose> enabled_poses = 0;
+
+	inline static constexpr uint64_t LEGACY_JOINT_COUNT = 22;
+
+	static void from_legacy_carl_hand_joint_poses(const std::optional<carl::TransformT> &p_wrist_pose, const std::array<carl::TransformT, static_cast<size_t>(LEGACY_JOINT_COUNT)> &p_carl_transforms, TypedArray<Transform3D> &r_godot_transforms);
 
 protected:
 	static void _bind_methods();
@@ -120,10 +101,11 @@ public:
 	static void to_carl_hand_joint_poses(const TypedArray<Transform3D> &p_godot_transforms, std::array<carl::TransformT, static_cast<size_t>(carl::InputSample::Joint::COUNT)> &r_carl_transforms);
 	static void from_carl_hand_joint_poses(const std::array<carl::TransformT, static_cast<size_t>(carl::InputSample::Joint::COUNT)> &p_carl_transforms, TypedArray<Transform3D> &r_godot_transforms);
 
+	static Ref<CARLInputSample> deserialize_from_version_zero(carl::Deserialization &p_deserialization);
+
 	CARLInputSample();
 	CARLInputSample(const carl::InputSample &p_carl_input_sample);
 	~CARLInputSample();
 };
 
-VARIANT_ENUM_CAST(CARLInputSample::HandJoint);
 VARIANT_BITFIELD_CAST(CARLInputSample::Pose);
