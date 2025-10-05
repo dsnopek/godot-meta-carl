@@ -132,13 +132,25 @@ PackedByteArray CARLRecording::_get_data() const {
 }
 
 PackedByteArray CARLRecording::serialize() const {
-	return _get_data();
+	ERR_FAIL_COND_V(!carl_recording, PackedByteArray());
+
+	std::vector<uint8_t> bytes;
+	carl::Serialization serialization{ bytes };
+	carl_recording->serialize(serialization);
+
+	PackedByteArray data;
+	data.resize(bytes.size());
+	memcpy(data.ptrw(), bytes.data(), bytes.size());
+	return data;
 }
 
 Ref<CARLRecording> CARLRecording::deserialize(const PackedByteArray &p_data) {
 	Ref<CARLRecording> ret;
 	ret.instantiate();
-	ret->_set_data(p_data);
+
+	carl::Deserialization deserialization{ p_data.ptr() };
+	ret->carl_recording = new carl::action::Recording(deserialization);
+
 	return ret;
 }
 

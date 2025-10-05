@@ -27,6 +27,8 @@
 #include "carl_recording.h"
 
 void CARLDefinition::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("serialize"), &CARLDefinition::serialize);
+
 	ClassDB::bind_method(D_METHOD("set_action_type", "action_type"), &CARLDefinition::set_action_type);
 	ClassDB::bind_method(D_METHOD("get_action_type"), &CARLDefinition::get_action_type);
 
@@ -59,6 +61,22 @@ void CARLDefinition::_bind_methods() {
 	BIND_ENUM_CONSTANT(ACTION_RIGHT_WRIST_TRAJECTORY);
 	BIND_ENUM_CONSTANT(ACTION_LEFT_HAND_SHAPE);
 	BIND_ENUM_CONSTANT(ACTION_RIGHT_HAND_SHAPE);
+}
+
+PackedByteArray CARLDefinition::serialize() const {
+	carl::action::Definition *carl_definition = create_carl_definition();
+
+	std::vector<uint8_t> bytes;
+	carl::Serialization serialization{ bytes };
+	carl_definition->serialize(serialization);
+
+	PackedByteArray data;
+	data.resize(bytes.size());
+	memcpy(data.ptrw(), bytes.data(), bytes.size());
+
+	delete carl_definition;
+
+	return data;
 }
 
 void CARLDefinition::set_action_type(ActionType p_action_type) {

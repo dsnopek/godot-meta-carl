@@ -60,6 +60,8 @@ protected:
 	static void _bind_methods();
 
 public:
+	PackedByteArray serialize() const;
+
 	void set_action_type(ActionType p_action_type);
 	ActionType get_action_type() const;
 
