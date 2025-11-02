@@ -108,6 +108,7 @@ visible = false
 unique_name_in_owner = true
 exclusive = false
 unresizable = true
+display_mode = 1
 access = 2
 filters = PackedStringArray("*.tres;Godot Resource;application/x-godot-resource")
 
