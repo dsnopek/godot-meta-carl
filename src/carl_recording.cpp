@@ -121,7 +121,7 @@ void CARLRecording::update_sample_from_version(const Ref<CARLInputSample> &p_inp
 			TypedArray<Transform3D> joints = p_input_sample->get_left_hand_joint_poses();
 			for (int i = 0; i < joints.size(); i++) {
 				Transform3D joint = joints[i];
-				joint = joint * wrist_pose;
+				joint = wrist_pose * joint;
 				joints[i] = joint;
 			}
 			p_input_sample->set_left_hand_joint_poses(joints);
@@ -132,7 +132,7 @@ void CARLRecording::update_sample_from_version(const Ref<CARLInputSample> &p_inp
 			TypedArray<Transform3D> joints = p_input_sample->get_right_hand_joint_poses();
 			for (int i = 0; i < joints.size(); i++) {
 				Transform3D joint = joints[i];
-				joint = joint * wrist_pose;
+				joint = wrist_pose * joint;
 				joints[i] = joint;
 			}
 			p_input_sample->set_right_hand_joint_poses(joints);
