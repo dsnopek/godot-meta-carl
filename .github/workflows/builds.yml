@@ -142,11 +142,11 @@ jobs:
   studio:
     runs-on: ubuntu-22.04
     container:
-      image: barichello/godot-ci:4.4.1
+      image: barichello/godot-ci:4.5.1
     needs: asset
     if: github.event_name == 'push'
     env:
-      GODOT_VERSION: 4.4.1
+      GODOT_VERSION: 4.5.1
       EXPORT_NAME: godot-carl-studio
     permissions:
       contents: write
