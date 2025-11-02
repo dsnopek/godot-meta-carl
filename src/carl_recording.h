@@ -44,7 +44,9 @@ protected:
 	void _set_data(const PackedByteArray &p_data);
 	PackedByteArray _get_data() const;
 
-	static PackedByteArray convert_from_version_zero(const PackedByteArray &p_orig_data);
+	static PackedByteArray convert_from_version_0(const PackedByteArray &p_orig_data);
+	static PackedByteArray convert_from_version_1(const PackedByteArray &p_orig_data);
+	static void update_sample_from_version(const Ref<CARLInputSample> &p_input_sample, uint64_t p_version);
 
 public:
 	PackedByteArray serialize() const;
