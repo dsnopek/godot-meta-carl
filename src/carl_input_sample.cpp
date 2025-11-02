@@ -80,11 +80,8 @@ void CARLInputSample::populate_from_hand_tracker(const Ref<XRHandTracker> &p_tra
 	TypedArray<Transform3D> &jts = (hand == XRPositionalTracker::TRACKER_HAND_LEFT) ? left_hand_joint_poses : right_hand_joint_poses;
 
 	Transform3D ht = p_tracker->get_hand_joint_transform(XRHandTracker::HAND_JOINT_WRIST);
-	Transform3D hti = ht.affine_inverse();
-
 	for (int joint = 0; joint < XRHandTracker::HAND_JOINT_MAX; joint++) {
-		// We make the joints relative to the wrist.
-		jts[joint] = hti * p_tracker->get_hand_joint_transform(static_cast<XRHandTracker::HandJoint>(joint));
+		jts[joint] = p_tracker->get_hand_joint_transform(static_cast<XRHandTracker::HandJoint>(joint));
 	}
 
 	if (hand == XRPositionalTracker::TRACKER_HAND_LEFT) {
@@ -106,8 +103,7 @@ void CARLInputSample::apply_to_hand_tracker(const Ref<XRHandTracker> &p_tracker)
 	Transform3D ht = (hand == XRPositionalTracker::TRACKER_HAND_LEFT) ? left_wrist_pose : right_wrist_pose;
 
 	for (int joint = 0; joint < XRHandTracker::HAND_JOINT_MAX; joint++) {
-		// We make the joints relative to the wrist.
-		p_tracker->set_hand_joint_transform((XRHandTracker::HandJoint)joint, ht * (Transform3D)jts[joint]);
+		p_tracker->set_hand_joint_transform((XRHandTracker::HandJoint)joint, (Transform3D)jts[joint]);
 		p_tracker->set_hand_joint_flags((XRHandTracker::HandJoint)joint, valid_flags);
 	}
 
