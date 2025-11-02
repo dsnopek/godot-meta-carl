@@ -260,9 +260,29 @@ void CARLInputSample::normalize_hmd_y_axis_rotation(const Ref<CARLInputSample> &
 		p_input_sample->set_left_wrist_pose(hmd_unwind_transform * left_wrist_pose);
 	}
 
+	if (enabled_poses & CARLInputSample::POSE_LEFT_JOINTS) {
+		TypedArray<Transform3D> joints = p_input_sample->get_left_hand_joint_poses();
+		for (int i = 0; i < joints.size(); i++) {
+			Transform3D joint = joints[i];
+			joint = hmd_unwind_transform * joint;
+			joints[i] = joint;
+		}
+		p_input_sample->set_left_hand_joint_poses(joints);
+	}
+
 	if (enabled_poses & CARLInputSample::POSE_RIGHT_WRIST) {
 		Transform3D right_wrist_pose = p_input_sample->get_right_wrist_pose();
 		p_input_sample->set_right_wrist_pose(hmd_unwind_transform * right_wrist_pose);
+	}
+
+	if (enabled_poses & CARLInputSample::POSE_RIGHT_JOINTS) {
+		TypedArray<Transform3D> joints = p_input_sample->get_right_hand_joint_poses();
+		for (int i = 0; i < joints.size(); i++) {
+			Transform3D joint = joints[i];
+			joint = hmd_unwind_transform * joint;
+			joints[i] = joint;
+		}
+		p_input_sample->set_right_hand_joint_poses(joints);
 	}
 }
 
