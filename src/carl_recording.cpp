@@ -80,7 +80,7 @@ PackedByteArray CARLRecording::convert_from_version_0(const PackedByteArray &p_o
 }
 
 PackedByteArray CARLRecording::convert_from_version_1(const PackedByteArray &p_orig_data) {
-	carl::Deserialization deserialization{ p_orig_data.ptr() + 16};
+	carl::Deserialization deserialization{ p_orig_data.ptr() + 16 };
 
 	uint64_t count;
 	deserialization >> count;
