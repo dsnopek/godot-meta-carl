@@ -207,6 +207,16 @@ func _on_file_dialog_file_selected(p_path: String) -> void:
 			_set_current_filename(p_path)
 
 
+func _on_file_dialog_visibility_changed() -> void:
+	if file_dialog.visible:
+		file_dialog.set_favorite_list(UserSettings.file_dialog_favorites)
+	else:
+		var new_favorites = file_dialog.get_favorite_list()
+		if UserSettings.file_dialog_favorites != new_favorites:
+			UserSettings.file_dialog_favorites = new_favorites
+			UserSettings.save_settings()
+
+
 func _process(_delta: float) -> void:
 	if _is_loading:
 		var progress := []

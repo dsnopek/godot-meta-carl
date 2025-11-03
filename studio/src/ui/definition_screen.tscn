@@ -120,3 +120,4 @@ unique_name_in_owner = true
 [connection signal="pressed" from="MenuBar/SaveButton" to="." method="_on_save_button_pressed"]
 [connection signal="pressed" from="MenuBar/TestButton" to="." method="_on_test_button_pressed"]
 [connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]
+[connection signal="visibility_changed" from="FileDialog" to="." method="_on_file_dialog_visibility_changed"]
