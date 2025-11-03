@@ -24,7 +24,7 @@
 #include "carl_recording.h"
 
 #define BINARY_VERSION_MARKER 0xffffffffffffffffUL
-#define BINARY_CURRENT_VERSION 1
+#define BINARY_CURRENT_VERSION 2
 
 void CARLRecording::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_set_data", "data"), &CARLRecording::_set_data);
@@ -47,7 +47,7 @@ void CARLRecording::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "end_timestamp", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR | PROPERTY_USAGE_READ_ONLY), "", "get_end_timestamp");
 }
 
-PackedByteArray CARLRecording::convert_from_version_zero(const PackedByteArray &p_orig_data) {
+PackedByteArray CARLRecording::convert_from_version_0(const PackedByteArray &p_orig_data) {
 	carl::Deserialization deserialization{ p_orig_data.ptr() };
 
 	uint64_t count;
@@ -58,6 +58,7 @@ PackedByteArray CARLRecording::convert_from_version_zero(const PackedByteArray &
 
 	for (uint64_t idx = 0; idx < count; ++idx) {
 		Ref<CARLInputSample> sample = CARLInputSample::deserialize_from_version_zero(deserialization);
+		update_sample_from_version(sample, 0);
 		samples.emplace_back(sample->get_carl_object());
 	}
 
@@ -78,6 +79,67 @@ PackedByteArray CARLRecording::convert_from_version_zero(const PackedByteArray &
 	return new_data;
 }
 
+PackedByteArray CARLRecording::convert_from_version_1(const PackedByteArray &p_orig_data) {
+	carl::Deserialization deserialization{ p_orig_data.ptr() + 16};
+
+	uint64_t count;
+	deserialization >> count;
+
+	std::vector<carl::InputSample> samples;
+	samples.reserve(count);
+
+	for (uint64_t idx = 0; idx < count; ++idx) {
+		carl::InputSample cis(deserialization);
+		Ref<CARLInputSample> sample = Ref<CARLInputSample>(memnew(CARLInputSample(cis)));
+		update_sample_from_version(sample, 1);
+		samples.emplace_back(sample->get_carl_object());
+	}
+
+	std::vector<uint8_t> bytes;
+	carl::Serialization serialization{ bytes };
+
+	serialization << samples.size();
+	for (uint64_t idx = 0; idx < count; ++idx) {
+		samples[idx].serialize(serialization);
+	}
+
+	PackedByteArray new_data;
+	new_data.resize(bytes.size() + 16);
+	new_data.encode_u64(0, BINARY_VERSION_MARKER);
+	new_data.encode_u64(8, BINARY_CURRENT_VERSION);
+	memcpy(new_data.ptrw() + 16, bytes.data(), bytes.size());
+
+	return new_data;
+}
+
+void CARLRecording::update_sample_from_version(const Ref<CARLInputSample> &p_input_sample, uint64_t p_version) {
+	if (p_version < 2) {
+		BitField<CARLInputSample::Pose> enabled_poses = p_input_sample->get_enabled_poses();
+
+		if ((enabled_poses & CARLInputSample::POSE_LEFT_WRIST) && (enabled_poses & CARLInputSample::POSE_LEFT_JOINTS)) {
+			Transform3D wrist_pose = p_input_sample->get_left_wrist_pose();
+			TypedArray<Transform3D> joints = p_input_sample->get_left_hand_joint_poses();
+			for (int i = 0; i < joints.size(); i++) {
+				Transform3D joint = joints[i];
+				joint = wrist_pose * joint;
+				joints[i] = joint;
+			}
+			p_input_sample->set_left_hand_joint_poses(joints);
+		}
+
+		if ((enabled_poses & CARLInputSample::POSE_RIGHT_WRIST) && (enabled_poses & CARLInputSample::POSE_RIGHT_JOINTS)) {
+			Transform3D wrist_pose = p_input_sample->get_right_wrist_pose();
+			TypedArray<Transform3D> joints = p_input_sample->get_right_hand_joint_poses();
+			for (int i = 0; i < joints.size(); i++) {
+				Transform3D joint = joints[i];
+				joint = wrist_pose * joint;
+				joints[i] = joint;
+			}
+			p_input_sample->set_right_hand_joint_poses(joints);
+		}
+	}
+}
+
 void CARLRecording::_set_data(const PackedByteArray &p_data) {
 	if (carl_recording) {
 		delete carl_recording;
@@ -89,13 +151,17 @@ void CARLRecording::_set_data(const PackedByteArray &p_data) {
 		version = p_data.decode_u64(8);
 	}
 
-	if (version == 0) {
-		data = convert_from_version_zero(p_data);
-	} else if (version != BINARY_CURRENT_VERSION) {
+	if (version > BINARY_CURRENT_VERSION) {
 		ERR_PRINT(vformat("Unable to deserialize CARLInputSample with unknown version %d", version));
 		return;
-	} else {
-		data = p_data;
+	}
+
+	data = p_data;
+
+	if (version == 0) {
+		data = convert_from_version_0(data);
+	} else if (version == 1) {
+		data = convert_from_version_1(data);
 	}
 
 	if (data.size() < 16) {
