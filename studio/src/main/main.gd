@@ -18,9 +18,6 @@ func _ready() -> void:
 	for perm in STORAGE_PERMISSIONS:
 		OS.request_permission(perm)
 
-	print("Is meta? ", OS.has_feature("meta"))
-	print("Is pico? ", OS.has_feature("pico"))
-
 	if OS.has_feature("pico"):
 		# For some reason, Pico never gives the "Aim activate" action, so we have to use "Pinch",
 		# which I'd argue is less semantic. But whatever, it's fine, it's the smallest change to
